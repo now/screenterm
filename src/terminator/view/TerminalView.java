@@ -338,7 +338,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	 * stay where we were but that *was* the bottom.
 	 */
 	public void scrollOnTtyOutput(boolean wereAtBottom) {
-		if (wereAtBottom || Terminator.getPreferences().getBoolean(TerminatorPreferences.SCROLL_ON_TTY_OUTPUT)) {
+		if (wereAtBottom) {
 			scrollToBottomButNotHorizontally();
 		}
 	}
