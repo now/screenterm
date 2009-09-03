@@ -14,7 +14,6 @@ import e.util.*;
 import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
-import terminator.view.highlight.*;
 
 public class TerminalView extends JComponent implements FocusListener, Scrollable {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
@@ -25,23 +24,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	private Location cursorPosition = new Location(0, 0);
 	private boolean hasFocus = false;
 	private boolean displayCursor = true;
-	private HashMap<Class<? extends Highlighter>, Highlighter> highlighters = new HashMap<Class<? extends Highlighter>, Highlighter>();
-	private SelectionHighlighter selectionHighlighter;
-	
-	/**
-	* The highlights present in each line.  The highlights for a line are stored at the index in
-	* lineHighlights corresponding to the line index.  The object at that index is another ArrayList
-	* containing all Highlight objects which appear on that line.  Note that a highlight object which
-	* appears on several lines will appear several times within this structure (once within the
-	* ArrayList for each line upon which the highlight appears).  This ArrayList is not guaranteed to
-	* be the same size as the number of lines in the model, and likewise there is no guarantee that
-	* the reference at a certain index will be a real ArrayList - it could be null.  Use the already
-	* implemented methods for accessing this structure whenever possible in order to hide all the
-	* necessary checks.
-	*/
-	private ArrayList<ArrayList<Highlight>> lineHighlights = new ArrayList<ArrayList<Highlight>>();
-	
-	private List<Highlight> highlightsUnderMouse = Collections.emptyList();
 	
 	public TerminalView() {
                 /* TODO: Or just set to 80×24 and then maximize the window and
@@ -60,55 +42,15 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
 				requestFocus();
-				if (SwingUtilities.isLeftMouseButton(event)) {
-					highlightClicked(event);
-				}
-			}
-
-			public void highlightClicked(MouseEvent event) {
-				List<Highlight> highlights = getHighlightsForLocation(viewToModel(event.getPoint()));
-				for (Highlight highlight : highlights) {
-					highlight.getHighlighter().highlightClicked(TerminalView.this, highlight, event);
-				}
-			}
-		});
-		addMouseMotionListener(new MouseMotionAdapter() {
-			private Location lastLocation = new Location(-1, -1);
-
-			public void mouseMoved(MouseEvent event) {
-				Location location = viewToModel(event.getPoint());
-				if (location.equals(lastLocation)) {
-					return;
-				}
-				lastLocation = location;
-				List<Highlight> previousHighlights = highlightsUnderMouse;
-				highlightsUnderMouse = getHighlightsForLocation(viewToModel(event.getPoint()));
-				repaintHighlights(previousHighlights);
-				repaintHighlights(highlightsUnderMouse);
-				setCursor(getCursorForHighlightsUnderMouse());
-			}
-			
-			private Cursor getCursorForHighlightsUnderMouse() {
-				for (Highlight highlight : highlightsUnderMouse) {
-					if (highlight.getCursor() != null) {
-						return highlight.getCursor();
-					}
-				}
-				return Cursor.getDefaultCursor();
 			}
 		});
 		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
 		becomeDropTarget();
-		selectionHighlighter = new SelectionHighlighter(this);
 	}
 	
 	public void optionsDidChange() {
 		setFont(font);
 		sizeChanged();
-	}
-	
-	public SelectionHighlighter getSelectionHighlighter() {
-		return selectionHighlighter;
 	}
 	
 	public void userIsTyping() {
@@ -225,7 +167,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	
 	public void linesChangedFrom(int lineIndex) {
 		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
-		redoHighlightsFrom(lineIndex);
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
@@ -240,7 +181,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	
 	public void sizeChanged(Dimension oldSizeInChars, Dimension newSizeInChars) {
 		sizeChanged();
-		redoHighlightsFrom(Math.min(oldSizeInChars.height, newSizeInChars.height));
 	}
 	
 	public void scrollToBottomButNotHorizontally() {
@@ -255,6 +195,22 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		scrollHorizontallyToShowCursor();
 	}
 	
+	public JViewport getViewport() {
+		return (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
+	}
+	
+	public int getFirstVisibleLine() {
+		int lineHeight = getCharUnitSize().height;
+		Rectangle visibleBounds = getViewport().getViewRect();
+		return visibleBounds.y / lineHeight;
+	}
+	
+	public int getLastVisibleLine() {
+		int lineHeight = getCharUnitSize().height;
+		Rectangle visibleBounds = getViewport().getViewRect();
+		return (visibleBounds.y + visibleBounds.height) / lineHeight;
+	}
+
 	private boolean isLineVisible(int lineIndex) {
 		return (lineIndex >= getFirstVisibleLine() && lineIndex <= getLastVisibleLine());
 	}
@@ -433,220 +389,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		return new Dimension(width, height);
 	}
 	
-	// Highlighting support.
-	
-	/**
-	 * Adds a highlighter. Highlighters are referred to by class, so it's
-	 * a bad idea to have more than one of the same class.
-	 */
-	public <T extends Highlighter> void addHighlighter(T highlighter) {
-		Class<? extends Highlighter> kind = highlighter.getClass();
-		if (highlighters.get(kind) != null) {
-			throw new IllegalArgumentException("duplicate " + kind);
-		}
-		highlighters.put(kind, highlighter);
-	}
-	
-	/**
-	 * Returns the highlighter of the given class.
-	 */
-	@SuppressWarnings("unchecked") // FIXME: can we give highlighters the correct type and avoid this?
-	public <T extends Highlighter> T getHighlighterOfClass(Class<T> kind) {
-		return (T) highlighters.get(kind);
-	}
-	
-	public Collection<Highlighter> getHighlighters() {
-		return Collections.unmodifiableCollection(highlighters.values());
-	}
-	
-	private void redoHighlightsFrom(int firstLineIndex) {
-		removeHighlightsFrom(firstLineIndex);
-		for (Highlighter highlighter : getHighlighters()) {
-			highlighter.addHighlights(this, firstLineIndex);
-		}
-	}
-	
-	public void removeHighlightsFrom(int firstLineIndex) {
-		if (firstLineIndex == 0) {
-			lineHighlights.clear();
-			repaint();
-		} else {
-				// We use a backwards loop because going forwards results in N array copies if we're removing N lines.
-				for (int i = (lineHighlights.size() - 1); i >= firstLineIndex; --i) {
-					lineHighlights.remove(i);
-				}
-				repaintFromLine(firstLineIndex);
-		}
-	}
-	
-	public void removeHighlightsFrom(Highlighter highlighter, int firstLineIndex) {
-		for (int i = firstLineIndex; i < lineHighlights.size(); i++) {
-			ArrayList<Highlight> list = lineHighlights.get(i);
-			if (list != null) {
-				Iterator<Highlight> it = list.iterator();
-				while (it.hasNext()) {
-					Highlight highlight = it.next();
-					if (highlight.getHighlighter() == highlighter) {
-						it.remove();
-						repaintHighlight(highlight);
-					}
-				}
-			}
-		}
-	}
-	
-	public void addHighlight(Highlight highlight) {
-		for (int i = highlight.getStart().getLineIndex(); i <= highlight.getEnd().getLineIndex(); i++) {
-			addHighlightAtLine(highlight, i);
-		}
-		repaintHighlight(highlight);
-	}
-	
-	private void repaintFromLine(int firstLineToRepaint) {
-		int top = modelToView(new Location(firstLineToRepaint, 0)).y;
-		Dimension size = getSize();
-		repaint(0, top, size.width, size.height - top);
-	}
-	
-	private void repaintHighlights(final Collection<Highlight> highlights) {
-		for (Highlight highlight : highlights) {
-			repaintHighlight(highlight);
-		}
-	}
-	
-	private void repaintHighlight(Highlight highlight) {
-		Point redrawStart = modelToView(highlight.getStart()).getLocation();
-		Rectangle endRect = modelToView(highlight.getEnd());
-		Point redrawEnd = new Point(endRect.x + endRect.width, endRect.y + endRect.height);
-		if (highlight.getStart().getLineIndex() == highlight.getEnd().getLineIndex()) {
-			repaint(redrawStart.x, redrawStart.y, redrawEnd.x - redrawStart.x, redrawEnd.y - redrawStart.y);
-		} else {
-			repaint(0, redrawStart.y, getSize().width,redrawEnd.y - redrawStart.y);
-		}
-	}
-	
-	public void addHighlightAtLine(Highlight highlight, int lineIndex) {
-		if (lineIndex >= lineHighlights.size() || lineHighlights.get(lineIndex) == null) {
-			for (int i = lineHighlights.size(); i <= lineIndex; i++) {
-				lineHighlights.add(i, null);
-			}
-			lineHighlights.set(lineIndex, new ArrayList<Highlight>());
-		}
-		ArrayList<Highlight> highlightsForThisLine = lineHighlights.get(lineIndex);
-		if (highlightsForThisLine.contains(highlight) == false) {
-			highlightsForThisLine.add(highlight);
-		}
-	}
-	
-	/**
-	 * Searches from startLine to endLine inclusive, incrementing the
-	 * current line by 'direction', looking for a line with a find highlight.
-	 * When one is found, the cursor is moved there.
-	 */
-	private void findAgain(Class<? extends Highlighter> highlighterClass, int startLine, int endLine, int direction) {
-		for (int i = startLine; i != endLine; i += direction) {
-			List<Highlight> highlights = getHighlightsForLine(i);
-			Highlight match = firstHighlightOfClass(highlights, highlighterClass);
-			if (match != null) {
-				scrollTo(i, match.getStart().getCharOffset(), match.getEnd().getCharOffset());
-				// Highlight the new match in the bird view as well as in the text itself.
-				return;
-			}
-		}
-	}
-	
-	/**
-	 * Tests whether any of the Highlight objects in the list is a FindHighlighter.
-	 */
-	private static Highlight firstHighlightOfClass(List<Highlight> highlights, Class<? extends Highlighter> highlighterClass) {
-		for (Highlight highlight : highlights) {
-			if (highlight.getHighlighter().getClass() == highlighterClass) {
-				return highlight;
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * Scrolls the display down to the next highlight of the given class not currently on the display.
-	 */
-	public void findNext(Class<? extends Highlighter> highlighterClass) {
-		findAgain(highlighterClass, getLastVisibleLine() + 1, getModel().getLineCount() + 1, 1);
-	}
-	
-	/**
-	 * Scrolls the display up to the next highlight of the given class not currently on the display.
-	 */
-	public void findPrevious(Class<? extends Highlighter> highlighterClass) {
-		findAgain(highlighterClass, getFirstVisibleLine() - 1, -1, -1);
-	}
-	
-	public JViewport getViewport() {
-		return (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
-	}
-	
-	public int getFirstVisibleLine() {
-		int lineHeight = getCharUnitSize().height;
-		Rectangle visibleBounds = getViewport().getViewRect();
-		return visibleBounds.y / lineHeight;
-	}
-	
-	public int getLastVisibleLine() {
-		int lineHeight = getCharUnitSize().height;
-		Rectangle visibleBounds = getViewport().getViewRect();
-		return (visibleBounds.y + visibleBounds.height) / lineHeight;
-	}
-
-	public List<Highlight> getHighlightsForLocation(Location location) {
-		List<Highlight> highlights = getHighlightsForLine(location.getLineIndex());
-		ArrayList<Highlight> result = new ArrayList<Highlight>();
-		for (Highlight highlight : highlights) {
-			Location start = highlight.getStart();
-			Location end = highlight.getEnd();
-			boolean startOK = (location.getLineIndex() > start.getLineIndex()) ||
-					(location.getCharOffset() >= start.getCharOffset());
-			boolean endOK = (location.getLineIndex() < end.getLineIndex()) ||
-					(location.getCharOffset() < end.getCharOffset());
-			if (startOK && endOK) {
-				result.add(highlight);
-			}
-		}
-		return Collections.unmodifiableList(result);
-	}
-	
-	public boolean isHighlightUnderMouse(Highlight highlight) {
-		return highlightsUnderMouse.contains(highlight);
-	}
-	
-	/** Returns a (possibly empty) list containing all highlights in the indexed line. */
-	private List<Highlight> getHighlightsForLine(int lineIndex) {
-		if (lineIndex >= lineHighlights.size() || lineHighlights.get(lineIndex) == null) {
-			return Collections.emptyList();
-		} else {
-			return Collections.unmodifiableList(lineHighlights.get(lineIndex));
-		}
-	}
-	
-	public String getTabbedString(Highlight highlight) {
-		Location start = highlight.getStart();
-		Location end = highlight.getEnd();
-		StringBuilder buf = new StringBuilder();
-		for (int i = start.getLineIndex(); i <= end.getLineIndex(); i++) {
-			// Necessary to cope with selections extending to the bottom of the buffer.
-			if (i == end.getLineIndex() && end.getCharOffset() == 0) {
-				break;
-			}
-			TextLine textLine = model.getTextLine(i);
-			int lineStart = (i == start.getLineIndex()) ? start.getCharOffset() : 0;
-			int lineEnd = (i == end.getLineIndex()) ? end.getCharOffset() : textLine.length();
-			buf.append(textLine.getTabbedString(lineStart, lineEnd));
-			if (i != end.getLineIndex()) {
-				buf.append('\n');
-			}
-		}
-		return buf.toString();
-	}
-	
 	// Redraw code.
 	
 	private void redrawCursorPosition() {
@@ -711,12 +453,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	}
 	
 	private List<StyledText> getLineStyledText(int line, int widthHintInChars) {
-		List<StyledText> result = model.getTextLine(line).getStyledTextSegments(widthHintInChars);
-		List<Highlight> highlights = getHighlightsForLine(line);
-		for (Highlight highlight : highlights) {
-			result = highlight.applyHighlight(result, new Location(line, 0));
-		}
-		return result;
+		return model.getTextLine(line).getStyledTextSegments(widthHintInChars);
 	}
 	
 	/**

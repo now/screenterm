@@ -20,6 +20,4 @@ public interface TerminalPaneHost {
 	public void terminalNameChanged(JTerminalPane terminalPane);
 	
 	public void setTerminalSize(Dimension size);
-	
-	public MenuItemProvider createMenuItemProvider(JTerminalPane terminalPane);
 }

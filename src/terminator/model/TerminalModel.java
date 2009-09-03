@@ -76,10 +76,6 @@ public class TerminalModel {
 			return;
 		}
 		
-		// If we don't remove the highlights, we'll see the mouse
-		// cursor change when we move over where they were.
-		view.removeHighlightsFrom(0);
-		
 		// We want to keep any lines after the cursor, so remember them.
 		// FIXME: if the user's editing a really long logical line at
 		// the bash prompt, it may have manually wrapped it onto
@@ -273,7 +269,6 @@ public class TerminalModel {
 	
 	public void linesChangedFrom(int firstLineChanged) {
 		this.firstLineChanged = Math.min(this.firstLineChanged, firstLineChanged);
-		view.getSelectionHighlighter().textChanged(new Location(firstLineChanged, 0), new Location(getLineCount() + 1, 0));
 	}
 	
 	public Dimension getCurrentSizeInChars() {

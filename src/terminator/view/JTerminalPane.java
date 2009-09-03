@@ -12,7 +12,6 @@ import org.jessies.os.*;
 import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
-import terminator.view.highlight.*;
 
 public class JTerminalPane extends JPanel {
 	// The probably over-simplified belief here is that Unix terminals always send ^?.
@@ -111,10 +110,6 @@ public class JTerminalPane extends JPanel {
 	
 	public void optionsDidChange() {
 		// We're called before start().
-		if (host != null) {
-			// "Use alt key as meta key" affects the keyboard shortcuts displayed on the pop-up menu.
-			this.menuItemProvider = host.createMenuItemProvider(this);
-		}
 		view.optionsDidChange();
 		viewport.setBackground(view.getBackground());
 		updateTerminalSize();
@@ -239,7 +234,6 @@ public class JTerminalPane extends JPanel {
 	 */
 	public void start(TerminalPaneHost host) {
 		this.host = host;
-		this.menuItemProvider = host.createMenuItemProvider(this);
 		control.start();
 	}
 	
@@ -603,14 +597,6 @@ public class JTerminalPane extends JPanel {
 		}
 	}
 	
-	public SelectionHighlighter getSelectionHighlighter() {
-		return view.getHighlighterOfClass(SelectionHighlighter.class);
-	}
-	
-	public void selectAll() {
-		getSelectionHighlighter().selectAll();
-	}
-	
 	public void pageUp() {
 		scrollVertically(-0.5);
 	}
@@ -648,9 +634,6 @@ public class JTerminalPane extends JPanel {
 	 */
 	public void requestFocus() {
 		view.requestFocus();
-	}
-	public void doCopyAction() {
-		getSelectionHighlighter().copyToSystemClipboard();
 	}
 	public void doPasteAction() {
 		view.pasteSystemClipboard();

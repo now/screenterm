@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import terminator.view.*;
-import terminator.view.highlight.*;
 
 /**
  * Provides a menu bar for Mac OS, and acts as a source of Action instances for
@@ -24,7 +23,6 @@ public class TerminatorMenuBar extends EMenuBar {
 	
 	public TerminatorMenuBar() {
 		add(makeFileMenu());
-		add(makeEditMenu());
 		add(makeScrollbackMenu());
 		if (GuiUtilities.isMacOs()) {
 			add(WindowMenu.getSharedInstance().makeJMenu(customWindowMenuItems));
@@ -49,15 +47,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		menu.addSeparator();
 		menu.add(new ShowInfoAction());
 		menu.add(new ResetAction());
-		
-		return menu;
-	}
-	
-	private JMenu makeEditMenu() {
-		JMenu menu = GuiUtilities.makeMenu("Edit", 'E');
-		menu.add(new CopyAction());
-		menu.add(new PasteAction());
-		menu.add(new SelectAllAction());
 		
 		return menu;
 	}
@@ -412,19 +401,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class CopyAction extends AbstractPaneAction {
-		public CopyAction() {
-			super("Copy");
-			putValue(ACCELERATOR_KEY, makeKeyStroke("C"));
-			GnomeStockIcon.configureAction(this);
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.doCopyAction();
-		}
-	}
-	
 	public static class PasteAction extends AbstractPaneAction {
 		public PasteAction() {
 			super("Paste");
@@ -435,19 +411,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		@Override
 		protected void performPaneAction(JTerminalPane terminalPane) {
 			terminalPane.doPasteAction();
-		}
-	}
-	
-	private static class SelectAllAction extends AbstractPaneAction {
-		public SelectAllAction() {
-			super("Select All");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("A"));
-			GnomeStockIcon.configureAction(this);
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.selectAll();
 		}
 	}
 	
