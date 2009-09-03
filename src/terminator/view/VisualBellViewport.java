@@ -45,29 +45,7 @@ public class VisualBellViewport extends JViewport {
     }
     
     private void paintBell(Graphics g) {
-        TerminatorPreferences preferences = Terminator.getPreferences();
-        if (preferences.getBoolean(TerminatorPreferences.VISUAL_BELL) == false) {
             return;
-        }
-        Color foreground = preferences.getColor(TerminatorPreferences.FOREGROUND_COLOR);
-        if (preferences.getBoolean(TerminatorPreferences.FANCY_BELL)) {
-            // On decent hardware, we can produce a really tasteful effect by compositing a semi-transparent rectangle over the terminal.
-            // We need to choose a color that will show up against the background.
-            // A reasonable assumption is that the user has already chosen such a color for the foreground.
-            Color color = new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 100);
-            g.setColor(color);
-            g.fillRect(0, 0, getWidth(), getHeight());
-        } else {
-            // On a remote X11 display (or really rubbish hardware) the compositing effect is prohibitively expensive, so we offer XOR instead.
-            Color background = preferences.getColor(TerminatorPreferences.BACKGROUND_COLOR);;
-            final int R = blend(background.getRed(), foreground.getRed());
-            final int G = blend(background.getGreen(), foreground.getGreen());
-            final int B = blend(background.getBlue(), foreground.getBlue());
-            g.setColor(background);
-            g.setXORMode(new Color(R, G, B));
-            g.fillRect(0, 0, getWidth(), getHeight());
-            g.setPaintMode();
-        }
     }
     
     /**
