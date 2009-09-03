@@ -14,7 +14,6 @@ import terminator.view.*;
 public class Terminator {
 	private static final Terminator INSTANCE = new Terminator();
 	
-	private TerminatorPreferences preferences;
 	private Color boldForegroundColor;
 	
 	private Frames frames = new Frames();
@@ -23,24 +22,9 @@ public class Terminator {
 		return INSTANCE;
 	}
 	
-	public static TerminatorPreferences getPreferences() {
-		return INSTANCE.preferences;
-	}
-	
 	private Terminator() {
-		initPreferences();
 		initAboutBox();
 		initMacOsEventHandlers();
-	}
-	
-	private void initPreferences() {
-		preferences = new TerminatorPreferences();
-		preferences.addPreferencesListener(new Preferences.Listener() {
-			public void preferencesChanged() {
-				optionsDidChange();
-			}
-		});
-		preferences.readFromDisk();
 	}
 	
 	public Color getBoldColor() {
@@ -137,9 +121,6 @@ public class Terminator {
 		new TerminatorFrame(Collections.singletonList(terminalPane));
 	}
 	
-	/**
-	 * Invoked (via our Preferences.Listener, above) by the preferences dialog whenever an option is changed.
-	 */
 	private void optionsDidChange() {
 		boldForegroundColor = Palettes.getBrightColorFor(new Color(0x181818));
 		
@@ -151,20 +132,12 @@ public class Terminator {
 		// At the moment, we assume that Linux users who want characters not on their keyboard will switch keyboard mapping dynamically (which works fine).
 		// We can avoid the question on Mac OS for now because disabling input methods doesn't currently work properly, and we don't get the key events anyway.
 		if (GuiUtilities.isMacOs() == false) {
-			final boolean useAltAsMeta = preferences.getBoolean(TerminatorPreferences.USE_ALT_AS_META);
 			int modifiers = KeyEvent.ALT_MASK;
-			if (useAltAsMeta) {
-				modifiers = KeyEvent.SHIFT_MASK | KeyEvent.CTRL_MASK;
-			}
 			TerminatorMenuBar.setDefaultKeyStrokeModifiers(modifiers);
 			// When useAltAsMeta is true, we want Alt-F to go to Emacs.
 			// When useAltAsMeta is false, we want Alt-F to invoke the Find action.
 			// In neither case do we want Alt-F to open the File menu.
 			GuiUtilities.setMnemonicsEnabled(false);
-		}
-		
-		for (int i = 0; i < frames.size(); ++i) {
-			frames.get(i).optionsDidChange();
 		}
 	}
 	

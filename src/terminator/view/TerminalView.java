@@ -46,8 +46,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	private List<Highlight> highlightsUnderMouse = Collections.emptyList();
 	
 	public TerminalView() {
-		TerminatorPreferences preferences = Terminator.getPreferences();
-
                 /* TODO: Or just set to 80×24 and then maximize the window and
                  * have the model resize itself? */
                 Rectangle2D charBounds = font.getMaxCharBounds(new FontRenderContext(null, true, true));
@@ -110,12 +108,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	}
 	
 	public void optionsDidChange() {
-		TerminatorPreferences preferences = Terminator.getPreferences();
-		if (preferences.getBoolean(TerminatorPreferences.USE_ALT_AS_META)) {
-			// If we want to handle key events when alt is down, we need to turn off input methods.
-			enableInputMethods(false);
-		}
-		
 		setFont(font);
 		sizeChanged();
 	}

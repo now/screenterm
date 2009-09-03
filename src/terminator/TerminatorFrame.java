@@ -365,9 +365,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 	public void optionsDidChange() {
 		updateMenuBar();
 		updateTabbedPane();
-		for (JTerminalPane terminal : terminals) {
-			terminal.optionsDidChange();
-		}
 		repaint();
 	}
 

@@ -149,9 +149,6 @@ public class JTerminalPane extends JPanel {
 		
 		optionsDidChange();
 		
-		BirdView birdView = new BirdView(view.getBirdsEye(), scrollPane.getVerticalScrollBar());
-		view.setBirdView(birdView);
-		
 		findPanel = new FindPanel(this);
 		findPanel.setVisible(false);
 		
@@ -467,10 +464,6 @@ public class JTerminalPane extends JPanel {
 		// Handle key presses which generate keyTyped events.
 		private String getUtf8ForKeyEvent(KeyEvent e) {
 			char ch = e.getKeyChar();
-			// Interpret the alt key as meta if that's what the user asked for. 
-			if (Terminator.getPreferences().getBoolean(TerminatorPreferences.USE_ALT_AS_META) && e.isAltDown()) {
-				return Ascii.ESC + String.valueOf(e.getKeyChar());
-			}
 			if (ch == '\t') {
 				// We handled tab in keyPressed because only there can we distinguish control-i and control-tab.
 				return null;
