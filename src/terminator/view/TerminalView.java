@@ -3,6 +3,8 @@ package terminator.view;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
+import java.awt.font.*;
+import java.awt.geom.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
@@ -45,7 +47,15 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	
 	public TerminalView() {
 		TerminatorPreferences preferences = Terminator.getPreferences();
-		this.model = new TerminalModel(this, preferences.getInt(TerminatorPreferences.INITIAL_COLUMN_COUNT), preferences.getInt(TerminatorPreferences.INITIAL_ROW_COUNT));
+
+                /* TODO: Or just set to 80×24 and then maximize the window and
+                 * have the model resize itself? */
+                Rectangle2D charBounds = font.getMaxCharBounds(new FontRenderContext(null, true, true));
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                int columns = (int)(screenSize.getWidth() * 0.8 / charBounds.getWidth());
+                int rows = (int)(screenSize.getHeight() * 0.9 / charBounds.getHeight());
+		this.model = new TerminalModel(this, columns, rows);
+
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 4, 4, 4));
 		setOpaque(true);
