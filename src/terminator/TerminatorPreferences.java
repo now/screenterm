@@ -18,7 +18,6 @@ public class TerminatorPreferences extends Preferences {
     
     public static final String ALPHA = "alpha";
     public static final String FONT = "font";
-    public static final String HIDE_MOUSE_WHEN_TYPING = "hideMouseWhenTyping";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
     public static final String INITIAL_ROW_COUNT = "initialRowCount";
     public static final String SCROLL_ON_KEY_PRESS = "scrollKey";
@@ -53,7 +52,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", INITIAL_ROW_COUNT, Integer.valueOf(24), "New terminal height");
         addPreference("Behavior", SCROLL_ON_KEY_PRESS, Boolean.TRUE, "Scroll to bottom on key press");
         addPreference("Behavior", SCROLL_ON_TTY_OUTPUT, Boolean.FALSE, "Scroll to bottom on output");
-        addPreference("Behavior", HIDE_MOUSE_WHEN_TYPING, Boolean.TRUE, "Hide mouse when typing");
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
         
         addPreference("Appearance", ALPHA, Double.valueOf(1.0), "Terminal opacity");

@@ -126,9 +126,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	
 	public void userIsTyping() {
 		redrawCursorPosition();
-		if (Terminator.getPreferences().getBoolean(TerminatorPreferences.HIDE_MOUSE_WHEN_TYPING)) {
-			setCursor(GuiUtilities.INVISIBLE_CURSOR);
-		}
+                setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
 	private void becomeDropTarget() {
