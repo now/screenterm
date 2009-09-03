@@ -767,19 +767,12 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		Rectangle cursorRect = modelToView(cursorPosition);
 		final int bottomY = cursorRect.y + cursorRect.height - 1;
 		if (hasFocus) {
-			TerminatorPreferences preferences = Terminator.getPreferences();
-			if (preferences.getBoolean(TerminatorPreferences.BLOCK_CURSOR)) {
-                                // Block.
-                                // Paint over the character underneath.
-                                g.fill(cursorRect);
-                                // Redraw the character in the
-                                // background color.
-                                g.setColor(getBackground());
-                                g.drawString(characterUnderCursor, cursorRect.x, baseline);
-			} else {
-				// Underline.
-                                g.drawLine(cursorRect.x, bottomY, cursorRect.x + cursorRect.width - 1, bottomY);
-			}
+                        // Paint over the character underneath.
+                        g.fill(cursorRect);
+                        // Redraw the character in the
+                        // background color.
+                        g.setColor(getBackground());
+                        g.drawString(characterUnderCursor, cursorRect.x, baseline);
 		} else {
 			// For some reason, terminals always seem to use an
 			// empty block for the unfocused cursor, regardless

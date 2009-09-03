@@ -17,7 +17,6 @@ public class TerminatorPreferences extends Preferences {
     public static final String SELECTION_COLOR = "selectionColor";
     
     public static final String ALPHA = "alpha";
-    public static final String BLOCK_CURSOR = "blockCursor";
     public static final String FONT = "font";
     public static final String HIDE_MOUSE_WHEN_TYPING = "hideMouseWhenTyping";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
@@ -57,7 +56,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", HIDE_MOUSE_WHEN_TYPING, Boolean.TRUE, "Hide mouse when typing");
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
         
-        addPreference("Appearance", BLOCK_CURSOR, Boolean.FALSE, "Use block cursor");
         addPreference("Appearance", ALPHA, Double.valueOf(1.0), "Terminal opacity");
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
         
