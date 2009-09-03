@@ -98,7 +98,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 			}
 		});
 		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
-		addHighlighter(new UrlHighlighter());
 		becomeDropTarget();
 		selectionHighlighter = new SelectionHighlighter(this);
 	}
