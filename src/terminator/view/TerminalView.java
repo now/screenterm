@@ -707,7 +707,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 			Graphics2D g = (Graphics2D) oldGraphics;
 			
 			Object antiAliasHint = g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, Terminator.getPreferences().getBoolean(TerminatorPreferences.ANTI_ALIAS) ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			FontMetrics metrics = getFontMetrics(getFont());
 			Dimension charUnitSize = getCharUnitSize();

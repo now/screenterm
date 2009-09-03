@@ -18,7 +18,6 @@ public class TerminatorPreferences extends Preferences {
     
     public static final String ALPHA = "alpha";
     public static final String ALWAYS_SHOW_TABS = "alwaysShowTabs";
-    public static final String ANTI_ALIAS = "antiAlias";
     public static final String BLINK_CURSOR = "cursorBlink";
     public static final String BLOCK_CURSOR = "blockCursor";
     public static final String FANCY_BELL = "fancyBell";
@@ -64,7 +63,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", VISUAL_BELL, Boolean.TRUE, "Visual bell (as opposed to no bell)");
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
         
-        addPreference("Appearance", ANTI_ALIAS, Boolean.FALSE, "Anti-alias text");
         addPreference("Appearance", BLINK_CURSOR, Boolean.TRUE, "Blink cursor");
         addPreference("Appearance", BLOCK_CURSOR, Boolean.FALSE, "Use block cursor");
         addPreference("Appearance", FANCY_BELL, Boolean.TRUE, "High-quality rendering of the visual bell");
