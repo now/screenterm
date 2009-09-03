@@ -11,7 +11,6 @@ import java.util.List;
 import javax.swing.*;
 
 public class TerminatorPreferences extends Preferences {
-    public static final String FONT = "font";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
     public static final String INITIAL_ROW_COUNT = "initialRowCount";
     
@@ -33,7 +32,5 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", INITIAL_COLUMN_COUNT, Integer.valueOf(80), "New terminal width");
         addPreference("Behavior", INITIAL_ROW_COUNT, Integer.valueOf(24), "New terminal height");
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
-        
-        addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
     }
 }

@@ -17,6 +17,7 @@ import terminator.view.highlight.*;
 public class TerminalView extends JComponent implements FocusListener, Scrollable {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
 	private static final Stopwatch paintStyledTextStopwatch = Stopwatch.get("TerminalView.paintStyledText");
+        private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
 	
 	private TerminalModel model;
 	private Location cursorPosition = new Location(0, 0);
@@ -105,10 +106,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 			enableInputMethods(false);
 		}
 		
-		setBackground(preferences.getColor("background"));
-		setForeground(preferences.getColor("foreground"));
-		
-		setFont(preferences.getFont(TerminatorPreferences.FONT));
+		setFont(font);
 		sizeChanged();
 	}
 	
