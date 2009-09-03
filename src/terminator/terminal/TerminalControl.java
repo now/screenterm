@@ -53,8 +53,6 @@ public class TerminalControl {
 	
 	private boolean automaticNewline;
 	
-	private TerminalLogWriter terminalLogWriter;
-	
 	private StringBuilder lineBuffer = new StringBuilder();
 	
 	private EscapeParser escapeParser;
@@ -89,10 +87,9 @@ public class TerminalControl {
 		}
 		
 		// We log an announceConnectionLost message if we fail to create the PtyProcess, so we need the TerminalLogWriter first.
-		this.terminalLogWriter = new TerminalLogWriter(command);
 		this.ptyProcess = new PtyProcess(executable, argv, workingDirectory);
 		this.processIsRunning = true;
-		Log.warn("Created " + ptyProcess + " and logging to " + terminalLogWriter.getInfo());
+		Log.warn("Created " + ptyProcess);
 		this.in = new InputStreamReader(ptyProcess.getInputStream(), CHARSET_NAME);
 		this.out = ptyProcess.getOutputStream();
 		writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
@@ -314,7 +311,6 @@ public class TerminalControl {
 			}
 			processChar(ch);
 		}
-		terminalLogWriter.append(buffer, size, sawNewline);
 		flushLineBuffer();
 		flushTerminalActions();
 		fireChangeListeners();
@@ -608,10 +604,6 @@ public class TerminalControl {
 	
 	private void reportFailedSend(String kind, String value, Exception ex) {
 		Log.warn("Couldn't send " + kind + " \"" + StringUtilities.escapeForJava(value) + "\" to " + ptyProcess, ex);
-	}
-	
-	public TerminalLogWriter getTerminalLogWriter() {
-		return terminalLogWriter;
 	}
 	
 	public PtyProcess getPtyProcess() {
