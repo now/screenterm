@@ -45,7 +45,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 			}
 		});
 		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
-		becomeDropTarget();
 	}
 	
 	public void optionsDidChange() {
@@ -56,10 +55,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	public void userIsTyping() {
 		redrawCursorPosition();
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
-	}
-	
-	private void becomeDropTarget() {
-		new TerminalDropTarget(this);
 	}
 	
 	public TerminalModel getModel() {
