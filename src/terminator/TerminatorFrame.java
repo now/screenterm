@@ -110,7 +110,7 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 	}
 	
 	private void updateTabbedPane() {
-		if (terminals.size() == 1 && !Terminator.getPreferences().getBoolean(TerminatorPreferences.ALWAYS_SHOW_TABS)) {
+		if (terminals.size() == 1) {
 			if (tabbedPane != null) {
 				switchToSinglePane();
 			}

@@ -17,7 +17,6 @@ public class TerminatorPreferences extends Preferences {
     public static final String SELECTION_COLOR = "selectionColor";
     
     public static final String ALPHA = "alpha";
-    public static final String ALWAYS_SHOW_TABS = "alwaysShowTabs";
     public static final String BLINK_CURSOR = "cursorBlink";
     public static final String BLOCK_CURSOR = "blockCursor";
     public static final String FONT = "font";
@@ -54,7 +53,6 @@ public class TerminatorPreferences extends Preferences {
         
         addPreference("Behavior", INITIAL_COLUMN_COUNT, Integer.valueOf(80), "New terminal width");
         addPreference("Behavior", INITIAL_ROW_COUNT, Integer.valueOf(24), "New terminal height");
-        addPreference("Behavior", ALWAYS_SHOW_TABS, Boolean.FALSE, "Always show tab bar");
         addPreference("Behavior", SCROLL_ON_KEY_PRESS, Boolean.TRUE, "Scroll to bottom on key press");
         addPreference("Behavior", SCROLL_ON_TTY_OUTPUT, Boolean.FALSE, "Scroll to bottom on output");
         addPreference("Behavior", HIDE_MOUSE_WHEN_TYPING, Boolean.TRUE, "Hide mouse when typing");
