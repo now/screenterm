@@ -54,7 +54,6 @@ public class TerminatorPreferences extends Preferences {
         
         addTab("Behavior");
         addTab("Appearance");
-        addTab("Presets");
         
         addPreference("Behavior", INITIAL_COLUMN_COUNT, Integer.valueOf(80), "New terminal width");
         addPreference("Behavior", INITIAL_ROW_COUNT, Integer.valueOf(24), "New terminal height");
@@ -77,72 +76,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Appearance", CURSOR_COLOR, Color.GREEN, "Cursor");
         addPreference("Appearance", FOREGROUND_COLOR, NEAR_WHITE, "Text foreground");
         addPreference("Appearance", SELECTION_COLOR, SELECTION_BLUE, "Selection background");
-    }
-    
-    // Offer various preset color combinations.
-    // Note that these get fossilized into the user's preferences; updating values here doesn't affect users who've already clicked the button.
-    @Override protected void willAddRows(List<FormPanel> formPanels) {
-        ArrayList<JButton> buttons = new ArrayList<JButton>();
-        buttons.add(makePresetButton("White on Blue", VERY_DARK_BLUE, NEAR_WHITE, Color.GREEN, SELECTION_BLUE));
-        buttons.add(makePresetButton("Green on Black", Color.BLACK, NEAR_GREEN, Color.GREEN, SELECTION_BLUE));
-        buttons.add(makePresetButton("White on Black", Color.BLACK, NEAR_WHITE, Color.GREEN, Color.DARK_GRAY));
-        buttons.add(makePresetButton("Black on White", Color.WHITE, NEAR_BLACK, Color.BLUE, LIGHT_BLUE));
-        buttons.add(makePresetButton("Black on Cream", CREAM, NEAR_BLACK, Color.RED, LIGHT_BLUE));
-        ComponentUtilities.tieButtonSizes(buttons);
-        
-        String description = "Presets:";
-        for (JButton button : buttons) {
-            formPanels.get(2).addRow(description, button);
-            description = "";
-        }
-    }
-    
-    private JButton makePresetButton(String name, final Color background, final Color foreground, final Color cursor, final Color selection) {
-        // FIXME: ideally, we'd update the button image when the user changes the anti-aliasing preference.
-        JButton button = new JButton(new ImageIcon(makePresetButtonImage(name, background, foreground)));
-        button.putClientProperty("JButton.buttonType", "gradient"); // Mac OS 10.5
-        button.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                put(BACKGROUND_COLOR, background);
-                put(FOREGROUND_COLOR, foreground);
-                put(CURSOR_COLOR, cursor);
-                put(SELECTION_COLOR, selection);
-            }
-        });
-        return button;
-    }
-    
-    private BufferedImage makePresetButtonImage(String name, Color background, Color foreground) {
-        // Make a representative image for the button.
-        BufferedImage image = makeEmptyPresetButtonImage();
-        Graphics2D g = image.createGraphics();
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, getBoolean(TerminatorPreferences.ANTI_ALIAS) ? RenderingHints.VALUE_TEXT_ANTIALIAS_ON : RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
-        g.setFont(getFont(TerminatorPreferences.FONT));
-        g.setColor(background);
-        g.fillRect(0, 0, image.getWidth(), image.getHeight());
-        g.setColor(background.darker());
-        g.drawRect(0, 0, image.getWidth() - 1, image.getHeight() - 1);
-        g.setColor(foreground);
-        Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(name, g);
-        final int x = (image.getWidth() - (int) stringBounds.getWidth()) / 2;
-        int y = (image.getHeight() - (int) stringBounds.getHeight()) / 2 + g.getFontMetrics().getAscent();
-        y = (int) (y / 1.1);
-        g.drawString(name, x, y);
-        g.dispose();
-        return image;
-    }
-    
-    private BufferedImage makeEmptyPresetButtonImage() {
-        // This seems ugly and awkward, but I can't think of a simpler way to get a suitably-sized BufferedImage to work with, without hard-coding dimensions.
-        // We want all images to be the same width, so we use a constant string rather than the button text.
-        BufferedImage image = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = image.createGraphics();
-        g.setFont(getFont(TerminatorPreferences.FONT));
-        FontMetrics metrics = g.getFontMetrics();
-        final int height = (int) (1.4* metrics.getHeight());
-        final int width = (int) (metrics.getStringBounds("XXXXXXXXXXXXXXXX", g).getWidth() * 1.2);
-        g.dispose();
-        return new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
     }
     
     public double getDouble(String key) {
