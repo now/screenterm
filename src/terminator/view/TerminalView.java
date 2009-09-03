@@ -379,10 +379,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		return displayCursor;
 	}
 	
-	public Color getCursorColor() {
-		return Terminator.getPreferences().getColor(TerminatorPreferences.CURSOR_COLOR);
-	}
-	
 	public Location viewToModel(Point point) {
 		Insets insets = getInsets();
 		int lineIndex = (point.y - insets.top) / getCharUnitSize().height;
@@ -761,7 +757,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	 * the 'off' state.
 	 */
 	private void paintCursor(Graphics2D g, String characterUnderCursor, int baseline) {
-		g.setColor(getCursorColor());
+		g.setColor(Color.black);
 		Rectangle cursorRect = modelToView(cursorPosition);
 		final int bottomY = cursorRect.y + cursorRect.height - 1;
 		if (hasFocus) {

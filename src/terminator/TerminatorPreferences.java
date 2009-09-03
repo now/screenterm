@@ -11,7 +11,6 @@ import java.util.List;
 import javax.swing.*;
 
 public class TerminatorPreferences extends Preferences {
-    public static final String CURSOR_COLOR = "cursorColor";
     public static final String SELECTION_COLOR = "selectionColor";
     
     public static final String FONT = "font";
@@ -42,7 +41,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
         
         // Defaults reminiscent of SGI's xwsh(1).
-        addPreference("Appearance", CURSOR_COLOR, Color.GREEN, "Cursor");
         addPreference("Appearance", SELECTION_COLOR, SELECTION_BLUE, "Selection background");
     }
 }
