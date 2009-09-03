@@ -23,6 +23,7 @@ public class SelectionHighlighter implements Highlighter, ClipboardOwner, MouseL
 	 * in response.
 	 */
 	private class SelectionStyle extends Style implements FocusListener {
+                private final Color focusedSelectionColor = new Color(0xb3d4ff);
 		private final Color unfocusedSelectionColor = new Color(0.5f, 0.5f, 0.5f);
 		private boolean focused = true;
 		
@@ -32,7 +33,7 @@ public class SelectionHighlighter implements Highlighter, ClipboardOwner, MouseL
 		
 		@Override
 		public Color getBackground() {
-			return (focused ? Terminator.getPreferences().getColor(TerminatorPreferences.SELECTION_COLOR) : unfocusedSelectionColor);
+			return focused ? focusedSelectionColor : unfocusedSelectionColor;
 		}
 		
 		@Override

@@ -11,8 +11,6 @@ import java.util.List;
 import javax.swing.*;
 
 public class TerminatorPreferences extends Preferences {
-    public static final String SELECTION_COLOR = "selectionColor";
-    
     public static final String FONT = "font";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
     public static final String INITIAL_ROW_COUNT = "initialRowCount";
@@ -23,8 +21,6 @@ public class TerminatorPreferences extends Preferences {
      * If false, you can't comfortably use emacs(1).
      */
     public static final String USE_ALT_AS_META = "useAltAsMeta";
-    
-    private static final Color SELECTION_BLUE = new Color(0x1c2bff);
     
     protected String getPreferencesFilename() {
         return System.getProperty("org.jessies.terminator.optionsFile");
@@ -39,8 +35,5 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
         
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
-        
-        // Defaults reminiscent of SGI's xwsh(1).
-        addPreference("Appearance", SELECTION_COLOR, SELECTION_BLUE, "Selection background");
     }
 }
