@@ -35,11 +35,9 @@ public class TerminatorMenuBar extends EMenuBar {
 	private JMenu makeFileMenu() {
 		JMenu menu = GuiUtilities.makeMenu("File", 'F');
 		menu.add(new NewShellAction());
-		menu.add(new NewCommandAction());
 		
 		menu.addSeparator();
 		menu.add(new NewShellTabAction());
-		menu.add(new NewCommandTabAction());
 		
 		menu.addSeparator();
 		menu.add(new CloseAction());
@@ -317,50 +315,6 @@ public class TerminatorMenuBar extends EMenuBar {
 				return;
 			}
 			addTab(newPane);
-		}
-	}
-	
-	public static class NewCommandAction extends AbstractAction {
-		public NewCommandAction() {
-			super("New Command...");
-			putValue(ACCELERATOR_KEY, makeShiftedKeyStroke("N"));
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			newCommand();
-		}
-		
-		public static void newCommand() {
-			final JTerminalPane terminalPane = new CommandDialog().askForCommandToRun();
-			if (terminalPane != null) {
-				// We need to invokeLater to avoid a race condition where (I think) the VK_ENTER hasn't finished processing and gets dispatched again to the new terminal.
-				// Chris Reece saw this on Mac OS if he did shift-command T, tab, return with no other windows open.
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						Terminator.getSharedInstance().openFrame(terminalPane);
-					}
-				});
-			}
-		}
-	}
-	
-	public static class NewCommandTabAction extends AbstractAction {
-		public NewCommandTabAction() {
-			super("New Command Tab...");
-			putValue(ACCELERATOR_KEY, makeShiftedKeyStroke("T"));
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			TerminatorFrame frame = getFocusedTerminatorFrame();
-			if (frame != null) {
-				JTerminalPane terminalPane = new CommandDialog().askForCommandToRun();
-				if (terminalPane != null) {
-					frame.addTab(terminalPane);
-				}
-			} else {
-				// There's no existing frame, so interpret "New Command Tab..." as "New Command...".
-				NewCommandAction.newCommand();
-			}
 		}
 	}
 	
