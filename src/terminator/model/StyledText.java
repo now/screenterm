@@ -21,6 +21,9 @@ public class StyledText {
 	
 	private static final int HAS_FOREGROUND = 1 << 14;
 	private static final int HAS_BACKGROUND = 1 << 15;
+
+        private static final Color FOREGROUND_COLOR = new Color(0x181818);
+        private static final Color BACKGROUND_COLOR = new Color(0xf6f6f6);
 	
 	private String text;
 	private Style style;
@@ -74,7 +77,7 @@ public class StyledText {
 			}
 		}
 		if (result == null && hasSpecifiedColor == false) {
-			result = Terminator.getPreferences().getColor(isForeground ? TerminatorPreferences.FOREGROUND_COLOR : TerminatorPreferences.BACKGROUND_COLOR);
+			result = isForeground ? FOREGROUND_COLOR : BACKGROUND_COLOR;
 		}
 		if (result == null) {
 			result = Palettes.getColor(colorIndex, false);

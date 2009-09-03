@@ -146,8 +146,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 			return;
 		}
 		
-		updateBackground();
-		
 		JComponent oldContentPane = (JComponent) getContentPane();
 		Dimension initialSize = oldContentPane.getSize();
 		
@@ -167,8 +165,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 	 */
 	private void switchToSinglePane() {
 		// It's only safe to call this if tabbedPane != null *or* we're setting up the window contents for the first time.
-		
-		updateBackground();
 		
 		JTerminalPane soleSurvivor = terminals.get(0);
 		Dimension initialSize = soleSurvivor.getSize();
@@ -366,19 +362,7 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		}
 	}
 	
-	/**
-	 * Gives the frame the same background color as the terminal to improve appearance during resizes.
-	 * We don't do this when showing multiple tabs because Mac OS' tabbed pane is partially transparent.
-	 * Even on GNOME and Windows it would look odd because the tabbed pane is the outermost component, and the new space ought to belong to it, and share its color.
-	 */
-	private void updateBackground() {
-		if (GuiUtilities.isMacOs() == false) {
-			setBackground(terminals.size() > 1 ? originalBackground : Terminator.getPreferences().getColor(TerminatorPreferences.BACKGROUND_COLOR));
-		}
-	}
-	
 	public void optionsDidChange() {
-		updateBackground();
 		updateMenuBar();
 		updateTabbedPane();
 		for (JTerminalPane terminal : terminals) {

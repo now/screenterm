@@ -11,9 +11,7 @@ import java.util.List;
 import javax.swing.*;
 
 public class TerminatorPreferences extends Preferences {
-    public static final String BACKGROUND_COLOR = "background";
     public static final String CURSOR_COLOR = "cursorColor";
-    public static final String FOREGROUND_COLOR = "foreground";
     public static final String SELECTION_COLOR = "selectionColor";
     
     public static final String FONT = "font";
@@ -27,13 +25,7 @@ public class TerminatorPreferences extends Preferences {
      */
     public static final String USE_ALT_AS_META = "useAltAsMeta";
     
-    private static final Color CREAM = new Color(0xfefaea);
-    private static final Color LIGHT_BLUE = new Color(0xb3d4ff);
-    private static final Color NEAR_BLACK = new Color(0x181818);
-    private static final Color NEAR_GREEN = new Color(0x72ff00);
-    private static final Color NEAR_WHITE = new Color(0xeeeeee);
     private static final Color SELECTION_BLUE = new Color(0x1c2bff);
-    private static final Color VERY_DARK_BLUE = new Color(0x000045);
     
     protected String getPreferencesFilename() {
         return System.getProperty("org.jessies.terminator.optionsFile");
@@ -50,9 +42,7 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
         
         // Defaults reminiscent of SGI's xwsh(1).
-        addPreference("Appearance", BACKGROUND_COLOR, VERY_DARK_BLUE, "Background");
         addPreference("Appearance", CURSOR_COLOR, Color.GREEN, "Cursor");
-        addPreference("Appearance", FOREGROUND_COLOR, NEAR_WHITE, "Text foreground");
         addPreference("Appearance", SELECTION_COLOR, SELECTION_BLUE, "Selection background");
     }
 }

@@ -37,7 +37,7 @@ public class SelectionHighlighter implements Highlighter, ClipboardOwner, MouseL
 		
 		@Override
 		public Color getForeground() {
-			return Terminator.getPreferences().getColor(TerminatorPreferences.FOREGROUND_COLOR);
+                        return new Color(0x181818);
 		}
 		
 		@Override

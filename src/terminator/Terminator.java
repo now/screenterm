@@ -141,7 +141,7 @@ public class Terminator {
 	 * Invoked (via our Preferences.Listener, above) by the preferences dialog whenever an option is changed.
 	 */
 	private void optionsDidChange() {
-		boldForegroundColor = Palettes.getBrightColorFor(preferences.getColor(TerminatorPreferences.FOREGROUND_COLOR));
+		boldForegroundColor = Palettes.getBrightColorFor(new Color(0x181818));
 		
 		// On the Mac, the Command key (called 'meta' by Java) is always used for keyboard equivalents.
 		// On other systems, Control tends to be used, but in the special case of terminal emulators this conflicts with the ability to type control characters.
