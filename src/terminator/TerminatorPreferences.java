@@ -26,7 +26,6 @@ public class TerminatorPreferences extends Preferences {
     public static final String HIDE_MOUSE_WHEN_TYPING = "hideMouseWhenTyping";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
     public static final String INITIAL_ROW_COUNT = "initialRowCount";
-    public static final String PALETTE = "palette";
     public static final String SCROLL_ON_KEY_PRESS = "scrollKey";
     public static final String SCROLL_ON_TTY_OUTPUT = "scrollTtyOutput";
     public static final String VISUAL_BELL = "visualBell";
@@ -52,7 +51,6 @@ public class TerminatorPreferences extends Preferences {
     
     protected void initPreferences() {
         setHelperForClass(Double.class, new AlphaHelper());
-        setHelperForClass(Color[].class, new PaletteHelper());
         
         addTab("Behavior");
         addTab("Appearance");
@@ -73,7 +71,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Appearance", FANCY_BELL, Boolean.TRUE, "High-quality rendering of the visual bell");
         addPreference("Appearance", ALPHA, Double.valueOf(1.0), "Terminal opacity");
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
-        addPreference("Appearance", PALETTE, Palettes.fromString("ANSI"), "Palette");
         
         // Defaults reminiscent of SGI's xwsh(1).
         addPreference("Appearance", BACKGROUND_COLOR, VERY_DARK_BLUE, "Background");
@@ -172,30 +169,6 @@ public class TerminatorPreferences extends Preferences {
             // Only enable the slider if the JVM seems likely to support setFrameAlpha.
             slider.setEnabled(GuiUtilities.canSetFrameAlpha());
             formPanel.addRow(description + ":", slider);
-        }
-    }
-    
-    private class PaletteHelper implements PreferencesHelper {
-        public String encode(String key) {
-            return Palettes.toString((Color[]) get(key));
-        }
-        
-        public Object decode(String valueString) {
-            return Palettes.fromString(valueString);
-        }
-        
-        public void addRow(FormPanel formPanel, final String key, final String description) {
-            final JComboBox choices = new JComboBox();
-            for (String paletteName : Palettes.names()) {
-                choices.addItem(paletteName);
-            }
-            choices.setSelectedItem(encode(key));
-            choices.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    put(key, decode((String) choices.getSelectedItem()));
-                }
-            });
-            formPanel.addRow(description + ":", choices);
         }
     }
 }
