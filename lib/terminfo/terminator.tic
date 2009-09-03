@@ -1,0 +1,131 @@
+# Terminator terminfo capabilities.
+# Originally based on the rxvt file "doc/etc/rxvt.terminfo", by Thomas Dickey <dickey@clark.net> 04 Oct 1997, updated <kesim@math.fu-berlin.de> 02 Nov 1997
+
+# If you want to experiment with named sequences, try something like this:
+# 
+#   $ echo normal $(tput rev) reversed $(tput rmso) normal
+
+terminator|Terminator no line wrap, 
+# Pretend to be 80x24, but with an arbitrary number of lines in memory.
+    cols#80,
+    lines#24,
+    lm#0,
+# Tabs initially every 8 spaces.
+    it#8,
+# Visible bell. We don't support an audible bell ("bell").
+    flash=^G,
+# Cursor visibility. We don't support control over cursor blink, so
+# there's no cvvis capability here.
+    civis=\E[?25l,
+    cnorm=\E[?25h,
+# Undocumented; possibly untested and incorrect...
+    eo,
+    km,
+    mir,
+    msgr,
+    xenl,
+    xon,
+    acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+    bold=\E[1m,
+    clear=\E[H\E[2J,
+    cr=^M,
+    csr=\E[%i%p1%d;%p2%dr,
+    cub=\E[%p1%dD, cub1=^H,
+    cud=\E[%p1%dB, cud1=^J,
+    cuf=\E[%p1%dC, cuf1=\E[C,
+    cup=\E[%i%p1%d;%p2%dH,
+    cuu=\E[%p1%dA, cuu1=\E[A,
+    dch=\E[%p1%dP, dch1=\E[P,
+    dl=\E[%p1%dM, dl1=\E[M,
+    ed=\E[J,
+    el=\E[K, el1=\E[1K,
+    enacs=\E(B\E)0,
+    home=\E[H,
+    hpa=\E[%i%p1%dG,
+    ht=^I,
+    hts=\EH,
+    il=\E[%p1%dL,
+    il1=\E[L,
+    ind=^J,
+    is1=\E[?47l\E=\E[?1l,
+    is2=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;3;4;6l\E[4l,
+    rc=\E8,
+    rev=\E[7m,
+    ri=\EM,
+    rmacs=^O,
+    rmcup=\E[?47l\E8,
+    rmir=\E[4l,
+    rmso=\E[27m,
+    rmul=\E[24m,
+    rs1=\E>\E[1;3;4;5;6l\E[?7h\E[m\E[r\E[2J\E[H,
+    rs2=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;3;4;6l\E[4l\E>,
+    s0ds=\E(B,
+    s1ds=\E(0,
+    sc=\E7,
+    smacs=^N,
+    smcup=\E7\E[?47h,
+    smir=\E[4h,
+    smso=\E[7m,
+    smul=\E[4m,
+    tbc=\E[3g,
+    vpa=\E[%i%p1%dd,
+    sgr0=\E[m,
+# We offer 8 colors, in any foreground/background combination.
+    colors#8,
+    pairs#64,
+# Return to the original pair of colors.
+    op=\E[39;49m,
+# Set ANSI background and foreground colors.
+    setab=\E[%p1%{40}%+%dm,
+    setaf=\E[%p1%{30}%+%dm,
+#
+# Use the title bar as a status line. Because we don't set $WINDOWID, you'll
+# have to "set title" in your .vimrc to get vim(1) to behave as it does with
+# xterm(1) or rxvt(1). This line was constructed based on information in
+# the "Status Lines" section of:
+#
+#  http://publib16.boulder.ibm.com/pseries/en_US/files/aixfiles/terminfo.htm
+#
+# which implied that we shouldn't use "hs" because our status line is not
+# cursor-addressable. We also shouldn't specify eslok (because we don't
+# support escape sequences in titles), or wsl (because the title bar is
+# roughly the width of the terminal). We ignore the parameter to tsl, which
+# is the column of the status line in which to start.
+#
+    dsl=\E]2;\007, fsl=^G, tsl=\E]2;%p1,
+#
+# Keys
+#
+# Backspace.
+    kbs=^H,
+# Arrow keys.
+    kcub1=\E[D,
+    kcud1=\E[B,
+    kcuf1=\E[C,
+    kcuu1=\E[A,
+# Insert and Delete.
+    kich1=\E[2~,
+    kdch1=\E[3~,
+# Home and End.
+    khome=\E[1~,
+    kend=\E[4~,
+# PageUp and PageDown.
+    kpp=\E[5~,
+    knp=\E[6~,
+# Function keys.
+    kf1=\EOP,
+    kf2=\EOQ,
+    kf3=\EOR,
+    kf4=\EOS,
+    kf5=\E[15~,
+    kf6=\E[17~,
+    kf7=\E[18~,
+    kf8=\E[19~,
+    kf9=\E[20~,
+    kf10=\E[21~,
+    kf11=\E[23~,
+    kf12=\E[24~,
+    kf13=\E[25~,
+    kf14=\E[26~,
+    kf15=\E[28~,
+    kf16=\E[29~,
