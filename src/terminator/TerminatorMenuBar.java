@@ -45,7 +45,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		menu.add(new CloseAction());
 		
 		menu.addSeparator();
-		menu.add(new ShowInfoAction());
 		menu.add(new ResetAction());
 		
 		return menu;
@@ -385,19 +384,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		
 		public void performFrameAction(TerminatorFrame frame) {
 			frame.detachCurrentTab();
-		}
-	}
-	
-	public static class ShowInfoAction extends AbstractPaneAction {
-		public ShowInfoAction() {
-			super("Show Info");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("I"));
-			GnomeStockIcon.configureAction(this);
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			InfoDialog.getSharedInstance().showInfoDialogFor(terminalPane);
 		}
 	}
 	
