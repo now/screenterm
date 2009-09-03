@@ -92,18 +92,13 @@ public class FindHighlighter implements Highlighter {
 		if (pattern == null) {
 			return 0;
 		}
-		view.getBirdView().setValueIsAdjusting(true);
-		try {
-			TerminalModel model = view.getModel();
-			int count = 0;
-			for (int i = firstLineIndex; i < model.getLineCount(); i++) {
-				String line = model.getTextLine(i).getString();
-				count += addHighlightsOnLine(view, i, line);
-			}
-			return count;
-		} finally {
-			view.getBirdView().setValueIsAdjusting(false);
-		}
+                TerminalModel model = view.getModel();
+                int count = 0;
+                for (int i = firstLineIndex; i < model.getLineCount(); i++) {
+                        String line = model.getTextLine(i).getString();
+                        count += addHighlightsOnLine(view, i, line);
+                }
+                return count;
 	}
 	
 	private int addHighlightsOnLine(TerminalView view, int lineIndex, String text) {

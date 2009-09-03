@@ -153,7 +153,6 @@ public class JTerminalPane extends JPanel {
 		findPanel.setVisible(false);
 		
 		add(scrollPane, BorderLayout.CENTER);
-		add(birdView, BorderLayout.EAST);
 		add(findPanel, BorderLayout.SOUTH);
 		GuiUtilities.keepMaximumShowing(scrollPane.getVerticalScrollBar());
 		

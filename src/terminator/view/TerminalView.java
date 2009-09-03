@@ -27,8 +27,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	private boolean displayCursor = true;
 	private HashMap<Class<? extends Highlighter>, Highlighter> highlighters = new HashMap<Class<? extends Highlighter>, Highlighter>();
 	private SelectionHighlighter selectionHighlighter;
-	private BirdView birdView;
-	private FindBirdsEye birdsEye;
 	
 	/**
 	* The highlights present in each line.  The highlights for a line are stored at the index in
@@ -104,20 +102,11 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		addHighlighter(new UrlHighlighter());
 		becomeDropTarget();
 		selectionHighlighter = new SelectionHighlighter(this);
-		birdsEye = new FindBirdsEye(this);
 	}
 	
 	public void optionsDidChange() {
 		setFont(font);
 		sizeChanged();
-	}
-	
-	public BirdsEye getBirdsEye() {
-		return birdsEye;
-	}
-	
-	public void setBirdView(BirdView birdView) {
-		this.birdView = birdView;
 	}
 	
 	public SelectionHighlighter getSelectionHighlighter() {
@@ -482,27 +471,17 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	public void removeHighlightsFrom(int firstLineIndex) {
 		if (firstLineIndex == 0) {
 			lineHighlights.clear();
-			birdView.clearMatchingLines();
 			repaint();
 		} else {
-			birdView.setValueIsAdjusting(true);
-			try {
 				// We use a backwards loop because going forwards results in N array copies if we're removing N lines.
 				for (int i = (lineHighlights.size() - 1); i >= firstLineIndex; --i) {
 					lineHighlights.remove(i);
-					birdView.removeMatchingLine(i);
 				}
 				repaintFromLine(firstLineIndex);
-			} finally {
-				birdView.setValueIsAdjusting(false);
-			}
 		}
 	}
 	
 	public void removeHighlightsFrom(Highlighter highlighter, int firstLineIndex) {
-		if (highlighter instanceof FindHighlighter) {
-			birdView.clearMatchingLines();
-		}
 		for (int i = firstLineIndex; i < lineHighlights.size(); i++) {
 			ArrayList<Highlight> list = lineHighlights.get(i);
 			if (list != null) {
@@ -518,14 +497,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		}
 	}
 	
-	public BirdView getBirdView() {
-		return birdView;
-	}
-	
 	public void addHighlight(Highlight highlight) {
-		if (highlight.getHighlighter() instanceof FindHighlighter) {
-			birdView.addMatchingLine(highlight.getStart().getLineIndex());
-		}
 		for (int i = highlight.getStart().getLineIndex(); i <= highlight.getEnd().getLineIndex(); i++) {
 			addHighlightAtLine(highlight, i);
 		}
@@ -579,9 +551,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 			Highlight match = firstHighlightOfClass(highlights, highlighterClass);
 			if (match != null) {
 				scrollTo(i, match.getStart().getCharOffset(), match.getEnd().getCharOffset());
-				birdsEye.setCurrentLineIndex(i);
 				// Highlight the new match in the bird view as well as in the text itself.
-				birdView.repaint();
 				return;
 			}
 		}
