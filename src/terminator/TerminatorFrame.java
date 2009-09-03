@@ -377,19 +377,8 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		}
 	}
 	
-	@Override
-	public void addNotify() {
-		super.addNotify();
-		updateTransparency();
-	}
-	
-	private void updateTransparency() {
-		GuiUtilities.setFrameAlpha(this, Terminator.getPreferences().getDouble(TerminatorPreferences.ALPHA));
-	}
-	
 	public void optionsDidChange() {
 		updateBackground();
-		updateTransparency();
 		updateMenuBar();
 		updateTabbedPane();
 		for (JTerminalPane terminal : terminals) {

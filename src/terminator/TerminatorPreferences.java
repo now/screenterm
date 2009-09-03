@@ -16,7 +16,6 @@ public class TerminatorPreferences extends Preferences {
     public static final String FOREGROUND_COLOR = "foreground";
     public static final String SELECTION_COLOR = "selectionColor";
     
-    public static final String ALPHA = "alpha";
     public static final String FONT = "font";
     public static final String INITIAL_COLUMN_COUNT = "initialColumnCount";
     public static final String INITIAL_ROW_COUNT = "initialRowCount";
@@ -43,8 +42,6 @@ public class TerminatorPreferences extends Preferences {
     }
     
     protected void initPreferences() {
-        setHelperForClass(Double.class, new AlphaHelper());
-        
         addTab("Behavior");
         addTab("Appearance");
         
@@ -54,7 +51,6 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Behavior", SCROLL_ON_TTY_OUTPUT, Boolean.FALSE, "Scroll to bottom on output");
         addPreference("Behavior", USE_ALT_AS_META, Boolean.FALSE, "Use alt key as meta key (for Emacs)");
         
-        addPreference("Appearance", ALPHA, Double.valueOf(1.0), "Terminal opacity");
         addPreference("Appearance", FONT, new Font(GuiUtilities.getMonospacedFontName(), Font.PLAIN, 12), "Font");
         
         // Defaults reminiscent of SGI's xwsh(1).
@@ -62,32 +58,5 @@ public class TerminatorPreferences extends Preferences {
         addPreference("Appearance", CURSOR_COLOR, Color.GREEN, "Cursor");
         addPreference("Appearance", FOREGROUND_COLOR, NEAR_WHITE, "Text foreground");
         addPreference("Appearance", SELECTION_COLOR, SELECTION_BLUE, "Selection background");
-    }
-    
-    public double getDouble(String key) {
-        return (Double) get(key);
-    }
-    
-    private class AlphaHelper implements PreferencesHelper {
-        public String encode(String key) {
-            return Double.toString(getDouble(key));
-        }
-        
-        public Object decode(String valueString) {
-            return Double.valueOf(valueString);
-        }
-        
-        public void addRow(FormPanel formPanel, final String key, final String description) {
-            final JSlider slider = new JSlider(0, 255);
-            slider.setValue((int) (slider.getMaximum() * getDouble(key)));
-            slider.addChangeListener(new javax.swing.event.ChangeListener() {
-                public void stateChanged(javax.swing.event.ChangeEvent e) {
-                    put(key, ((double) slider.getValue())/slider.getMaximum());
-                }
-            });
-            // Only enable the slider if the JVM seems likely to support setFrameAlpha.
-            slider.setEnabled(GuiUtilities.canSetFrameAlpha());
-            formPanel.addRow(description + ":", slider);
-        }
     }
 }
