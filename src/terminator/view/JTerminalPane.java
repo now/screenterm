@@ -609,12 +609,10 @@ public class JTerminalPane extends JPanel {
 		 * result of a key press/release/type.
 		 */
 		public void scroll() {
-			if (Terminator.getPreferences().getBoolean(TerminatorPreferences.SCROLL_ON_KEY_PRESS)) {
-				view.scrollToBottomButNotHorizontally();
-				waitForCorrespondingOutputTimer.stop();
-				waitForCursorStabilityTimer.stop();
-				waitForCorrespondingOutputTimer.start();
-			}
+                        view.scrollToBottomButNotHorizontally();
+                        waitForCorrespondingOutputTimer.stop();
+                        waitForCursorStabilityTimer.stop();
+                        waitForCorrespondingOutputTimer.start();
 		}
 	}
 	
