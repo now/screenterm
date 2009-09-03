@@ -121,14 +121,6 @@ public class JTerminalPane extends JPanel {
 		view = new TerminalView();
 		view.addKeyListener(new KeyHandler());
 		
-		EPopupMenu popupMenu = new EPopupMenu(view);
-		// Indirection because we've not yet created the real MenuItemProvider.  
-		popupMenu.addMenuItemProvider(new MenuItemProvider() {
-			public void provideMenuItems(MouseEvent event, Collection<Action> actions) {
-				menuItemProvider.provideMenuItems(event, actions);
-			}
-		});
-		
 		viewport = new VisualBellViewport();
 		viewport.setView(view);
 		
