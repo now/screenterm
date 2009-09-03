@@ -22,8 +22,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	private Location cursorPosition = new Location(0, 0);
 	private boolean hasFocus = false;
 	private boolean displayCursor = true;
-	private boolean blinkOn = true;
-	private CursorBlinker cursorBlinker;
 	private HashMap<Class<? extends Highlighter>, Highlighter> highlighters = new HashMap<Class<? extends Highlighter>, Highlighter>();
 	private SelectionHighlighter selectionHighlighter;
 	private BirdView birdView;
@@ -96,7 +94,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		addHighlighter(new FindHighlighter());
 		addHighlighter(new UrlHighlighter());
 		becomeDropTarget();
-		cursorBlinker = new CursorBlinker(this);
 		selectionHighlighter = new SelectionHighlighter(this);
 		birdsEye = new FindBirdsEye(this);
 	}
@@ -128,7 +125,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	}
 	
 	public void userIsTyping() {
-		blinkOn = true;
 		redrawCursorPosition();
 		if (Terminator.getPreferences().getBoolean(TerminatorPreferences.HIDE_MOUSE_WHEN_TYPING)) {
 			setCursor(GuiUtilities.INVISIBLE_CURSOR);
@@ -386,12 +382,7 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	}
 	
 	public Color getCursorColor() {
-		return Terminator.getPreferences().getColor(blinkOn ? TerminatorPreferences.CURSOR_COLOR : TerminatorPreferences.BACKGROUND_COLOR);
-	}
-	
-	public void blinkCursor() {
-		blinkOn = !blinkOn;
-		redrawCursorPosition();
+		return Terminator.getPreferences().getColor(TerminatorPreferences.CURSOR_COLOR);
 	}
 	
 	public Location viewToModel(Point point) {
@@ -777,24 +768,17 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		final int bottomY = cursorRect.y + cursorRect.height - 1;
 		if (hasFocus) {
 			TerminatorPreferences preferences = Terminator.getPreferences();
-			// The CursorBlinker may have left blinkOn in either state if the user changed the cursor blink preference.
-			// Ignore blinkOn if the cursor shouldn't be blinking right now.
-			boolean cursorIsVisible = (preferences.getBoolean(TerminatorPreferences.BLINK_CURSOR) == false) || blinkOn;
 			if (preferences.getBoolean(TerminatorPreferences.BLOCK_CURSOR)) {
-				// Block.
-				if (cursorIsVisible) {
-					// Paint over the character underneath.
-					g.fill(cursorRect);
-					// Redraw the character in the
-					// background color.
-					g.setColor(getBackground());
-					g.drawString(characterUnderCursor, cursorRect.x, baseline);
-				}
+                                // Block.
+                                // Paint over the character underneath.
+                                g.fill(cursorRect);
+                                // Redraw the character in the
+                                // background color.
+                                g.setColor(getBackground());
+                                g.drawString(characterUnderCursor, cursorRect.x, baseline);
 			} else {
 				// Underline.
-				if (cursorIsVisible) {
-					g.drawLine(cursorRect.x, bottomY, cursorRect.x + cursorRect.width - 1, bottomY);
-				}
+                                g.drawLine(cursorRect.x, bottomY, cursorRect.x + cursorRect.width - 1, bottomY);
 			}
 		} else {
 			// For some reason, terminals always seem to use an
@@ -865,15 +849,11 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	
 	public void focusGained(FocusEvent event) {
 		hasFocus = true;
-		blinkOn = true;
-		cursorBlinker.start();
 		redrawCursorPosition();
 	}
 	
 	public void focusLost(FocusEvent event) {
 		hasFocus = false;
-		blinkOn = true;
-		cursorBlinker.stop();
 		redrawCursorPosition();
 	}
 	
