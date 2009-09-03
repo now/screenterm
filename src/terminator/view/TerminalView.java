@@ -66,45 +66,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		return model;
 	}
 	
-	/**
-	 * Pastes the text on the clipboard into the terminal.
-	 */
-	public void pasteSystemClipboard() {
-		pasteClipboard(getToolkit().getSystemClipboard());
-	}
-	
-	/**
-	 * Pastes the system selection, generally only available on X11.
-	 */
-	public void pasteSystemSelection() {
-		Clipboard systemSelection = getToolkit().getSystemSelection();
-		if (systemSelection != null) {
-			pasteClipboard(systemSelection);
-		}
-	}
-	
-	/**
-	 * Pastes the system selection on X11, the clipboard on Windows
-	 * and nothing on Mac OS X.
-	 */
-	public void middleButtonPaste() {
-		if (GuiUtilities.isWindows()) {
-			pasteSystemClipboard();
-		} else {
-			pasteSystemSelection();
-		}
-	}
-		
-	private void pasteClipboard(Clipboard clipboard) {
-		try {
-			Transferable contents = clipboard.getContents(this);
-			String string = (String) contents.getTransferData(DataFlavor.stringFlavor);
-			terminalControl.sendUtf8String(string);
-		} catch (Exception ex) {
-			Log.warn("Couldn't paste.", ex);
-		}
-	}
-	
 	private TerminalControl terminalControl;
 	
 	public TerminalControl getTerminalControl() {

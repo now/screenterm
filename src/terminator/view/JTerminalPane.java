@@ -635,10 +635,6 @@ public class JTerminalPane extends JPanel {
 	public void requestFocus() {
 		view.requestFocus();
 	}
-	public void doPasteAction() {
-		view.pasteSystemClipboard();
-	}
-	
 	public void destroyProcess() {
 		control.destroyProcess();
 	}

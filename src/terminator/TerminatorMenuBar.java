@@ -401,19 +401,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class PasteAction extends AbstractPaneAction {
-		public PasteAction() {
-			super("Paste");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("V"));
-			GnomeStockIcon.configureAction(this);
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.doPasteAction();
-		}
-	}
-	
 	public static class ResetAction extends AbstractPaneAction {
 		public ResetAction() {
 			super("Reset");
