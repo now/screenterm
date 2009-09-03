@@ -59,12 +59,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		menu.add(new PasteAction());
 		menu.add(new SelectAllAction());
 		
-		menu.addSeparator();
-		menu.add(new FindAction());
-		menu.add(new FindNextAction());
-		menu.add(new FindPreviousAction());
-		menu.add(new CancelFindAction());
-		
 		return menu;
 	}
 	
@@ -468,52 +462,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class FindAction extends AbstractPaneAction {
-		public FindAction() {
-			super("Find...");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("F"));
-			GnomeStockIcon.configureAction(this);
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.getFindPanel().showFindPanel();
-		}
-	}
-	
-	public static class FindNextAction extends BindableAction {
-		public FindNextAction() {
-			super("Find Next");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("G"));
-		}
-		
-		public void performOn(JTerminalPane terminalPane) {
-			terminalPane.getTerminalView().findNext(FindHighlighter.class);
-		}
-	}
-	
-	public static class FindPreviousAction extends BindableAction {
-		public FindPreviousAction() {
-			super("Find Previous");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("D"));
-		}
-		
-		public void performOn(JTerminalPane terminalPane) {
-			terminalPane.getTerminalView().findPrevious(FindHighlighter.class);
-		}
-	}
-	
-	public static class CancelFindAction extends AbstractPaneAction {
-		public CancelFindAction() {
-			super("Cancel Find");
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			TerminalView view = terminalPane.getTerminalView();
-			view.getHighlighterOfClass(FindHighlighter.class).forgetPattern(view);
-		}
-	}
 	
 	public static class ScrollToTopAction extends AbstractPaneAction {
 		public ScrollToTopAction() {

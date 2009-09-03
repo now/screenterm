@@ -27,7 +27,6 @@ public class JTerminalPane extends JPanel {
 	private TerminalView view;
 	private JScrollPane scrollPane;
 	private VisualBellViewport viewport;
-	private FindPanel findPanel;
 	private String name;
 	private boolean wasCreatedAsNewShell;
 	private Dimension currentSizeInChars;
@@ -149,11 +148,7 @@ public class JTerminalPane extends JPanel {
 		
 		optionsDidChange();
 		
-		findPanel = new FindPanel(this);
-		findPanel.setVisible(false);
-		
 		add(scrollPane, BorderLayout.CENTER);
-		add(findPanel, BorderLayout.SOUTH);
 		GuiUtilities.keepMaximumShowing(scrollPane.getVerticalScrollBar());
 		
 		view.sizeChanged();
@@ -725,9 +720,5 @@ public class JTerminalPane extends JPanel {
 	
 	public TerminalPaneHost getHost() {
 		return host;
-	}
-	
-	public FindPanel getFindPanel() {
-		return findPanel;
 	}
 }
