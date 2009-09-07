@@ -157,9 +157,6 @@ public class CSIEscapeAction implements TerminalAction {
 				case 25:
 					model.setCursorVisible(value);
 					break;
-				case 47:
-					model.useAlternateBuffer(value);
-					break;
 				default:
 					Log.warn("Unknown private mode " + mode + " in [" + StringUtilities.escapeForJava(seq) + (value ? 'h' : 'l'));
 				}

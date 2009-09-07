@@ -367,11 +367,7 @@ public class TerminalView extends JComponent implements FocusListener {
 			int firstTextLine = (rect.y - insets.top) / charUnitSize.height;
 			int lastTextLine = (rect.y - insets.top + rect.height + charUnitSize.height - 1) / charUnitSize.height;
 			lastTextLine = Math.min(lastTextLine, model.getLineCount() - 1);
-			int lineNotToDraw = model.usingAlternateBuffer() ? model.getFirstDisplayLine() - 1 : -1;
 			for (int i = firstTextLine; i <= lastTextLine; i++) {
-				if (i == lineNotToDraw) {
-					continue;
-				}
 				boolean drawCursor = (shouldShowCursor() && i == cursorPosition.getLineIndex());
 				int x = insets.left;
 				int baseline = insets.top + charUnitSize.height * (i + 1) - metrics.getMaxDescent();

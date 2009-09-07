@@ -28,9 +28,6 @@ public class TerminalModel {
 	private Location savedPosition;
 	private short savedStyle;
 	
-	// Fields used for saving and restoring the 'real' screen while the alternate buffer is in use.
-	private TextLine[] savedScreen;
-	
 	public TerminalModel(TerminalView view, int width, int height) {
 		this.view = view;
 		setSize(width, height);
@@ -83,42 +80,6 @@ public class TerminalModel {
 		int lineIndex = Math.min(location.getLineIndex(), textLines.size() - 1);
 		int charOffset = Math.min(location.getCharOffset(), width - 1);
 		return new Location(lineIndex, charOffset);
-	}
-	
-	/** Sets or unsets the use of the alternate buffer. */
-	public void useAlternateBuffer(boolean useAlternateBuffer) {
-		if (useAlternateBuffer == usingAlternateBuffer()) {
-			return;
-		}
-		if (useAlternateBuffer) {
-			savedScreen = new TextLine[height];
-			for (int i = 0; i < height; i++) {
-				int lineIndex = getFirstDisplayLine() + i;
-				savedScreen[i] = getTextLine(lineIndex);
-				textLines.set(lineIndex, new TextLine());
-			}
-		} else {
-			for (int i = 0; i < height; i++) {
-				int lineIndex = getFirstDisplayLine() + i;
-				textLines.set(lineIndex, i >= savedScreen.length ? new TextLine() : savedScreen[i]);
-			}
-			for (int i = height; i < savedScreen.length; i++) {
-				textLines.add(savedScreen[i]);
-			}
-			savedScreen = null;
-		}
-		lineIsDirty(getFirstDisplayLine());
-		for (int i = 0; i < height; i++) {
-			int index = getFirstDisplayLine() + i;
-			linesChangedFrom(index);
-		}
-		view.repaint();
-		checkInvariant();
-	}
-	
-	/** Returns true when the alternate buffer is in use. */
-	public boolean usingAlternateBuffer() {
-		return (savedScreen != null);
 	}
 	
 	public void setTabAtCursor() {
@@ -286,7 +247,7 @@ public class TerminalModel {
 			for (int i = firstDisplayLine + lastScrollLineIndex + 1; i <= index; i++) {
 				textLines.add(i, lineToInsert);
 			}
-			if (usingAlternateBuffer() || (firstScrollLineIndex > 0)) {
+			if (firstScrollLineIndex > 0) {
 				// If the program has defined scroll bounds, newline-adding actually chucks away
 				// the first scroll line, rather than just scrolling everything upwards like we normally
 				// do.  This makes vim work better.  Also, if we're using the alternate buffer, we
@@ -329,13 +290,13 @@ public class TerminalModel {
 		if (this.height > height && textLines.size() >= this.height) {
 			for (int i = 0; i < (this.height - height); i++) {
 				int lineToRemove = textLines.size() - 1;
-				if (usingAlternateBuffer() || (getTextLine(lineToRemove).length() == 0 && cursorPosition.getLineIndex() != lineToRemove)) {
+				if (getTextLine(lineToRemove).length() == 0 && cursorPosition.getLineIndex() != lineToRemove) {
 					textLines.remove(lineToRemove);
 				}
 			}
 		} else if (this.height < height) {
 			for (int i = 0; i < (height - this.height); i++) {
-				if (usingAlternateBuffer() || getFirstDisplayLine() <= 0) {
+				if (getFirstDisplayLine() <= 0) {
 					textLines.add(new TextLine());
 				}
 			}
