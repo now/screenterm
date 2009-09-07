@@ -516,9 +516,4 @@ public class TerminalModel {
 		view.repaint();
 		checkInvariant();
 	}
-	
-	public void setWindowTitle(String newWindowTitle) {
-		JTerminalPane terminalPane = (JTerminalPane) SwingUtilities.getAncestorOfClass(JTerminalPane.class, view);
-		terminalPane.setName(newWindowTitle);
-	}
 }

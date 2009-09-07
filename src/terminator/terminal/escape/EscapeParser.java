@@ -23,7 +23,6 @@ public class EscapeParser {
 		addSequenceRecognizers("6789=>DEHMZcno", new SingleCharSequenceRecognizer());
 		addSequenceRecognizers("#()*+$@", new TwoCharSequenceRecognizer());
 		addSequenceRecognizers("[", new CSISequenceRecognizer());
-		addSequenceRecognizers("]", new XTermSequenceRecognizer());
 	}
 	private static void addSequenceRecognizers(String chars, SequenceRecognizer recognizer) {
 		for (int i = 0; i < chars.length(); i++) {
@@ -93,35 +92,6 @@ public class EscapeParser {
 		
 		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
 			return new CSIEscapeAction(terminalControl, sequence);
-		}
-	}
-	
-	private static class XTermSequenceRecognizer implements SequenceRecognizer {
-		private boolean isInInitialNumber = true;
-
-		public boolean isAtEnd(String sequence) {
-			// We don't need to check for sequence.length() == 0, since SequenceRecognizers are always
-			// created after the first char has been read.
-			if (sequence.length() == 1) {
-				return false;
-			}
-			char endChar = sequence.charAt(sequence.length() - 1);
-			if (endChar < ' ') {
-				return true;
-			}
-			if (isInInitialNumber) {
-				if (endChar == ';') {
-					isInInitialNumber = false;
-					return false;
-				} else if (Character.isDigit(endChar) == false) {
-					return true;
-				}
-			}
-			return (endChar < ' ');
-		}
-		
-		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
-			return new XTermEscapeAction(sequence);
 		}
 	}
 }

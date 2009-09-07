@@ -247,10 +247,6 @@ public class JTerminalPane extends JPanel {
 		return (wasCreatedAsNewShell == false) && (status != 0);
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-		host.terminalNameChanged(this);
-	}
 	
 	public Dimension getOptimalViewSize() {
 		return view.getOptimalViewSize();

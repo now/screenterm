@@ -123,14 +123,6 @@ public class TerminatorTabbedPane extends TabbedPane {
         setTabComponentAt_safe(newIndex, tabEar);
     }
     
-    @Override public void setTitleAt(int index, String title) {
-        TerminatorTabComponent c = (TerminatorTabComponent) getTabComponentAt_safe(index);
-        if (c != null) {
-            c.setTitle(title);
-        }
-        super.setTitleAt(index, title);
-    }
-    
     @Override protected void fireStateChanged() {
         super.fireStateChanged();
         updateSpinnerVisibilities();

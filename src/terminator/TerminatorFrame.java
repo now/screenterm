@@ -334,14 +334,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		terminalSizeTimer.start();
 	}
 	
-	public void terminalNameChanged(JTerminalPane terminal) {
-		if (tabbedPane != null) {
-			int index = tabbedPane.indexOfComponent(terminal);
-			tabbedPane.setTitleAt(index, terminal.getName());
-		}
-		updateFrameTitle();
-	}
-	
 	public void addTab(JTerminalPane newPane) {
 		terminals.add(newPane);
 		addPaneToUI(newPane);

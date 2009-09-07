@@ -17,7 +17,6 @@ public interface TerminalPaneHost {
 	public void closeTerminalPane(JTerminalPane terminalPane);
 	
 	public void updateFrameTitle();
-	public void terminalNameChanged(JTerminalPane terminalPane);
 	
 	public void setTerminalSize(Dimension size);
 }
