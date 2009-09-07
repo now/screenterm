@@ -70,50 +70,6 @@ public class TerminalModel {
 		}
 	}
 	
-	public void clearScrollBuffer() {
-		// FIXME: really, we should still clear everything off-screen.
-		if (usingAlternateBuffer()) {
-			return;
-		}
-		
-		// We want to keep any lines after the cursor, so remember them.
-		// FIXME: if the user's editing a really long logical line at
-		// the bash prompt, it may have manually wrapped it onto
-		// multiple physical lines, and the cursor may not be on the
-		// first of those lines. Ideally we should keep all pertinent
-		// lines. Unfortunately, I can't see how we'd know.
-		ArrayList<TextLine> retainedLines = new ArrayList<TextLine>(textLines.subList(cursorPosition.getLineIndex(), textLines.size()));
-		
-		// Revert to just the right number of empty lines to fill the
-		// current window size.
-		// Using a new ArrayList ensures we free space without risking
-		// expensive nulling-out of now-unused elements. The assumption
-		// being that we're most likely to be asked to clear the
-		// scrollback when it's insanely large.
-		textLines = new ArrayList<TextLine>();
-		setSize(width, view.getVisibleSizeInCharacters().height);
-		maxLineWidth = width;
-		
-		// Re-insert the lines after the cursor.
-		for (int i = 0; i < retainedLines.size(); ++i) {
-			insertLine(i, retainedLines.get(i));
-		}
-		
-		// Make sure all the lines will be redrawn.
-		view.sizeChanged();
-		lineIsDirty(0);
-		
-		// Re-position the cursor.
-		// FIXME: it's a bit crazy that these aren't tied!
-		// FIXME: it's even crazier that they use different origins!
-		setCursorPosition(-1, 1);
-		view.setCursorPosition(cursorPosition);
-		
-		// Redraw ourselves.
-		view.repaint();
-		checkInvariant();
-	}
-	
 	public void sizeChanged(Dimension sizeInChars) {
 		setSize(sizeInChars.width, sizeInChars.height);
 		cursorPosition = getLocationWithinBounds(cursorPosition);

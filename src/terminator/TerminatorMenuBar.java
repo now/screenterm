@@ -23,7 +23,6 @@ public class TerminatorMenuBar extends EMenuBar {
 	
 	public TerminatorMenuBar() {
 		add(makeFileMenu());
-		add(makeScrollbackMenu());
 		if (GuiUtilities.isMacOs()) {
 			add(WindowMenu.getSharedInstance().makeJMenu(customWindowMenuItems));
 		} else {
@@ -47,27 +46,7 @@ public class TerminatorMenuBar extends EMenuBar {
 		
 		return menu;
 	}
-	
-	private JMenu makeScrollbackMenu() {
-		JMenu menu = GuiUtilities.makeMenu("Scrollback", 'S');
-		
-		menu.add(new ScrollToTopAction());
-		menu.add(new ScrollToBottomAction());
-		
-		menu.addSeparator();
-		menu.add(new PageUpAction());
-		menu.add(new PageDownAction());
-		
-		menu.addSeparator();
-		menu.add(new LineUpAction());
-		menu.add(new LineDownAction());
-		
-		menu.addSeparator();
-		menu.add(new ClearScrollbackAction());
-		
-		return menu;
-	}
-	
+
 	private JMenu makeTabsMenu() {
 		final JMenu menu = GuiUtilities.makeMenu("Tabs", 'b');
 		menu.add(new DetachTabAction());
@@ -349,91 +328,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		@Override
 		protected void performPaneAction(JTerminalPane terminalPane) {
 			terminalPane.reset();
-		}
-	}
-	
-	
-	public static class ScrollToTopAction extends AbstractPaneAction {
-		public ScrollToTopAction() {
-			super("Scroll To Top");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("HOME"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.getTerminalView().scrollToTop();
-		}
-	}
-	
-	public static class ScrollToBottomAction extends AbstractPaneAction {
-		public ScrollToBottomAction() {
-			super("Scroll To Bottom");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("END"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.getTerminalView().scrollToEnd();
-		}
-	}
-	
-	public static class PageUpAction extends AbstractPaneAction {
-		public PageUpAction() {
-			super("Page Up");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("PAGE_UP"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.pageUp();
-		}
-	}
-	
-	public static class PageDownAction extends AbstractPaneAction {
-		public PageDownAction() {
-			super("Page Down");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("PAGE_DOWN"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.pageDown();
-		}
-	}
-	
-	public static class LineUpAction extends AbstractPaneAction {
-		public LineUpAction() {
-			super("Line Up");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("UP"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.lineUp();
-		}
-	}
-	
-	public static class LineDownAction extends AbstractPaneAction {
-		public LineDownAction() {
-			super("Line Down");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("DOWN"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.lineDown();
-		}
-	}
-	
-	public static class ClearScrollbackAction extends AbstractPaneAction {
-		public ClearScrollbackAction() {
-			super("Clear Scrollback");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("K"));
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.getTerminalView().getModel().clearScrollBuffer();
 		}
 	}
 	

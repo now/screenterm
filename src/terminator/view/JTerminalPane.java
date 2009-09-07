@@ -302,7 +302,7 @@ public class JTerminalPane extends JPanel {
 		}
 		
 		public void keyPressed(KeyEvent event) {
-			if (doKeyboardScroll(event) || doKeyboardTabAction(event)) {
+			if (doKeyboardTabAction(event)) {
 				event.consume();
 				return;
 			}
@@ -507,27 +507,6 @@ public class JTerminalPane extends JPanel {
 			}
 		}
 		
-		// gnome-terminal offers these shifted shortcuts, but nothing for scrolling by a single line.
-		private boolean doKeyboardScroll(KeyEvent e) {
-			final int keyCode = e.getKeyCode();
-			if (e.getModifiersEx() == InputEvent.SHIFT_DOWN_MASK) {
-				if (keyCode == KeyEvent.VK_HOME) {
-					view.scrollToTop();
-					return true;
-				} else if (keyCode == KeyEvent.VK_END) {
-					view.scrollToEnd();
-					return true;
-				} else if (keyCode == KeyEvent.VK_PAGE_UP) {
-					pageUp();
-					return true;
-				} else if (keyCode == KeyEvent.VK_PAGE_DOWN) {
-					pageDown();
-					return true;
-				}
-			}
-			return false;
-		}
-		
 		/**
 		 * Although we only advertise one pair of keystrokes on the menu, we actually support a variety of methods for changing tab.
 		 * The idea is that someone who subconsciously uses some other major application's keystrokes won't ever have to learn ours.
@@ -587,38 +566,6 @@ public class JTerminalPane extends JPanel {
                         waitForCursorStabilityTimer.stop();
                         waitForCorrespondingOutputTimer.start();
 		}
-	}
-	
-	public void pageUp() {
-		scrollVertically(-0.5);
-	}
-	
-	public void pageDown() {
-		scrollVertically(0.5);
-	}
-	
-	public void lineUp() {
-		scrollVertically(-1.0/currentSizeInChars.height);
-	}
-	
-	public void lineDown() {
-		scrollVertically(1.0/currentSizeInChars.height);
-	}
-	
-	private void scrollVertically(double yMul) {
-		// Translate JViewport's terrible confusing names into plain English.
-		final int totalHeight = viewport.getViewSize().height;
-		final int visibleHeight = viewport.getExtentSize().height;
-		
-		Point p = viewport.getViewPosition();
-		p.y += (int) (yMul * visibleHeight);
-		
-		// Don't go off the top...
-		p.y = Math.max(0, p.y);
-		// Or bottom...
-		p.y = Math.min(p.y, totalHeight - visibleHeight);
-		
-		viewport.setViewPosition(p);
 	}
 	
 	/**

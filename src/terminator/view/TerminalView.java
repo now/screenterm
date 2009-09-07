@@ -15,7 +15,7 @@ import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
 
-public class TerminalView extends JComponent implements FocusListener, Scrollable {
+public class TerminalView extends JComponent implements FocusListener {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
 	private static final Stopwatch paintStyledTextStopwatch = Stopwatch.get("TerminalView.paintStyledText");
         private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
@@ -146,11 +146,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		verticalModel.setValue(verticalModel.getMaximum() - verticalModel.getExtent());
 	}
 	
-	public void scrollToEnd() {
-		scrollToBottomButNotHorizontally();
-		scrollHorizontallyToShowCursor();
-	}
-	
 	public JViewport getViewport() {
 		return (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
 	}
@@ -210,10 +205,6 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 		} else if (rightCursorEdge > rightWindowEdge) {
 			horizontalModel.setValue(rightCursorEdge - horizontalModel.getExtent() / 2);
 		}
-	}
-	
-	public void scrollToTop() {
-		scrollTo(0, 0, 0);
 	}
 	
 	private void scrollTo(final int lineNumber, final int charStart, final int charEnd) {
@@ -503,37 +494,5 @@ public class TerminalView extends JComponent implements FocusListener, Scrollabl
 	public void focusLost(FocusEvent event) {
 		hasFocus = false;
 		redrawCursorPosition();
-	}
-	
-	//
-	// Scrollable interface.
-	//
-	
-	public Dimension getPreferredScrollableViewportSize() {
-		return getPreferredSize();
-	}
-	
-	public int getScrollableUnitIncrement(Rectangle visibleRectangle, int orientation, int direction) {
-		if (orientation == SwingConstants.VERTICAL) {
-			return visibleRectangle.height / 10;
-		} else {
-			return 3 * getCharUnitSize().width;
-		}
-	}
-	
-	public int getScrollableBlockIncrement(Rectangle visibleRectangle, int orientation, int direction) {
-		if (orientation == SwingConstants.VERTICAL) {
-			return visibleRectangle.height;
-		} else {
-			return visibleRectangle.width;
-		}
-	}
-	
-	public boolean getScrollableTracksViewportWidth() {
-		return false;
-	}
-	
-	public boolean getScrollableTracksViewportHeight() {
-		return false; // We want a vertical scroll-bar.
 	}
 }
