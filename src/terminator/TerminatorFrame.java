@@ -329,8 +329,4 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		updateTabbedPane();
 		repaint();
 	}
-
-	public boolean confirmClose(String processesUsingTty) {
-		return SimpleDialog.askQuestion(this, "Close Terminal?", "Closing this terminal may terminate the following processes: " + processesUsingTty, "Close");
-	}
 }

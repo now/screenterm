@@ -9,7 +9,6 @@ import java.awt.*;
  * Not tied to the rest of Terminator to facilitate embedding.
  */
 public interface TerminalPaneHost {
-	public boolean confirmClose(String processesUsingTty);
 	public void closeTerminalPane(JTerminalPane terminalPane);
 	
 	public void updateFrameTitle();
