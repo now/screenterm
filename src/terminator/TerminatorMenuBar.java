@@ -78,12 +78,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		return GuiUtilities.makeKeyStrokeWithModifiers(defaultKeyStrokeModifiers, key);
 	}
 	
-	// Semi-duplicated from GuiUtilities so we can apply our custom modifiers if needed.
-	// Use the GuiUtilities version for actions that aren't terminal-related, to get the system-wide defaults.
-	private static KeyStroke makeShiftedKeyStroke(String key) {
-		return GuiUtilities.makeKeyStrokeWithModifiers(defaultKeyStrokeModifiers | InputEvent.SHIFT_MASK, key);
-	}
-	
 	private static Component getFocusedComponent() {
 		return KeyboardFocusManager.getCurrentKeyboardFocusManager().getPermanentFocusOwner();
 	}
@@ -96,40 +90,12 @@ public class TerminatorMenuBar extends EMenuBar {
 		return (TerminatorFrame) SwingUtilities.getAncestorOfClass(TerminatorFrame.class, getFocusedComponent());
 	}
 	
-	private static boolean focusedFrameHasMultipleTabs() {
-		TerminatorFrame frame = getFocusedTerminatorFrame();
-		return (frame != null) && (frame.getTerminalPaneCount() > 1);
-	}
-	
 	//
 	// Any new Action should probably subclass one of these abstract
 	// classes. Only if your action requires neither a frame nor a
 	// terminal pane (i.e. acts upon the application as a whole) should
 	// you subclass AbstractAction directly.
 	//
-	
-	/**
-	 * Superclass for actions that just need a TerminatorFrame.
-	 */
-	private abstract static class AbstractFrameAction extends AbstractAction {
-		public AbstractFrameAction(String name) {
-			super(name);
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			TerminatorFrame frame = getFocusedTerminatorFrame();
-			if (frame != null) {
-				performFrameAction(frame);
-			}
-		}
-		
-		protected abstract void performFrameAction(TerminatorFrame frame);
-		
-		@Override
-		public boolean isEnabled() {
-			return (getFocusedTerminatorFrame() != null);
-		}
-	}
 	
 	/**
 	 * Superclass for actions that need a JTerminalPane (that may or may
@@ -152,51 +118,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		@Override
 		public boolean isEnabled() {
 			return (getFocusedTerminatorFrame() != null);
-		}
-	}
-	
-	/**
-	 * Superclass for actions that need a JTerminalPane that must be on a
-	 * tab rather than in a frame by itself.
-	 */
-	private abstract static class AbstractTabAction extends AbstractFrameAction {
-		public AbstractTabAction(String name) {
-			super(name);
-		}
-		
-		@Override
-		public boolean isEnabled() {
-			return focusedFrameHasMultipleTabs();
-		}
-	}
-	
-	public abstract static class BindableAction extends AbstractAction {
-		private JTerminalPane boundTerminalPane;
-		
-		public BindableAction(String name) {
-			super(name);
-		}
-		
-		public void bindTo(JTerminalPane terminalPane) {
-			this.boundTerminalPane = terminalPane;
-		}
-		
-		public void actionPerformed(ActionEvent e) {
-			JTerminalPane terminalPane = boundTerminalPane;
-			if (terminalPane == null) {
-				terminalPane = getFocusedTerminalPane();
-			}
-			if (terminalPane != null) {
-				performOn(terminalPane);
-			}
-		}
-		
-		public abstract void performOn(JTerminalPane terminalPane);
-		
-		
-		@Override
-		public boolean isEnabled() {
-			return (boundTerminalPane != null || getFocusedTerminalPane() != null);
 		}
 	}
 	
