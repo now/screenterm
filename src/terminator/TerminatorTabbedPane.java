@@ -88,10 +88,6 @@ public class TerminatorTabbedPane extends TabbedPane {
     
     @Override protected void provideMenuItems(int index, Collection<Action> actions) {
         actions.add(new TerminatorMenuBar.NewShellTabAction());
-        actions.add(new TerminatorMenuBar.DetachTabAction());
-        actions.add(null);
-        actions.add(new TerminatorMenuBar.MoveTabAction(+1));
-        actions.add(new TerminatorMenuBar.MoveTabAction(-1));
         actions.add(null);
         actions.add(new TerminatorMenuBar.CloseAction());
     }

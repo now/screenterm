@@ -221,29 +221,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		return tabbedPane.getTabCount();
 	}
 	
-	public void detachCurrentTab() {
-		JTerminalPane escapee = (JTerminalPane) tabbedPane.getSelectedComponent();
-		terminals.remove(escapee);
-		closeTab(escapee);
-		Terminator.getSharedInstance().openFrame(escapee);
-	}
-	
-	public void cycleTab(int delta) {
-		if (tabbedPane != null) {
-			int tabCount = tabbedPane.getTabCount();
-			tabbedPane.setSelectedIndex((tabbedPane.getSelectedIndex() + delta + tabCount) % tabCount);
-		}
-	}
-	
-	public void setSelectedTabIndex(int index) {
-		if (tabbedPane != null) {
-			int tabCount = tabbedPane.getTabCount();
-			if (index < tabCount) {
-				tabbedPane.setSelectedIndex(index);
-			}
-		}
-	}
-
 	/**
 	 * Removes the given terminal. If this is the last terminal, close
 	 * the window.
@@ -345,13 +322,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 	private void addPaneToUI(JTerminalPane newPane) {
 		switchToTabbedPane();
 		tabbedPane.addTab(newPane.getName(), newPane);
-	}
-	
-	public void moveCurrentTab(int direction) {
-		if (tabbedPane != null) {
-			final int currentTabIndex = tabbedPane.getSelectedIndex();
-			tabbedPane.moveTab(currentTabIndex, currentTabIndex + direction);
-		}
 	}
 	
 	public void optionsDidChange() {

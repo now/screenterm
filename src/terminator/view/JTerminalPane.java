@@ -298,10 +298,6 @@ public class JTerminalPane extends JPanel {
 		}
 		
 		public void keyPressed(KeyEvent event) {
-			if (doKeyboardTabAction(event)) {
-				event.consume();
-				return;
-			}
 			// Leave the event for TerminatorMenuBar if it has appropriate modifiers.
 			if (TerminatorMenuBar.isKeyboardEquivalent(event)) {
 				return;
@@ -501,54 +497,6 @@ public class JTerminalPane extends JPanel {
 				scroll();
 				event.consume();
 			}
-		}
-		
-		/**
-		 * Although we only advertise one pair of keystrokes on the menu, we actually support a variety of methods for changing tab.
-		 * The idea is that someone who subconsciously uses some other major application's keystrokes won't ever have to learn ours.
-		 */
-		private boolean doKeyboardTabAction(KeyEvent e) {
-			final int keyCode = e.getKeyCode();
-			if (e.isControlDown() && keyCode == KeyEvent.VK_TAB) {
-				// Emulates Firefox's control-tab/control-shift-tab cycle-tab behavior.
-				// This is Terminator's native keystroke in the case where we're using Ctrl+Shift as our default modifier for shortcuts.
-				host.cycleTab(e.isShiftDown() ? -1 : 1);
-				return true;
-			} else if (e.isControlDown() && e.isShiftDown() == false && (keyCode == KeyEvent.VK_PAGE_UP || keyCode == KeyEvent.VK_PAGE_DOWN)) {
-				// Emulates gnome-terminal and Firefox's control-page up/down cycle-tab behavior.
-				// Strictly, we're supposed to send an escape sequence for these strokes, but I don't know of anything that uses them.
-				host.cycleTab(keyCode == KeyEvent.VK_PAGE_UP ? -1 : 1);
-				return true;
-			} else if (e.isControlDown() && e.isShiftDown() && (keyCode == KeyEvent.VK_PAGE_UP || keyCode == KeyEvent.VK_PAGE_DOWN)) {
-				// Emulates gnome-terminal's control-shift page up/page down move-tab behavior.
-				// When this clashes with Terminator's native keystroke for scrolling, defer to that.
-				if (TerminatorMenuBar.isKeyboardEquivalent(e)) {
-					return false;
-				}
-				host.moveCurrentTab(keyCode == KeyEvent.VK_PAGE_UP ? -1 : 1);
-				return true;
-			} else if (e.isControlDown() && e.isShiftDown() && (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT)) {
-				// Emulates konsole's control-shift left/right move-tab behavior.
-				// This is Terminator's native keystroke in the case where we're using Ctrl+Shift as our default modifier for shortcuts.
-				host.moveCurrentTab(keyCode == KeyEvent.VK_LEFT ? -1 : 1);
-				return true;
-			} else if (TerminatorMenuBar.isKeyboardEquivalent(e)) {
-				// Emulates gnome-terminal's alt-<number> jump-to-tab behavior, or an analog of Terminal.app's command-<number> jump-to-window behavior.
-				// We rely on VK_0 being '0' et cetera, and use the key code rather than the key char so that both alt-<number> and control-shift-<number> can work.
-				final char ch = (char) e.getKeyCode();
-				final int newIndex = TerminatorTabbedPane.keyCharToTabIndex(ch);
-				if (newIndex != -1) {
-					host.setSelectedTabIndex(newIndex);
-					return true;
-				}
-				// The shift-down case is handled elsewhere as a default Terminator keystroke.
-				if ((keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT) && e.isShiftDown() == false) {
-					// gnome-terminal behaves a little differently - it disables the left action on the first tab and the right action on the last tab.
-					host.cycleTab(keyCode == KeyEvent.VK_LEFT ? -1 : 1);
-					return true;
-				}
-			}
-			return false;
 		}
 		
 		/**

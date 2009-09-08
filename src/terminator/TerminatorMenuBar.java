@@ -14,20 +14,8 @@ import terminator.view.*;
 public class TerminatorMenuBar extends EMenuBar {
 	private static int defaultKeyStrokeModifiers = GuiUtilities.getDefaultKeyStrokeModifier();
 	
-	private Action[] customWindowMenuItems = new Action[] {
-		new MoveTabAction(+1),
-		new MoveTabAction(-1),
-		new CycleTabAction(+1),
-		new CycleTabAction(-1)
-	};
-	
 	public TerminatorMenuBar() {
 		add(makeFileMenu());
-		if (GuiUtilities.isMacOs()) {
-			add(WindowMenu.getSharedInstance().makeJMenu(customWindowMenuItems));
-		} else {
-			add(makeTabsMenu());
-		}
 		add(makeHelpMenu());
 	}
 	
@@ -47,15 +35,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		return menu;
 	}
 
-	private JMenu makeTabsMenu() {
-		final JMenu menu = GuiUtilities.makeMenu("Tabs", 'b');
-		menu.add(new DetachTabAction());
-		for (Action action : customWindowMenuItems) {
-			menu.add(action);
-		}
-		return menu;
-	}
-	
 	private JMenu makeHelpMenu() {
 		HelpMenu helpMenu = new HelpMenu();
 		return helpMenu.makeJMenu();
@@ -310,16 +289,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class DetachTabAction extends AbstractTabAction {
-		public DetachTabAction() {
-			super("Detach Tab");
-		}
-		
-		public void performFrameAction(TerminatorFrame frame) {
-			frame.detachCurrentTab();
-		}
-	}
-	
 	public static class ResetAction extends AbstractPaneAction {
 		public ResetAction() {
 			super("Reset");
@@ -328,68 +297,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		@Override
 		protected void performPaneAction(JTerminalPane terminalPane) {
 			terminalPane.reset();
-		}
-	}
-	
-	public static class CycleTabAction extends AbstractTabAction {
-		private int delta;
-		
-		public CycleTabAction(int delta) {
-			super(delta < 0 ? "Select Previous Tab" : "Select Next Tab");
-			this.delta = delta;
-			
-			// The choice of keystrokes has gone back and forth a lot.
-			
-			// Originally, Phil wanted alt left/right, but his implementation didn't work, and we needed a proper Action we could put on the "Window" menu for Mac OS.
-			// I wanted command { and command }, like Safari.
-			// Sun bug 6350813 prevents us from doing that directly, but we tried command-shift [ and command-shift ].
-			// Elias Naur explained that not only does that look wrong (even though it feels right on English keyboards), it doesn't work at all on Danish keyboards.
-			
-			// Ed did a quick survey and reported that Camino uses command-option left/right; Safari uses command {/}, while other programs (Adium, for example) use command left/right.
-			// konsole uses shift left/right, and gnome-terminal uses control page up/page down.
-			// Firefox uses control tab/control-shift tab, presumably because it had already used alt left/right for back/forward.
-			// Firefox also supports control page up/page down.
-			
-			// We already support the control-tab sequences in doKeyboardTabSwitch, but control-shift tab isn't well known, and is quite uncomfortable.
-			// There is some precedent for the left and right arrow keys, they are likely to be reasonably accessible on all keyboards, and they don't require the uncomfortable use of multiple modifier keys.
-			
-			// Alt left/right (which is what this will be except on Mac OS) is actually a combination we ought to report to our clients.
-			// We've never implemented modifier key reporting, though, so we'll worry about that when someone actually complains.
-			
-			// If anyone complains about the removal of the Safari keys, we could add them back in doKeyboardTabSwitch.
-			
-                        // Given the above, why keep advertising these?
-                        // 1. We have no manual documenting the alternatives.
-                        // 2. For hands like enh's, these are easier to type.
-                        putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke(delta < 0 ? "LEFT" : "RIGHT"));
-		}
-		
-		@Override protected void performFrameAction(TerminatorFrame frame) {
-			frame.cycleTab(delta);
-		}
-	}
-	
-	public static class MoveTabAction extends AbstractTabAction {
-		private int delta;
-		
-		public MoveTabAction(int delta) {
-			super(delta < 0 ? "Move Tab Left" : "Move Tab Right");
-			this.delta = delta;
-			
-			// Apple's Terminal doesn't yet support tabs.
-			// Firefox only supports drag and drop; there's no keyboard tab movement.
-			// gnome-terminal uses control-shift page up/page down.
-			// konsole uses control-shift left/right.
-			// We support those in our KeyEvent-handling code, but they're secret.
-			
-			// Our default, advertised, keystrokes are alt-shift left/right (command-shift left/right on Mac OS), by analogy to our next/previous tab keystrokes.
-			
-			putValue(ACCELERATOR_KEY, makeShiftedKeyStroke(delta < 0 ? "LEFT" : "RIGHT"));
-		}
-		
-		@Override
-		protected void performFrameAction(TerminatorFrame frame) {
-			frame.moveCurrentTab(delta);
 		}
 	}
 }
