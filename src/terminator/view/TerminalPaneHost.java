@@ -10,8 +10,4 @@ import java.awt.*;
  */
 public interface TerminalPaneHost {
 	public void closeTerminalPane(JTerminalPane terminalPane);
-	
-	public void updateFrameTitle();
-	
-	public void setTerminalSize(Dimension size);
 }

@@ -11,7 +11,6 @@ import javax.swing.Timer;
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame implements TerminalPaneHost {
-	private Dimension terminalSize;
 	private TerminatorTabbedPane tabbedPane;
 	
 	private ArrayList<JTerminalPane> terminals;
@@ -28,25 +27,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		for (JTerminalPane terminal : terminals) {
 			terminal.start(this);
 		}
-	}
-	
-	public void updateFrameTitle() {
-		StringBuilder title = new StringBuilder();
-		if (terminalSize != null) {
-			title.append("[").append(terminalSize.width).append(" x ").append(terminalSize.height).append("] ");
-		}
-		if (terminals.size() >= 1) {
-			JTerminalPane pane;
-			if (tabbedPane == null) {
-				pane = terminals.get(0);
-			} else {
-				pane = (JTerminalPane) tabbedPane.getSelectedComponent();
-			}
-			if (pane != null) {
-				title.append(pane.getName());
-			}
-		}
-		setTitle(title.toString());
 	}
 	
 	private void initFrame() {
@@ -178,8 +158,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		
 		Dimension finalSize = getContentPane().getSize();
 		fixTerminalSizesAfterAddingOrRemovingTabbedPane(initialSize, finalSize);
-		
-		updateFrameTitle();
 	}
 	
 	/**
@@ -294,29 +272,11 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		}
 	}
 	
-	public void setTerminalSize(Dimension size) {
-		this.terminalSize = size;
-		updateFrameTitle();
-		if (terminalSizeTimer != null) {
-			terminalSizeTimer.stop();
-		}
-		terminalSizeTimer = new Timer(2000, new ActionListener() {
-			public void actionPerformed(ActionEvent event) {
-				terminalSizeTimer = null;
-				terminalSize = null;
-				updateFrameTitle();
-			}
-		});
-		terminalSizeTimer.setRepeats(false);
-		terminalSizeTimer.start();
-	}
-	
 	public void addTab(JTerminalPane newPane) {
 		terminals.add(newPane);
 		addPaneToUI(newPane);
 		newPane.start(this);
 		tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-		updateFrameTitle();
 	}
 	
 	private void addPaneToUI(JTerminalPane newPane) {

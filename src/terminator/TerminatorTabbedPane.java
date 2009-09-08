@@ -231,7 +231,6 @@ public class TerminatorTabbedPane extends TabbedPane {
                 EventQueue.invokeLater(new Runnable() {
                     public void run() {
                         selected.requestFocus();
-                        selected.getHost().updateFrameTitle();
                     }
                 });
             }
