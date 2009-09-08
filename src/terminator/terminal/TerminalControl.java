@@ -388,8 +388,6 @@ public class TerminalControl {
 			invokeCharacterSetLater(1);
 		} else if (ch == Ascii.SI) {
 			invokeCharacterSetLater(0);
-		} else if (ch == Ascii.BEL) {
-			pane.flash();
 		} else if (ch == Ascii.NUL) {
 			// Most telnetd(1) implementations seem to have a bug whereby
 			// they send the NUL byte at the end of the C strings they want to

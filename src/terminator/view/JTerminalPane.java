@@ -25,7 +25,7 @@ public class JTerminalPane extends JPanel {
 	private TerminalControl control;
 	private TerminalView view;
 	private JScrollPane scrollPane;
-	private VisualBellViewport viewport;
+	private JViewport viewport;
 	private String name;
 	private boolean wasCreatedAsNewShell;
 	private Dimension currentSizeInChars;
@@ -121,7 +121,7 @@ public class JTerminalPane extends JPanel {
 		view = new TerminalView();
 		view.addKeyListener(new KeyHandler());
 		
-		viewport = new VisualBellViewport();
+		viewport = new JViewport();
 		viewport.setView(view);
 		
 		scrollPane = new JScrollPane();
@@ -622,13 +622,6 @@ public class JTerminalPane extends JPanel {
 	public void doCloseAction() {
 		destroyProcess();
 		host.closeTerminalPane(this);
-	}
-	
-	/**
-	 * Implements visual bell.
-	 */
-	public void flash() {
-		viewport.flash();
 	}
 	
 	public TerminalPaneHost getHost() {
