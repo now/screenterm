@@ -574,49 +574,13 @@ public class JTerminalPane extends JPanel {
 		control.destroyProcess();
 	}
 	
-	private boolean shouldClose() {
-		final PtyProcess ptyProcess = control.getPtyProcess();
-		if (ptyProcess == null) {
-			// This can happen if the JNI side failed to start.
-			// There's no reason not to close such a terminal.
-			return true;
-		}
-
-		final int directChildPid = ptyProcess.getPid();
-		final String processesUsingTty = ptyProcess.listProcessesUsingTty();
-
-		if (processesUsingTty.length() == 0) {
-			// There's nothing still running, so just close.
-			return true;
-		}
-		if (processesUsingTty.equals("(pty closed)")) {
-			return true;
-		}
-
-		// We're trying to protect the user from accidentally killing or hiding some background process they've forgotten about.
-		// We used to try to prevent them from killing something, other than a shell that we started, by accident.
-		// We stopped doing that because it was a pain confirming the desire to close connections to a serial port,
-		// where killing the connecting program kills nothing that's running behind the serial port.
-		// An SSH session remains a confusing case (Mac OS actually has a user-editable list of programs to ignore).
-		// FIXME: ideally, PtyProcess would give us a List<ProcessInfo>, but that opens a whole can of JNI worms. Hence the following hack.
-		final String[] processList = processesUsingTty.split(", ");
-		if (processList.length == 1 && processList[0].matches("^.*\\(" + directChildPid + "\\)$")) {
-			return true;
-		}
-
-		return host.confirmClose(processesUsingTty);
-	}
-
 	/**
 	 * Closes the terminal pane after checking with the user.
 	 * Returns false if the user canceled the close, true otherwise.
 	 */
 	public boolean doCheckedCloseAction() {
-		if (shouldClose()) {
-			doCloseAction();
-			return true;
-		}
-		return false;
+                doCloseAction();
+                return true;
 	}
 	
 	public void doCloseAction() {

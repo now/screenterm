@@ -221,15 +221,6 @@ public class PtyProcess {
         }
     }
     
-    public String listProcessesUsingTty() {
-        try {
-            return nativeListProcessesUsingTty();
-        } catch (IOException ex) {
-            Log.warn("listProcessesUsingTty failed on " + toString() + ".", ex);
-            return "";
-        }
-    }
-    
     @Override
     public String toString() {
         String result = "PtyProcess[pid=" + pid + ",fd=" + fd + ",pty=\"" + slavePtyName + "\"";
@@ -256,6 +247,4 @@ public class PtyProcess {
     private native void nativeStartProcess(String executable, String[] argv, String workingDirectory) throws IOException;
     
     public native void sendResizeNotification(Dimension sizeInChars, Dimension sizeInPixels) throws IOException;
-    
-    private native String nativeListProcessesUsingTty() throws IOException;
 }
