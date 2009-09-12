@@ -198,25 +198,6 @@ public class TerminalView extends JComponent implements FocusListener {
 		return displayCursor;
 	}
 	
-	public Location viewToModel(Point point) {
-		Insets insets = getInsets();
-		int lineIndex = (point.y - insets.top) / getCharUnitSize().height;
-		int charOffset = 0;
-		// If the line index is off the top or bottom, we leave charOffset = 0.  This gives us nicer
-		// selection functionality.
-		if (lineIndex >= model.getLineCount()) {
-			lineIndex = model.getLineCount();
-		} else if (lineIndex < 0) {
-			lineIndex = 0;
-		} else {
-			char[] chars = model.getTextLine(lineIndex).getString().toCharArray();
-			if (chars.length > 0) {
-				charOffset = GuiUtilities.getCharOffset(getFontMetrics(getFont()), 0, point.x - insets.left, chars);
-			}
-		}
-		return new Location(lineIndex, charOffset);
-	}
-	
 	public Rectangle modelToView(Location charCoords) {
 		// We can be asked the view rectangle of locations that are past the bottom of the text in various circumstances. Examples:
 		// 1. If the user sweeps a selection too far.
