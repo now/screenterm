@@ -145,68 +145,7 @@ public class TerminalView extends JComponent implements FocusListener {
 		BoundedRangeModel verticalModel = pane.getVerticalScrollBar().getModel();
 		verticalModel.setValue(verticalModel.getMaximum() - verticalModel.getExtent());
 	}
-	
-	public JViewport getViewport() {
-		return (JViewport) SwingUtilities.getAncestorOfClass(JViewport.class, this);
-	}
-	
-	public int getFirstVisibleLine() {
-		int lineHeight = getCharUnitSize().height;
-		Rectangle visibleBounds = getViewport().getViewRect();
-		return visibleBounds.y / lineHeight;
-	}
-	
-	public int getLastVisibleLine() {
-		int lineHeight = getCharUnitSize().height;
-		Rectangle visibleBounds = getViewport().getViewRect();
-		return (visibleBounds.y + visibleBounds.height) / lineHeight;
-	}
 
-	private boolean isLineVisible(int lineIndex) {
-		return (lineIndex >= getFirstVisibleLine() && lineIndex <= getLastVisibleLine());
-	}
-	
-	public void scrollHorizontallyToShowCursor() {
-		JScrollPane pane = (JScrollPane) SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
-		
-		if (isLineVisible(getCursorPosition().getLineIndex()) == false) {
-			// We shouldn't be jumping the horizontal scroll bar
-			// about because of new output if the user's trying to
-			// review the history.
-			return;
-		}
-		
-		// mutt(1) likes to leave the cursor one character off the right of the bottom line.
-		if (displayCursor == false) {
-			return;
-		}
-		
-		// FIXME: we don't necessarily have a horizontal position that
-		// corresponds to where the cursor is. This is probably a
-		// mistake that should be fixed.
-		
-		// [To reproduce the problem underlying this code, simply
-		// "cat > /dev/null" and then type more characters than fit
-		// on a line.]
-		
-		int leftCursorEdge = getCursorPosition().getCharOffset() * getCharUnitSize().width;
-		int rightCursorEdge = leftCursorEdge + getCharUnitSize().width;
-		
-		BoundedRangeModel horizontalModel = pane.getHorizontalScrollBar().getModel();
-		
-		int leftWindowEdge = horizontalModel.getValue();
-		int rightWindowEdge = leftWindowEdge + horizontalModel.getExtent();
-		
-		// We don't want to scroll back as the user moves the
-		// cursor back; we should just ensure that the cursor
-		// is visible, and do nothing if it is already visible.
-		if (leftCursorEdge < leftWindowEdge) {
-			horizontalModel.setValue(leftCursorEdge - horizontalModel.getExtent() / 2);
-		} else if (rightCursorEdge > rightWindowEdge) {
-			horizontalModel.setValue(rightCursorEdge - horizontalModel.getExtent() / 2);
-		}
-	}
-	
 	private void scrollTo(final int lineNumber, final int charStart, final int charEnd) {
 		Dimension character = getCharUnitSize();
 		final int x0 = charStart * character.width;
