@@ -280,7 +280,7 @@ public class TerminalControl {
 		try {
 			final char[] buffer = message.toCharArray();
 			processBuffer(buffer, buffer.length);
-			pane.getTerminalView().setCursorVisible(false);
+			model.setCursorVisible(false);
 		} catch (Exception ex) {
 			Log.warn("Couldn't say \"" + message + "\"", ex);
 		}
