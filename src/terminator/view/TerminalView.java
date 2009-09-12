@@ -44,6 +44,11 @@ public class TerminalView extends JComponent implements FocusListener {
 				requestFocus();
 			}
 		});
+                addMouseMotionListener(new MouseMotionAdapter() {
+                        public void mouseMoved(MouseEvent event) {
+                                setCursor(Cursor.getDefaultCursor());
+                        }
+                });
 		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
 	}
 	
