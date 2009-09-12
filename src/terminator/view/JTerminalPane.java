@@ -89,21 +89,6 @@ public class JTerminalPane extends JPanel {
 		return new JTerminalPane(name, workingDirectory, TerminalControl.getDefaultShell(), true);
 	}
 	
-	public JTerminalPane newShellHere() {
-		int fd = control.getPtyProcess().getFd();
-		int foregroundPid = Posix.tcgetpgrp(fd);
-		if (foregroundPid < 0) {
-			SimpleDialog.showAlert(this, "Failed to create new shell", "Could not find foreground process on pipe with fd " + fd);
-			return null;
-		}
-		String workingDirectory = ProcessUtilities.findCurrentWorkingDirectory(foregroundPid);
-		if (workingDirectory == null) {
-			SimpleDialog.showAlert(this, "Failed to create new shell", "Could not find current working directory of pid " + foregroundPid);
-			return null;
-		}
-		return newShellWithName(null, workingDirectory);
-	}
-	
 	public Dimension getPaneSize() {
 		return viewport.getSize();
 	}

@@ -167,36 +167,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class NewShellHereAction extends AbstractPaneAction {
-		public NewShellHereAction() {
-			super("New Shell Here");
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			JTerminalPane newPane = terminalPane.newShellHere();
-			if (newPane == null) {
-				return;
-			}
-			Terminator.getSharedInstance().openFrame(newPane);
-		}
-	}
-	
-	public static class NewShellTabHereAction extends AbstractPaneAction {
-		public NewShellTabHereAction() {
-			super("New Shell Tab Here");
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			JTerminalPane newPane = terminalPane.newShellHere();
-			if (newPane == null) {
-				return;
-			}
-			addTab(newPane);
-		}
-	}
-	
 	public static class CloseAction extends AbstractPaneAction {
 		public CloseAction() {
 			super("Close");
