@@ -151,21 +151,6 @@ public class TerminalView extends JComponent implements FocusListener {
 		verticalModel.setValue(verticalModel.getMaximum() - verticalModel.getExtent());
 	}
 
-	private void scrollTo(final int lineNumber, final int charStart, final int charEnd) {
-		Dimension character = getCharUnitSize();
-		final int x0 = charStart * character.width;
-		final int y0 = lineNumber * character.height - 10;
-		final int width = (charEnd - charStart) * character.width;
-		final int height = character.height + 20;
-		// Showing the beginning of the line first lets us scroll
-		// horizontally as far as necessary but no further. We'd rather
-		// show more of the beginning of the line in case we've jumped
-		// here from a long way away; the beginning is where the
-		// context is.
-		scrollRectToVisible(new Rectangle(0, y0, 0, height));
-		scrollRectToVisible(new Rectangle(x0, y0, width, height));
-	}
-	
 	/**
 	 * Scrolls to the bottom of the output if doing so fits the user's
 	 * configuration, or is over-ridden by the fact that we're trying to
