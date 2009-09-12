@@ -86,12 +86,6 @@ public class TerminatorTabbedPane extends TabbedPane {
         }
     }
     
-    @Override protected void provideMenuItems(int index, Collection<Action> actions) {
-        actions.add(new TerminatorMenuBar.NewShellTabAction());
-        actions.add(null);
-        actions.add(new TerminatorMenuBar.CloseAction());
-    }
-    
     @Override public String getToolTipTextAt(int index) {
         // Unless you have a ridiculous number of tabs, you'll get this bit.
         String switchMessage = "";
