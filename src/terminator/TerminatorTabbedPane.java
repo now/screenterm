@@ -11,61 +11,6 @@ import terminator.terminal.*;
 import terminator.view.*;
 
 public class TerminatorTabbedPane extends TabbedPane {
-    private static final TabDragger TAB_DRAGGER = new TabDragger();
-    
-    /**
-     * Lets the user drag tabs to reorder them.
-     * The tabs are reordered live, as the user drags.
-     */
-    private static class TabDragger extends MouseAdapter implements MouseMotionListener {
-        //@Override // FIXME: Java 5's javac(1) is broken.
-        public void mouseDragged(MouseEvent e) {
-            TerminatorTabbedPane tabbedPane = (TerminatorTabbedPane) e.getSource();
-            tabbedPane.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            
-            final int oldIndex = tabbedPane.getSelectedIndex();
-            int newIndex = tabbedPane.indexAtLocation(e.getX(), e.getY());
-            if (newIndex == -1) {
-                return;
-            }
-            if (newIndex == oldIndex) {
-                return;
-            }
-            // Hysteresis to prevent bad behavior when moving a small tab over a larger one (which would then be under the mouse, causing the opposite move).
-            // This is less unpleasant than using java.awt.Robot to move the pointer to a safe spot.
-            // (gnome-terminal sidesteps this problem by forcing all tabs to be the same width.)
-            javax.swing.plaf.TabbedPaneUI ui = tabbedPane.getUI();
-            Rectangle newRectangle = ui.getTabBounds(tabbedPane, newIndex);
-            if (oldIndex < newIndex) {
-                // Moving left-to-right.
-                if (e.getX() < newRectangle.x + newRectangle.width/2) {
-                    return;
-                }
-            } else {
-                // Moving right-to-left.
-                if (e.getX() > newRectangle.x + newRectangle.width/2) {
-                    return;
-                }
-            }
-            
-            // The move's okay.
-            tabbedPane.moveTab(oldIndex, newIndex);
-        }
-        
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            resetMouseCursor(e);
-        }
-        
-        private void resetMouseCursor(MouseEvent e) {
-            TerminatorTabbedPane tabbedPane = (TerminatorTabbedPane) e.getSource();
-            tabbedPane.setCursor(Cursor.getDefaultCursor());
-        }
-        
-        // FIXME: Java 5's MouseAdapter doesn't cover MouseMotionListener.
-        public void mouseMoved(MouseEvent e) { }
-    }
-    
     static {
         // Normally we use small tabbed panes on Mac OS, but activity indicators and close buttons need more space.
         UIManager.put("TabbedPane.useSmallLayout", Boolean.FALSE);
@@ -74,12 +19,6 @@ public class TerminatorTabbedPane extends TabbedPane {
     public TerminatorTabbedPane() {
         addChangeListener(new TerminalFocuser());
         
-        // Enable drag-to-order for the tab ears, but not on Mac OS where it doesn't work with the LAF.
-        if (GuiUtilities.isMacOs() == false) {
-            addMouseListener(TAB_DRAGGER);
-            addMouseMotionListener(TAB_DRAGGER);
-        }
-
         // Mac OS 10.5 defaults JTabbedPanes to non-opaque (though this wasn't in the release notes).
         if (GuiUtilities.isMacOs()) {
             setOpaque(true);
