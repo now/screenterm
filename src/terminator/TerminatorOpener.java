@@ -49,7 +49,7 @@ public class TerminatorOpener implements Runnable {
     
     public TerminatorFrame createUi() {
         try {
-            this.window = new TerminatorFrame(getInitialTerminals());
+            this.window = new TerminatorFrame(JTerminalPane.newShellWithName(null, null));
             return window;
         } catch (UsageError ex) {
             err.println(ex.getMessage());
@@ -63,46 +63,5 @@ public class TerminatorOpener implements Runnable {
     
     public void run() {
         createUi();
-    }
-    
-    private List<JTerminalPane> getInitialTerminals() {
-        ArrayList<JTerminalPane> result = new ArrayList<JTerminalPane>();
-        String name = null;
-        String workingDirectory = null;
-        for (int i = 0; i < arguments.size(); ++i) {
-            String word = arguments.get(i);
-            if (word.equals("-n") || word.equals("-T")) {
-                name = arguments.get(++i);
-                continue;
-            }
-            if (word.equals("--working-directory")) {
-                String previousWorkingDirectory = workingDirectory;
-                String workingDirectoryArgument = arguments.get(++i);
-                if (FileUtilities.fileFromString(workingDirectoryArgument).isAbsolute() == false && previousWorkingDirectory != null) {
-                    workingDirectory = new File(previousWorkingDirectory, workingDirectoryArgument).getPath();
-                } else {
-                    workingDirectory = workingDirectoryArgument;
-                }
-                continue;
-            }
-            if (word.equals("-e")) {
-                List<String> argV = arguments.subList(++i, arguments.size());
-                if (argV.isEmpty()) {
-                    throw new UsageError("-e requires further arguments");
-                }
-                result.add(JTerminalPane.newCommandWithArgV(name, workingDirectory, argV));
-                break;
-            }
-            
-            // We can't hope to imitate the shell's parsing of a string, so pass it unmolested to the shell.
-            String command = word;
-            result.add(JTerminalPane.newCommandWithName(command, name, workingDirectory));
-            name = null;
-        }
-        
-        if (result.isEmpty()) {
-            result.add(JTerminalPane.newShellWithName(name, workingDirectory));
-        }
-        return result;
     }
 }

@@ -11,22 +11,18 @@ import javax.swing.Timer;
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame implements TerminalPaneHost {
-	private TerminatorTabbedPane tabbedPane;
-	
-	private ArrayList<JTerminalPane> terminals;
+	private JTerminalPane terminal;
 	
 	private Timer terminalSizeTimer;
 	
 	private final Color originalBackground = getBackground();
 	
-	public TerminatorFrame(List<JTerminalPane> initialTerminalPanes) {
+	public TerminatorFrame(JTerminalPane initialTerminalPane) {
 		super("Terminator");
-		terminals = new ArrayList<JTerminalPane>(initialTerminalPanes);
+		terminal = initialTerminalPane;
 		initFrame();
-		initFocus();
-		for (JTerminalPane terminal : terminals) {
-			terminal.start(this);
-		}
+		terminal.requestFocus();
+                terminal.start(this);
 	}
 	
 	private void initFrame() {
@@ -67,7 +63,7 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 			});
 		}
 		
-		initTerminals();
+		initTerminal();
 		optionsDidChange();
 		
 		pack();
@@ -78,25 +74,18 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		}
 	}
 	
-	private void initTerminals() {
-		// Set up the basic single-pane UI...
-		switchToSinglePane();
-		// Add any other terminals...
-		for (int i = 1; i < terminals.size(); ++i) {
-			addPaneToUI(terminals.get(i));
-		}
-		// And make sure the user got what they wanted...
-		updateTabbedPane();
-	}
-	
-	private void updateTabbedPane() {
-		if (terminals.size() == 1) {
-			if (tabbedPane != null) {
-				switchToSinglePane();
-			}
-		} else {
-			switchToTabbedPane();
-		}
+	private void initTerminal() {
+		Dimension initialSize = terminal.getSize();
+
+		terminal.invalidate();
+		setContentPane(terminal);
+		validate();
+
+		terminal.requestFocus();
+
+                /* TODO: I don’t think this will be needed any more. */
+		Dimension finalSize = getContentPane().getSize();
+		fixTerminalSizesAfterAddingOrRemovingTabbedPane(initialSize, finalSize);
 	}
 	
 	/**
@@ -109,55 +98,6 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		
 		// Work around Sun bug 4949810 (setJMenuBar doesn't call revalidate/repaint).
 		getJMenuBar().revalidate();
-	}
-	
-	/**
-	 * Give focus to the first terminal.
-	 */
-	private void initFocus() {
-		terminals.get(0).requestFocus();
-	}
-	
-	/**
-	 * Switches to a tabbed-pane UI where we can have one tab per terminal.
-	 */
-	private void switchToTabbedPane() {
-		if (tabbedPane != null) {
-			return;
-		}
-		
-		JComponent oldContentPane = (JComponent) getContentPane();
-		Dimension initialSize = oldContentPane.getSize();
-		
-		tabbedPane = new TerminatorTabbedPane();
-		if (oldContentPane instanceof JTerminalPane) {
-			addPaneToUI((JTerminalPane) oldContentPane);
-		}
-		setContentPane(tabbedPane);
-		validate();
-		
-		Dimension finalSize = oldContentPane.getSize();
-		fixTerminalSizesAfterAddingOrRemovingTabbedPane(initialSize, finalSize);
-	}
-	
-	/**
-	 * Switches to a simple UI where we can have only one terminal.
-	 */
-	private void switchToSinglePane() {
-		// It's only safe to call this if tabbedPane != null *or* we're setting up the window contents for the first time.
-		
-		JTerminalPane soleSurvivor = terminals.get(0);
-		Dimension initialSize = soleSurvivor.getSize();
-		
-		soleSurvivor.invalidate();
-		setContentPane(soleSurvivor);
-		validate();
-		
-		soleSurvivor.requestFocus();
-		tabbedPane = null;
-		
-		Dimension finalSize = getContentPane().getSize();
-		fixTerminalSizesAfterAddingOrRemovingTabbedPane(initialSize, finalSize);
 	}
 	
 	/**
@@ -192,68 +132,16 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		setSize(size);
 	}
 	
-	public int getTerminalPaneCount() {
-		if (tabbedPane == null) {
-			return 1;
-		}
-		return tabbedPane.getTabCount();
-	}
-	
 	/**
 	 * Removes the given terminal. If this is the last terminal, close
 	 * the window.
 	 */
-	public void closeTerminalPane(JTerminalPane victim) {
-		terminals.remove(victim);
-		if (tabbedPane != null) {
-			closeTab(victim);
-		} else {
-			setVisible(false);
-		}
-	}
-	
-	/**
-	 * Removes the given terminal when there's more than one terminal in the frame.
-	 */
-	private void closeTab(JTerminalPane victim) {
-		tabbedPane.remove(victim);
-		if (tabbedPane.getTabCount() == 0) {
-			// FIXME: how can we ever get here?
-			setVisible(false);
-		} else {
-			// Switch back to a single terminal if appropriate.
-			updateTabbedPane();
-			// Just hand focus to the visible tab's terminal. We
-			// do this later because otherwise Swing seems to give
-			// the focus to the tab itself, rather than the
-			// component on the tab.
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					if (tabbedPane == null) {
-						return;
-					}
-					Component terminal = tabbedPane.getSelectedComponent();
-					if (terminal == null) {
-						return;
-					}
-					terminal.requestFocus();
-				}
-			});
-		}
+	public void closeTerminalPane() {
+                setVisible(false);
 	}
 	
 	public void handleWindowCloseRequestFromUser() {
-		// We can't iterate over "terminals" directly because we're causing terminals to close and be removed from the list.
-		ArrayList<JTerminalPane> copyOfTerminals = new ArrayList<JTerminalPane>(terminals);
-		for (JTerminalPane terminal : copyOfTerminals) {
-			if (tabbedPane != null) {
-				tabbedPane.setSelectedComponent(terminal);
-			}
-			if (terminal.doCheckedCloseAction() == false) {
-				// If the user hit "Cancel" for one terminal, cancel the close for all other terminals in the same window.
-				return;
-			}
-		}
+                terminal.doCloseAction();
 	}
 	
 	/**
@@ -264,29 +152,14 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 	public void setVisible(boolean newState) {
 		super.setVisible(newState);
 		if (newState == false) {
-			for (JTerminalPane terminal : terminals) {
-				terminal.destroyProcess();
-			}
+                        terminal.destroyProcess();
 			dispose();
 			Terminator.getSharedInstance().getFrames().removeFrame(this);
 		}
 	}
 	
-	public void addTab(JTerminalPane newPane) {
-		terminals.add(newPane);
-		addPaneToUI(newPane);
-		newPane.start(this);
-		tabbedPane.setSelectedIndex(tabbedPane.getTabCount() - 1);
-	}
-	
-	private void addPaneToUI(JTerminalPane newPane) {
-		switchToTabbedPane();
-		tabbedPane.addTab(newPane.getName(), newPane);
-	}
-	
 	public void optionsDidChange() {
 		updateMenuBar();
-		updateTabbedPane();
 		repaint();
 	}
 }

@@ -109,7 +109,7 @@ public class Terminator {
 	}
 	
 	public void openFrame(JTerminalPane terminalPane) {
-		new TerminatorFrame(Collections.singletonList(terminalPane));
+		new TerminatorFrame(terminalPane);
 	}
 	
 	private void optionsDidChange() {

@@ -517,6 +517,6 @@ public class JTerminalPane extends JPanel {
 	
 	public void doCloseAction() {
 		destroyProcess();
-		host.closeTerminalPane(this);
+		host.closeTerminalPane();
 	}
 }
