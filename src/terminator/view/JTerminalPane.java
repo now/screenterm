@@ -199,10 +199,6 @@ public class JTerminalPane extends JPanel {
 		}
 	}
 	
-	public TerminalView getTerminalView() {
-		return view;
-	}
-	
 	/** 
 	 * Starts the process listening once all the user interface stuff is set up.
 	 * 
@@ -215,14 +211,6 @@ public class JTerminalPane extends JPanel {
 	
 	public void reset() {
 		control.reset();
-	}
-	
-	public TerminalControl getControl() {
-		return control;
-	}
-	
-	public String getName() {
-		return name;
 	}
 	
 	public boolean shouldHoldOnExit(int status) {
