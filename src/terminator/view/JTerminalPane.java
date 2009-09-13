@@ -213,10 +213,6 @@ public class JTerminalPane extends JPanel {
 		control.reset();
 	}
 	
-	public Dimension getOptimalViewSize() {
-		return view.getOptimalViewSize();
-	}
-	
 	private class KeyHandler implements KeyListener {
 		public void keyPressed(KeyEvent event) {
 			// Leave the event for TerminatorMenuBar if it has appropriate modifiers.
