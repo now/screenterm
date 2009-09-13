@@ -44,9 +44,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 				model.processSpecialCharacter('\r');
 				model.processSpecialCharacter('\n');
 				break;
-			case 'H':  // rxvt: scr_set_tab(1)  Set a horizontal tab marker at the current cursor position.
-				model.setTabAtCursor();
-				break;
 			case 'M':  // Move cursor up one line, scrolling if it reaches the top of scroll region.  Opposite of NL.
 				model.scrollDisplayUp();
 				break;

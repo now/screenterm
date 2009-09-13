@@ -1,0 +1,6 @@
+Should provide a list of active screen sockets.  Need to process output of
+$(screen -ls) and display it in a dialog as a list.
+
+In the end, all we’ll have is $LINES lines of $COLUMNS columns that we treat
+like a ring.  Anything pushed off the screen reappears at the bottom as an
+empty line.

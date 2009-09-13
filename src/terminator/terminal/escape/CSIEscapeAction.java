@@ -45,7 +45,6 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'L': return "Insert lines";
 		case 'M': return "Delete lines";
 		case 'P': return "Delete characters";
-		case 'g': return "Clear tabs";
 		case 'h': return "Set DEC private mode";
 		case 'l': return "Clear DEC private mode";
 		case 'm': return "Set font, color, etc";
@@ -93,8 +92,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return deleteLines(model, midSequence);
 		case 'P':
 			return deleteCharacters(model, midSequence);
-		case 'g':
-			return clearTabs(model, midSequence);
 		case 'h':
 			return setDecPrivateMode(model, midSequence, true);
 		case 'l':
@@ -113,22 +110,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return saveDecPrivateModes(midSequence);
 		default:
 			Log.warn("unknown CSI sequence " + StringUtilities.escapeForJava(sequence));
-			return false;
-		}
-	}
-	
-	public boolean clearTabs(TerminalModel model, String seq) {
-		int clearType = (seq.length() == 0) ? 0 : Integer.parseInt(seq);
-		if (clearType == 0) {
-			// Clear horizontal tab at current cursor position.
-			model.removeTabAtCursor();
-			return true;
-		} else if (clearType == 3) {
-			// Clear all horizontal tabs.
-			model.removeAllTabs();
-			return true;
-		} else {
-			Log.warn("Unknown clear tabs type: " + clearType);
 			return false;
 		}
 	}

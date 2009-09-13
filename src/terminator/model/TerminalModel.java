@@ -18,7 +18,6 @@ public class TerminalModel {
 	private Location cursorPosition;
 	private int lastValidStartIndex = 0;
 	private boolean insertMode = false;
-	private ArrayList<Integer> tabPositions = new ArrayList<Integer>();
 	private int maxLineWidth = width;
 	
 	// Used for reducing the number of lines changed events sent up to the view.
@@ -82,35 +81,7 @@ public class TerminalModel {
 		return new Location(lineIndex, charOffset);
 	}
 	
-	public void setTabAtCursor() {
-		int newPos = cursorPosition.getCharOffset();
-		for (int i = 0; i < tabPositions.size(); i++) {
-			int pos = tabPositions.get(i);
-			if (pos == newPos) {
-				return;
-			} else if (pos > newPos) {
-				tabPositions.add(i, newPos);
-				return;
-			}
-		}
-		tabPositions.add(newPos);
-	}
-	
-	public void removeTabAtCursor() {
-		tabPositions.remove(cursorPosition.getCharOffset());
-	}
-	
-	public void removeAllTabs() {
-		tabPositions.clear();
-	}
-	
 	private int getNextTabPosition(int charOffset) {
-		for (int i = 0; i < tabPositions.size(); i++) {
-			int pos = tabPositions.get(i);
-			if (pos > charOffset) {
-				return pos;
-			}
-		}
 		// No special tab to our right; return the default 8-separated tab stop.
 		return (charOffset + 8) & ~7;
 	}
