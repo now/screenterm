@@ -35,12 +35,10 @@ public class TerminalControl {
 	
 	private static BufferedReader stepModeReader;
 	
-	private JTerminalPane pane;
 	private List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
 	private TerminalModel model;
 	private PtyProcess ptyProcess;
 	private boolean processIsRunning;
-	private boolean processHasBeenDestroyed = false;
 	
 	private InputStreamReader in;
 	private OutputStream out;
@@ -62,9 +60,8 @@ public class TerminalControl {
 	// Semaphore to prevent us from overrunning the EDT.
 	private Semaphore flowControl = new Semaphore(30);
 	
-	public TerminalControl(JTerminalPane pane, TerminalModel model) {
+	public TerminalControl(TerminalModel model) {
 		reset();
-		this.pane = pane;
 		this.model = model;
 	}
 	
@@ -105,7 +102,6 @@ public class TerminalControl {
 		if (processIsRunning) {
 			try {
 				ptyProcess.destroy();
-				processHasBeenDestroyed = true;
 			} catch (IOException ex) {
 				Log.warn("Failed to destroy process " + ptyProcess, ex);
 			}
@@ -253,26 +249,14 @@ public class TerminalControl {
 		}
 		Log.warn("waitFor returned on " + ptyProcess);
 		if (ptyProcess.didExitNormally()) {
-			int status = ptyProcess.getExitStatus();
-			if (pane.shouldHoldOnExit(status)) {
-				announceConnectionLost("\n\r[Process exited with status " + status + ".]");
-				return;
-			}
+                        announceConnectionLost("\n\r[Process exited with status " + ptyProcess.getExitStatus() + ".]");
+                        return;
 		} else if (ptyProcess.wasSignaled()) {
 			announceConnectionLost("\n\r[Process killed by " + ptyProcess.getSignalDescription() + ".]");
 			return;
 		} else {
 			announceConnectionLost("\n\r[Lost contact with process.]");
 			return;
-		}
-
-		// If it wasn't a pane close that caused us to get here, close the pane.
-		if (processHasBeenDestroyed == false) {
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					pane.doCloseAction();
-				}
-			});
 		}
 	}
 	

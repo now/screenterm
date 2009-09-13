@@ -125,7 +125,7 @@ public class JTerminalPane extends JPanel {
 		
 		view.sizeChanged();
 		try {
-			control = new TerminalControl(this, view.getModel());
+			control = new TerminalControl(view.getModel());
 			view.setTerminalControl(control);
 			control.initProcess(command, workingDirectory);
 			initSizeMonitoring();
@@ -212,13 +212,6 @@ public class JTerminalPane extends JPanel {
 	public void reset() {
 		control.reset();
 	}
-	
-	public boolean shouldHoldOnExit(int status) {
-		// bash (and probably other shells) return as their own exit status that of the last command executed.
-		// The user will already have seen any failure in a shell window, so we ignore them.
-		return (wasCreatedAsNewShell == false) && (status != 0);
-	}
-	
 	
 	public Dimension getOptimalViewSize() {
 		return view.getOptimalViewSize();
