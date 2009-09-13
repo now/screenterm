@@ -194,7 +194,7 @@ public class TerminalControl {
 	 * Invoked both on construction to set the defaults and by the "Reset"
 	 * action in the UI.
 	 */
-	public void reset() {
+	private void reset() {
 		setAutomaticNewline(false);
 		invokeCharacterSet(0);
 		designateCharacterSet(0, 'B');

@@ -26,9 +26,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		menu.addSeparator();
 		menu.add(new CloseAction());
 		
-		menu.addSeparator();
-		menu.add(new ResetAction());
-		
 		return menu;
 	}
 
@@ -143,17 +140,6 @@ public class TerminatorMenuBar extends EMenuBar {
 		@Override
 		protected void performPaneAction(JTerminalPane terminalPane) {
 			terminalPane.doCloseAction();
-		}
-	}
-	
-	public static class ResetAction extends AbstractPaneAction {
-		public ResetAction() {
-			super("Reset");
-		}
-		
-		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.reset();
 		}
 	}
 }

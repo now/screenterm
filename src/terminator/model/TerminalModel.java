@@ -176,14 +176,6 @@ public class TerminalModel {
 		return textLines.size();
 	}
 	
-	public void fullReset() {
-		int firstLineToClear = getFirstDisplayLine();
-		for (int i = 0; i < height; i++) {
-			getTextLine(firstLineToClear + i).clear();
-		}
-		view.repaint();
-	}
-	
 	public void linesChangedFrom(int firstLineChanged) {
 		this.firstLineChanged = Math.min(this.firstLineChanged, firstLineChanged);
 	}

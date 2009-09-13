@@ -54,9 +54,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 				// An obsolete form of ESC [ c (send device attributes).
 				CSIEscapeAction.sendDeviceAttributes(control);
 				break;
-			case 'c':  // Power on (full reset).
-				model.fullReset();
-				break;
 				
 			// Change character set.
 			// Note that these are different to the related ^N and ^O sequences, which select character sets 1 and 0 and are handled elsewhere.
@@ -92,7 +89,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 		case 'H': return "Set tab at cursor";
 		case 'M': return "Cursor up one line";
 		case 'Z': return "Send device attributes (obsolete)";
-		case 'c': return "Full reset";
 		case 'n': return "Invoke character set 2";
 		case 'o': return "Invoke character set 3";
 		case '|':

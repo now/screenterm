@@ -209,10 +209,6 @@ public class JTerminalPane extends JPanel {
 		control.start();
 	}
 	
-	public void reset() {
-		control.reset();
-	}
-	
 	private class KeyHandler implements KeyListener {
 		public void keyPressed(KeyEvent event) {
 			// Leave the event for TerminatorMenuBar if it has appropriate modifiers.
