@@ -436,15 +436,6 @@ public class JTerminalPane extends JPanel {
 		control.destroyProcess();
 	}
 	
-	/**
-	 * Closes the terminal pane after checking with the user.
-	 * Returns false if the user canceled the close, true otherwise.
-	 */
-	public boolean doCheckedCloseAction() {
-                doCloseAction();
-                return true;
-	}
-	
 	public void doCloseAction() {
 		destroyProcess();
 		host.closeTerminalPane();

@@ -142,7 +142,7 @@ public class TerminatorMenuBar extends EMenuBar {
 		
 		@Override
 		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.doCheckedCloseAction();
+			terminalPane.doCloseAction();
 		}
 	}
 	
