@@ -89,10 +89,6 @@ public class JTerminalPane extends JPanel {
 		return new JTerminalPane(name, workingDirectory, TerminalControl.getDefaultShell(), true);
 	}
 	
-	public Dimension getPaneSize() {
-		return viewport.getSize();
-	}
-	
 	public void optionsDidChange() {
 		// We're called before start().
 		view.optionsDidChange();
