@@ -21,7 +21,6 @@ public class TerminalModel {
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
 	private Location cursorPosition;
-	private int lastValidStartIndex = 0;
 	private boolean insertMode = false;
 	private int maxLineWidth = width;
 	
@@ -59,10 +58,6 @@ public class TerminalModel {
 	private int getNextTabPosition(int charOffset) {
 		// No special tab to our right; return the default 8-separated tab stop.
 		return (charOffset + 8) & ~7;
-	}
-	
-	private void lineIsDirty(int dirtyLineIndex) {
-		lastValidStartIndex = Math.min(lastValidStartIndex, dirtyLineIndex + 1);
 	}
 	
 	public int getLineCount() {
@@ -127,7 +122,6 @@ public class TerminalModel {
 		// Use a private copy of the first display line throughout this method to avoid mutation
 		// caused by textLines.add()/textLines.remove().
 		final int firstDisplayLine = getFirstDisplayLine();
-		lineIsDirty(firstDisplayLine);
 		if (index > firstDisplayLine + lastScrollLineIndex) {
 			for (int i = firstDisplayLine + lastScrollLineIndex + 1; i <= index; i++) {
 				textLines.add(i, lineToInsert);
@@ -170,7 +164,6 @@ public class TerminalModel {
 	
 	public void setSize(int width, int height) {
 		this.width = width;
-		lineIsDirty(0);
 		if (this.height > height && textLines.size() >= this.height) {
 			for (int i = 0; i < (this.height - height); i++) {
 				int lineToRemove = textLines.size() - 1;
@@ -218,7 +211,6 @@ public class TerminalModel {
 	private void textAdded(int length) {
 		TextLine textLine = getTextLine(cursorPosition.getLineIndex());
 		updateMaxLineWidth(textLine.length());
-		lineIsDirty(cursorPosition.getLineIndex() + 1);  // cursorPosition's line still has a valid *start* index.
 		linesChangedFrom(cursorPosition.getLineIndex());
 		moveCursorHorizontally(length);
 	}
@@ -277,7 +269,6 @@ public class TerminalModel {
 		int start = cursorPosition.getCharOffset();
 		int end = start + count;
 		line.killText(start, end);
-		lineIsDirty(cursorPosition.getLineIndex() + 1);  // cursorPosition.y's line still has a valid *start* index.
 		linesChangedFrom(cursorPosition.getLineIndex());
 	}
 	
@@ -287,7 +278,6 @@ public class TerminalModel {
 		int start = fromStart ? 0 : cursorPosition.getCharOffset();
 		int end = toEnd ? oldLineLength : cursorPosition.getCharOffset();
 		line.killText(start, end);
-		lineIsDirty(cursorPosition.getLineIndex() + 1);  // cursorPosition.y's line still has a valid *start* index.
 		linesChangedFrom(cursorPosition.getLineIndex());
 	}
 	
@@ -315,7 +305,6 @@ public class TerminalModel {
 		if (toBottom) {
 			line.killText(cursorPosition.getCharOffset(), oldLineLength);
 		}
-		lineIsDirty(start + 1);
 		linesChangedFrom(start);
 	}
 	
@@ -382,7 +371,6 @@ public class TerminalModel {
 		int removeIndex = getFirstDisplayLine() + lastScrollLineIndex + 1;
 		textLines.add(addIndex, new TextLine());
 		textLines.remove(removeIndex);
-		lineIsDirty(addIndex);
 		linesChangedFrom(addIndex);
 		view.repaint();
 	}
@@ -393,7 +381,6 @@ public class TerminalModel {
 		int addIndex = getFirstDisplayLine() + lastScrollLineIndex + 1;
 		textLines.add(addIndex, new TextLine());
 		textLines.remove(removeIndex);
-		lineIsDirty(removeIndex);
 		linesChangedFrom(removeIndex);
 		view.repaint();
 	}

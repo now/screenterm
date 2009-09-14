@@ -77,57 +77,7 @@ public class TextLine {
 		return text.replace(TAB_START, ' ').replace(TAB_CONTINUE, ' ');
 	}
 	
-	/** Returns the text, with all the tabs put back in for use with clipboard stuff. */
-	public String getTabbedString(int start, int end) {
-		StringBuilder buf = new StringBuilder();
-		for (int i = start; i < end; i++) {
-			char ch = text.charAt(i);
-			if (ch != TAB_CONTINUE) {
-				buf.append(ch);
-			}
-		}
-		return buf.toString();
-	}
-	
 	public int length() {
-		return text.length();
-	}
-	
-	public int lengthIncludingNewline() {
-		return length() + 1;
-	}
-	
-	/**
-	* Returns the offset of the character specified by charOffset.
-	* The returned value will be charOffset for most characters, but may
-	* be smaller if the character at charOffset is part of a tab.
-	*/
-	public int getEffectiveCharStartOffset(int charOffset) {
-		if (charOffset >= text.length()) {
-			return charOffset;
-		}
-		for (int i = charOffset; i >= 0; i--) {
-			if (text.charAt(i) != TAB_CONTINUE) {
-				return i;
-			}
-		}
-		return 0;
-	}
-	
-	/**
-	* Returns the offset of the character after that specified by charOffset.
-	* The returned value will be charOffset + 1 for most characters, but may
-	* be larger if the character at charOffset is part of a tab (after the start).
-	*/
-	public int getEffectiveCharEndOffset(int charOffset) {
-		if (charOffset >= text.length()) {
-			return charOffset;
-		}
-		for (int i = charOffset; i < text.length(); i++) {
-			if (text.charAt(i) != TAB_CONTINUE) {
-				return i;
-			}
-		}
 		return text.length();
 	}
 	
