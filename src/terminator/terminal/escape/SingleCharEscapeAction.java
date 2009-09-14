@@ -19,15 +19,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 
 	public void perform(TerminalModel model) {
 		switch (escChar) {
-			case '9':  // rxvt: scr_forwardindex
-				unsupported("scr_forwardindex");
-				break;
-			case '=':  // rxvt: set private mode PrivMode_aplKP (application keypad).
-				unsupported("set private mode PrivMode_aplKP (application keypad).");
-				break;
-			case '>':  // rxvt: unset private mode PrivMode_aplKP (application keypad).
-				unsupported("unset private mode PrivMode_aplKP (application keypad).");
-				break;
 			case 'D':  // Move the cursor down one line, scrolling if it reaches the bottom of scroll region.  Effectively NL.
 				model.processSpecialCharacter('\n');
 				break;
@@ -66,12 +57,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 	
 	private String getType() {
 		switch (escChar) {
-		case '6': return "rxvt: scr_backindex (not supported)";
-		case '7': return "Save cursor";
-		case '8': return "Restore cursor";
-		case '9': return "rxvt: scr_forwardindex (not supported)";
-		case '=': return "Set private mode application keypad";
-		case '>': return "Unset private mode application keypad";
 		case 'D': return "Down one line";
 		case 'E': return "Move to start of next line";
 		case 'H': return "Set tab at cursor";
