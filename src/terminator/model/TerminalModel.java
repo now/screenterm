@@ -23,10 +23,6 @@ public class TerminalModel {
 	// Used for reducing the number of lines changed events sent up to the view.
 	private int firstLineChanged;
 	
-	// Fields used for saving and restoring state.
-	private Location savedPosition;
-	private short savedStyle;
-	
 	public TerminalModel(TerminalView view, int width, int height) {
 		this.view = view;
 		setSize(width, height);
@@ -39,20 +35,6 @@ public class TerminalModel {
 	
 	public int getMaxLineWidth() {
 		return Math.max(maxLineWidth, width);
-	}
-	
-	/** Saves the current style and location for retrieving later. */
-	public void saveCursor() {
-		savedPosition = cursorPosition;
-		savedStyle = currentStyle;
-	}
-	
-	/** Restores the saved style and location if it was saved earlier. */
-	public void restoreCursor() {
-		if (savedPosition != null) {
-			cursorPosition = savedPosition;
-			setStyle(savedStyle);
-		}
 	}
 	
 	public void checkInvariant() {
@@ -69,7 +51,6 @@ public class TerminalModel {
 	public void sizeChanged(Dimension sizeInChars) {
 		setSize(sizeInChars.width, sizeInChars.height);
 		cursorPosition = getLocationWithinBounds(cursorPosition);
-		savedPosition = getLocationWithinBounds(savedPosition);
 	}
 	
 	private Location getLocationWithinBounds(Location location) {
