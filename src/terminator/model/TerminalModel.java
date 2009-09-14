@@ -191,7 +191,7 @@ public class TerminalModel {
 			for (int i = firstDisplayLine + lastScrollLineIndex + 1; i <= index; i++) {
 				textLines.add(i, lineToInsert);
 			}
-			if (firstScrollLineIndex > 0) {
+			if (true || firstScrollLineIndex > 0) {
 				// If the program has defined scroll bounds, newline-adding actually chucks away
 				// the first scroll line, rather than just scrolling everything upwards like we normally
 				// do.  This makes vim work better.  Also, if we're using the alternate buffer, we
