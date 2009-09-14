@@ -19,19 +19,8 @@ public class SingleCharEscapeAction implements TerminalAction {
 
 	public void perform(TerminalModel model) {
 		switch (escChar) {
-			case 'D':  // Move the cursor down one line, scrolling if it reaches the bottom of scroll region.  Effectively NL.
-				model.processSpecialCharacter('\n');
-				break;
-			case 'E':  // Move cursor to start of next line, scrolling if required.  Effectively CR,NL
-				model.processSpecialCharacter('\r');
-				model.processSpecialCharacter('\n');
-				break;
 			case 'M':  // Move cursor up one line, scrolling if it reaches the top of scroll region.  Opposite of NL.
 				model.scrollDisplayUp();
-				break;
-			case 'Z':
-				// An obsolete form of ESC [ c (send device attributes).
-				CSIEscapeAction.sendDeviceAttributes(control);
 				break;
 				
 			// Change character set.
