@@ -19,9 +19,6 @@ public class SingleCharEscapeAction implements TerminalAction {
 
 	public void perform(TerminalModel model) {
 		switch (escChar) {
-			case '6':  // rxvt: scr_backindex
-				unsupported("scr_backindex");
-				break;
 			case '7':  // Save cursor.  rxvt saves position, current style, and charset.
 				model.saveCursor();
 				break;
