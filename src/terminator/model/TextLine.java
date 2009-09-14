@@ -15,9 +15,6 @@ public class TextLine {
 	private static final char TAB_START = '\t';
 	private static final char TAB_CONTINUE = '\r';
 	
-	// The index in characters into the containing buffer of the first character of this line.
-	private int lineStartIndex;
-	
 	// The characters on this line.
 	// An immutable String may seem like an odd choice, but we've tried StringBuilder too.
 	// In terms of space, StringBuilder helps a little, saving on useless String fields (such as the cached hashCode), but we pay extra for each blank line (where the cost is a whole new StringBuilder rather than just sharing the JVM's single empty-string instance), and we pay for unused space in the underlying char[]s.
@@ -34,14 +31,6 @@ public class TextLine {
 	
 	public TextLine() {
 		clear();
-	}
-	
-	public int getLineStartIndex() {
-		return lineStartIndex;
-	}
-	
-	public void setLineStartIndex(int lineStartIndex) {
-		this.lineStartIndex = lineStartIndex;
 	}
 	
 	public short getStyleAt(int index) {

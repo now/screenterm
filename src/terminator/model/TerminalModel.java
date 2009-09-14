@@ -11,6 +11,11 @@ public class TerminalModel {
 	private TerminalView view;
 	private int width;
 	private int height;
+        /* TODO: Separate out TextLines object and delegate to it.  It should
+         * be a fixed-size ordered set of lines.  I think an ArrayList of lines
+         * may suffice and then keep an index as to which of the lines is the
+         * first. This should allow for minimal modification to the ArrayList
+         * and also allows for reuse of TextLines. */
 	private ArrayList<TextLine> textLines = new ArrayList<TextLine>();
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
@@ -37,17 +42,6 @@ public class TerminalModel {
 		return Math.max(maxLineWidth, width);
 	}
 	
-	public void checkInvariant() {
-		int highestStartLineIndex = -1;
-		for (int lineNumber = 0; lineNumber <= lastValidStartIndex; ++ lineNumber) {
-			int thisStartLineIndex = textLines.get(lineNumber).getLineStartIndex();
-			if (thisStartLineIndex <= highestStartLineIndex) {
-				throw new RuntimeException("the lineStartIndex must increase monotonically as the line number increases");
-			}
-			highestStartLineIndex = thisStartLineIndex;
-		}
-	}
-	
 	public void sizeChanged(Dimension sizeInChars) {
 		setSize(sizeInChars.width, sizeInChars.height);
 		cursorPosition = getLocationWithinBounds(cursorPosition);
@@ -67,61 +61,8 @@ public class TerminalModel {
 		return (charOffset + 8) & ~7;
 	}
 	
-	/** Returns the length of the indexed line including the terminating NL. */
-	public int getLineLength(int lineIndex) {
-		return getTextLine(lineIndex).length() + 1;
-	}
-	
-	/** Returns the start character index of the indexed line. */
-	public int getStartIndex(int lineIndex) {
-		ensureValidStartIndex(lineIndex);
-		return getTextLine(lineIndex).getLineStartIndex();
-	}
-	
-	/**
-	 * Returns a Location describing the line and offset at which the given char index exists.
-	 * If the index is actually larger than the screen area, returns a 'fake' location to the right
-	 * of the end of the last line.
-	 */
-	public Location getLocationFromCharIndex(int charIndex) {
-		int lowLine = 0;
-		int highLine = textLines.size();
-		
-		while (highLine - lowLine > 1) {
-			int midLine = (lowLine + highLine) / 2;
-			int mid = getStartIndex(midLine);
-			if (mid <= charIndex) {
-				lowLine = midLine;
-			} else {
-				highLine = midLine;
-			}
-		}
-		return new Location(lowLine, charIndex - getStartIndex(lowLine));
-	}
-	
-	/** Returns the char index equivalent to the given Location. */
-	public int getCharIndexFromLocation(Location location) {
-		return getStartIndex(location.getLineIndex()) + location.getCharOffset();
-	}
-	
-	/** Returns the count of all characters in the buffer, including NLs. */
-	public int length() {
-		int lastIndex = textLines.size() - 1;
-		return getStartIndex(lastIndex) + getLineLength(lastIndex);
-	}
-	
 	private void lineIsDirty(int dirtyLineIndex) {
 		lastValidStartIndex = Math.min(lastValidStartIndex, dirtyLineIndex + 1);
-	}
-	
-	private void ensureValidStartIndex(int lineIndex) {
-		if (lineIndex > lastValidStartIndex) {
-			for (int i = lastValidStartIndex; i < lineIndex; i++) {
-				TextLine line = getTextLine(i);
-				getTextLine(i + 1).setLineStartIndex(line.getLineStartIndex() + line.lengthIncludingNewline());
-			}
-			lastValidStartIndex = lineIndex;
-		}
 	}
 	
 	public int getLineCount() {
@@ -209,7 +150,6 @@ public class TerminalModel {
 			linesChangedFrom(index);
 			cursorPosition = new Location(index, cursorPosition.getCharOffset());
 		}
-		checkInvariant();
 	}
 	
 	public int getFirstDisplayLine() {
@@ -251,7 +191,6 @@ public class TerminalModel {
 		while (getFirstDisplayLine() < 0) {
 			textLines.add(new TextLine());
 		}
-		checkInvariant();
 	}
 	
 	public void setInsertMode(boolean insertMode) {
@@ -446,7 +385,6 @@ public class TerminalModel {
 		lineIsDirty(addIndex);
 		linesChangedFrom(addIndex);
 		view.repaint();
-		checkInvariant();
 	}
 	
 	/** Delete one line, moving everything below up and inserting a blank line at the bottom. */
@@ -458,6 +396,5 @@ public class TerminalModel {
 		lineIsDirty(removeIndex);
 		linesChangedFrom(removeIndex);
 		view.repaint();
-		checkInvariant();
 	}
 }
