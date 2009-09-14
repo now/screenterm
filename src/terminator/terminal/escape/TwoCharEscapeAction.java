@@ -21,11 +21,6 @@ public class TwoCharEscapeAction implements TerminalAction {
 			case '+':
 				control.designateCharacterSet(getCharacterSetIndex(), getCharacterSet());
 				break;
-			case '#':  // rxvt: if second char == '8', scr_E().
-			case '$':  // rxvt: scr_charset_set(-2, second char).
-			case '@':  // rxvt ignores this completely.
-				Log.warn("Unsupported two-character escape \"" + StringUtilities.escapeForJava(sequence) + "\".");
-				break;
 			default:
 				Log.warn("Unrecognized two-character escape \"" + StringUtilities.escapeForJava(sequence) + "\".");
 		}
