@@ -379,7 +379,7 @@ public class JTerminalPane extends JPanel {
 			if (ch == Ascii.LF) {
 				return String.valueOf(Ascii.CR);
 			} else if (ch == Ascii.CR) {
-				return control.isAutomaticNewline() ? "\r\n" : "\r";
+				return "\r";
 			} else if (ch == Ascii.BS) {
 				return ERASE_STRING;
 			} else if (ch == Ascii.DEL) {

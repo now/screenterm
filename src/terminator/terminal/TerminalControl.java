@@ -49,8 +49,6 @@ public class TerminalControl {
 	private int characterSet;
 	private char[] g = new char[4];
 	
-	private boolean automaticNewline;
-	
 	private StringBuilder lineBuffer = new StringBuilder();
 	
 	private EscapeParser escapeParser;
@@ -182,20 +180,11 @@ public class TerminalControl {
 		});
 	}
 	
-	public void setAutomaticNewline(boolean automatic) {
-		this.automaticNewline = automatic;
-	}
-	
-	public boolean isAutomaticNewline() {
-		return automaticNewline;
-	}
-	
 	/**
 	 * Invoked both on construction to set the defaults and by the "Reset"
 	 * action in the UI.
 	 */
 	private void reset() {
-		setAutomaticNewline(false);
 		invokeCharacterSet(0);
 		designateCharacterSet(0, 'B');
 		designateCharacterSet(1, '0');

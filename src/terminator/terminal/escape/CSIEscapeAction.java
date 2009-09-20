@@ -130,9 +130,6 @@ public class CSIEscapeAction implements TerminalAction {
 				case 4:
 					model.setInsertMode(value);
 					break;
-				case 20:
-					control.setAutomaticNewline(value);
-					break;
 				default:
 					Log.warn("Unknown mode " + mode + " in [" + StringUtilities.escapeForJava(seq) + (value ? 'h' : 'l'));
 				}
