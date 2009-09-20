@@ -43,8 +43,7 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'h': return "Set DEC private mode";
 		case 'l': return "Clear DEC private mode";
 		case 'm': return "Set font, color, etc";
-		case 'r': return "Restore DEC private modes or set scrolling region";
-		case 's': return "Save DEC private modes";
+		case 'r': return "Set scrolling region";
 		default: return "Unknown:" + lastChar;
 		}
 	}
@@ -86,8 +85,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return processFontEscape(model, midSequence);
 		case 'r':
                         return setScrollingRegion(model, midSequence);
-		case 's':
-			return saveDecPrivateModes(midSequence);
 		default:
 			Log.warn("unknown CSI sequence " + StringUtilities.escapeForJava(sequence));
 			return false;
@@ -132,11 +129,6 @@ public class CSIEscapeAction implements TerminalAction {
 			}
 		}
 		return true;
-	}
-	
-	private boolean saveDecPrivateModes(String seq) {
-		Log.warn("Save DEC private mode values not implemented (CSI " + StringUtilities.escapeForJava(seq) + ")");
-		return false;
 	}
 	
 	public boolean setScrollingRegion(TerminalModel model, String seq) {
