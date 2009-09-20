@@ -17,8 +17,6 @@ public class TwoCharEscapeAction implements TerminalAction {
 		switch (sequence.charAt(0)) {
 			case '(':
 			case ')':
-			case '*':
-			case '+':
 				control.designateCharacterSet(getCharacterSetIndex(), getCharacterSet());
 				break;
 			default:
@@ -27,7 +25,7 @@ public class TwoCharEscapeAction implements TerminalAction {
 	}
 	
 	private int getCharacterSetIndex() {
-		return "()*+".indexOf(sequence.charAt(0));
+		return "()".indexOf(sequence.charAt(0));
 	}
 	
 	private char getCharacterSet() {

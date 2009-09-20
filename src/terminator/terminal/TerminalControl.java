@@ -47,7 +47,7 @@ public class TerminalControl {
 	private Thread readerThread;
 	
 	private int characterSet;
-	private char[] g = new char[4];
+	private char[] g = new char[2];
 	
 	private StringBuilder lineBuffer = new StringBuilder();
 	
@@ -188,8 +188,6 @@ public class TerminalControl {
 		invokeCharacterSet(0);
 		designateCharacterSet(0, 'B');
 		designateCharacterSet(1, '0');
-		designateCharacterSet(2, 'B');
-		designateCharacterSet(3, 'B');
 		if (model != null) {
 			model.setStyle(StyledText.getDefaultStyle());
 		}
@@ -461,8 +459,6 @@ public class TerminalControl {
 		switch (g[characterSet]) {
 		case '0':
 			return translateToGraphicalCharacterSet(ch);
-		case 'A':
-			return translateToUkCharacterSet(ch);
 		default:
 			return ch;
 		}
@@ -552,10 +548,6 @@ public class TerminalControl {
 		default:
 			return ch;
 		}
-	}
-	
-	private char translateToUkCharacterSet(char ch) {
-		return (ch == '#') ? '\u00a3' : ch;
 	}
 	
 	public void sendUtf8String(final String s) {
