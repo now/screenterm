@@ -34,7 +34,6 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'B': return "Cursor down";
 		case 'C': return "Cursor right";
 		case 'D': return "Cursor left";
-		case 'f':
 		case 'H': return "Move cursor to";
 		case 'K': return "Kill line contents";
 		case 'J': return "Kill lines";
@@ -67,7 +66,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return moveCursor(model, midSequence, 1, 0);
 		case 'D':
 			return moveCursor(model, midSequence, -1, 0);
-		case 'f':
 		case 'H':
 			return moveCursorTo(model, midSequence);
 		case 'K':
