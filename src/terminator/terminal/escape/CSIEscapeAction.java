@@ -33,7 +33,6 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'A': return "Cursor up";
 		case 'B': return "Cursor down";
 		case 'C': return "Cursor right";
-		case 'c': return "Device attributes request";
 		case 'D': return "Cursor left";
 		case 'd': return "Move cursor to row";
 		case 'G':
@@ -48,7 +47,6 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'h': return "Set DEC private mode";
 		case 'l': return "Clear DEC private mode";
 		case 'm': return "Set font, color, etc";
-		case 'n': return "Device status report";
 		case 'r': return "Restore DEC private modes or set scrolling region";
 		case 's': return "Save DEC private modes";
 		default: return "Unknown:" + lastChar;
@@ -70,8 +68,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return moveCursor(model, midSequence, 0, 1);
 		case 'C':
 			return moveCursor(model, midSequence, 1, 0);
-		case 'c':
-			return deviceAttributesRequest(midSequence);
 		case 'D':
 			return moveCursor(model, midSequence, -1, 0);
 		case 'd':
@@ -98,8 +94,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return setDecPrivateMode(model, midSequence, false);
 		case 'm':
 			return processFontEscape(model, midSequence);
-		case 'n':
-			return processDeviceStatusReport(model, midSequence);
 		case 'r':
 			if (midSequence.startsWith("?")) {
 				return restoreDecPrivateModes(midSequence);
@@ -176,20 +170,7 @@ public class CSIEscapeAction implements TerminalAction {
 		}
 		return true;
 	}
-	
-	private boolean deviceAttributesRequest(String seq) {
-		if (seq.equals("") || seq.equals("0")) {
-			sendDeviceAttributes(control);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	public static void sendDeviceAttributes(TerminalControl control) {
-		control.sendUtf8String(Ascii.ESC + "[?1;0c");
-	}
-	
+
 	public boolean deleteCharacters(TerminalModel model, String seq) {
 		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
 		model.deleteCharacters(count);
@@ -243,22 +224,6 @@ public class CSIEscapeAction implements TerminalAction {
 			model.moveCursorVertically(yDirection * count);
 		}
 		return true;
-	}
-	
-	private boolean processDeviceStatusReport(TerminalModel model, String sequence) {
-		switch (Integer.parseInt(sequence)) {
-		case 5:
-			control.sendUtf8String(Ascii.ESC + "[0n");
-			return true;
-		case 6:
-			Location location = model.getCursorPosition();
-			int row = location.getLineIndex() - model.getFirstDisplayLine() + 1;
-			int column = location.getCharOffset() + 1;
-			control.sendUtf8String(Ascii.ESC + "[" + row + ";" + column + "R");
-			return true;
-		default:
-			return false;
-		}
 	}
 	
 	public boolean processFontEscape(TerminalModel model, String sequence) {
