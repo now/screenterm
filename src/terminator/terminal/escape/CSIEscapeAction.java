@@ -34,7 +34,6 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'B': return "Cursor down";
 		case 'C': return "Cursor right";
 		case 'D': return "Cursor left";
-		case 'd': return "Move cursor to row";
 		case 'G':
 		case '`': return "Move cursor column to";
 		case 'f':
@@ -70,8 +69,6 @@ public class CSIEscapeAction implements TerminalAction {
 			return moveCursor(model, midSequence, 1, 0);
 		case 'D':
 			return moveCursor(model, midSequence, -1, 0);
-		case 'd':
-			return moveCursorRowTo(model, midSequence);
 		case 'G':
 		case '`':
 			return moveCursorColumnTo(model, midSequence);
@@ -190,11 +187,6 @@ public class CSIEscapeAction implements TerminalAction {
 		boolean fromTop = (type >= 1);
 		boolean toBottom = (type != 1);
 		model.eraseInPage(fromTop, toBottom);
-		return true;
-	}
-	
-	public boolean moveCursorRowTo(TerminalModel model, String seq) {
-		model.setCursorPosition(-1, Integer.parseInt(seq));
 		return true;
 	}
 	

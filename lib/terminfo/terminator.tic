@@ -61,7 +61,6 @@ terminator|Terminator no line wrap,
     smir=\E[4h,
     smso=\E[7m,
     smul=\E[4m,
-    vpa=\E[%i%p1%dd,
     sgr0=\E[m,
 # We offer 8 colors, in any foreground/background combination.
     colors#8,
