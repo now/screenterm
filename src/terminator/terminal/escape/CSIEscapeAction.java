@@ -85,11 +85,7 @@ public class CSIEscapeAction implements TerminalAction {
 		case 'm':
 			return processFontEscape(model, midSequence);
 		case 'r':
-			if (midSequence.startsWith("?")) {
-				return restoreDecPrivateModes(midSequence);
-			} else {
-				return setScrollingRegion(model, midSequence);
-			}
+                        return setScrollingRegion(model, midSequence);
 		case 's':
 			return saveDecPrivateModes(midSequence);
 		default:
@@ -136,11 +132,6 @@ public class CSIEscapeAction implements TerminalAction {
 			}
 		}
 		return true;
-	}
-	
-	private boolean restoreDecPrivateModes(String seq) {
-		Log.warn("Restore DEC private mode values not implemented (CSI " + StringUtilities.escapeForJava(seq) + ")");
-		return false;
 	}
 	
 	private boolean saveDecPrivateModes(String seq) {
