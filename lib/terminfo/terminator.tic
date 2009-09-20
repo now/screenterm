@@ -54,7 +54,6 @@ terminator|Terminator no line wrap,
     colors#8,
     pairs#64,
     # Cursor Visibility
-    # TODO: These can be shortened by using a one-digit number instead
     civis=\E[?25l,
     cnorm=\E[?25h,
     # Margin Handling
