@@ -114,11 +114,18 @@ public class TerminalModel {
 		}
 	}
 	
-	public void insertLine(int index) {
+	/** Inserts lines at the current cursor position. */
+	public void insertLines(int count) {
+		for (int i = 0; i < count; i++) {
+			insertLine(cursorPosition.getLineIndex());
+		}
+	}
+	
+	private void insertLine(int index) {
 		insertLine(index, new TextLine());
 	}
 	
-	public void insertLine(int index, TextLine lineToInsert) {
+	private void insertLine(int index, TextLine lineToInsert) {
 		// Use a private copy of the first display line throughout this method to avoid mutation
 		// caused by textLines.add()/textLines.remove().
 		final int firstDisplayLine = getFirstDisplayLine();
@@ -255,13 +262,6 @@ public class TerminalModel {
 	/** Sets whether the cursor should be visible. */
 	public void setCursorVisible(boolean isDisplayed) {
 		view.setCursorVisible(isDisplayed);
-	}
-	
-	/** Inserts lines at the current cursor position. */
-	public void insertLines(int count) {
-		for (int i = 0; i < count; i++) {
-			insertLine(cursorPosition.getLineIndex());
-		}
 	}
 	
 	public void deleteCharacters(int count) {
