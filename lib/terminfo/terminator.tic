@@ -1,7 +1,7 @@
 terminator|Terminator no line wrap, 
     lines#24,
     cols#80,
-    # Cursor movement
+# Cursor movement
     cup=\E[%i%p1%d;%p2%dH,
     home=\E[H,
     cr=^M,
@@ -13,7 +13,7 @@ terminator|Terminator no line wrap,
     cub=\E[%p1%dD,
     cuf1=\E[C,
     cuf=\E[%p1%dC,
-    # Scroll
+# Scroll
     csr=\E[%i%p1%d;%p2%dr,
     ind=^J,
     ri=\EM,
@@ -21,24 +21,24 @@ terminator|Terminator no line wrap,
     il=\E[%p1%dL,
     dl1=\E[M,
     dl=\E[%p1%dM,
-    # Insert/Delete
+# Insert/Delete
     smir=\E[4h,
     rmir=\E[4l,
-    # TODO: How about adding ich1/ich?
+# TODO: How about adding ich1/ich?
     dch1=\E[P,
     dch=\E[%p1%dP,
-    # Erase
+# Erase
     clear=\E[H\E[2J,
     ed=\E[J,
     el=\E[K,
     el1=\E[1K,
-    # Initialize
-    # TODO: Do we need to keep this around, empty?
+# Initialize
+# TODO: Do we need to keep this around, empty?
     is1=,
-    # TODO: \E[H can probably be removed, as cursor will be placed there
-    # anyway by the \E[2J, right?
+# TODO: \E[H can probably be removed, as cursor will be placed there
+# anyway by the \E[2J, right?
     is2=\E[r\E[m\E[2J\E[H\E[4l,
-    # Attributes
+# Attributes
     smul=\E[4m,
     bold=\E[1m,
     rev=\E[7m,
@@ -47,24 +47,24 @@ terminator|Terminator no line wrap,
     rmso=\E[27m,
     sgr0=\E[m,
     msgr,
-    # Color
+# Color
     setaf=\E[%p1%{30}%+%dm,
     setab=\E[%p1%{40}%+%dm,
     op=\E[39;49m,
     colors#8,
     pairs#64,
-    # Cursor Visibility
+# Cursor Visibility
     civis=\E[?25l,
     cnorm=\E[?25h,
-    # Margin Handling
-    # NOTE: Is this actually correct?
+# Margin Handling
+# NOTE: Is this actually correct?
     xenl,
-    # Character sets
+# Character sets
     smacs=^N,
     rmacs=^O,
     acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
     enacs=\E(B\E)0,
-    # Keys
+# Keys
     kf1=\EOP,
     kf2=\EOQ,
     kf3=\EOR,
@@ -88,9 +88,9 @@ terminator|Terminator no line wrap,
     kcud1=\E[B,
     kcuf1=\E[C,
     kcub1=\E[D,
-    # Sets meta (is this true?)
+# Sets meta (is this true?)
     km,
-    # NOTE: Not used by screen
+# NOTE: Not used by screen
     ht=^I,
     rs1=\E[4l\E[m\E[r\E[2J\E[H,
     rs2=\E[r\E[m\E[2J\E[H\E[4l,
@@ -98,7 +98,7 @@ terminator|Terminator no line wrap,
     s1ds=\E(0,
     mir,
     it#8,
-    # NOTE: Not read by screen and possibly incorrect
+# NOTE: Not read by screen and possibly incorrect
     eo,
-    # NOTE: Not read by screen and probably incorrect
+# NOTE: Not read by screen and probably incorrect
     xon,
