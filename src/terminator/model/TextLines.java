@@ -13,7 +13,7 @@ public class TextLines {
         public void setSize(int width, int height) {
                 while (textLines.size() > height)
                         textLines.removeFirst();
-                while (textLines.size() <= height)
+                while (textLines.size() < height)
                         textLines.addLast(new TextLine());
         }
 

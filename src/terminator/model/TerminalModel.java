@@ -123,8 +123,6 @@ public class TerminalModel {
                 if (above > 0)
                         cursorPosition = new Location(cursorPosition.getLineIndex() + above,
                                                       cursorPosition.getCharOffset());
-                Log.warn("first changed line:" + firstLineChanged);
-                Log.warn(cursorPosition.toString());
 	}
 	
 	public int getFirstDisplayLine() {
