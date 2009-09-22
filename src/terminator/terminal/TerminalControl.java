@@ -258,19 +258,19 @@ public class TerminalControl {
 	}
 	
 	/** Must be called in the AWT dispatcher thread. */
-	public void sizeChanged(final Dimension sizeInChars, final Dimension sizeInPixels) throws IOException {
+	public void sizeChanged(final Dimension size) throws IOException {
 		TerminalAction sizeChangeAction = new TerminalAction() {
 			public void perform(TerminalModel model) {
-				model.sizeChanged(sizeInChars);
+				model.sizeChanged(size);
 			}
 			
 			public String toString() {
-				return "TerminalAction[Size change to " + sizeInChars + "]";
+				return "TerminalAction[Size change to " + size + "]";
 			}
 		};
 		model.processActions(new TerminalAction[] { sizeChangeAction });
 		// Notify the pty that the size has changed.
-		ptyProcess.sendResizeNotification(sizeInChars, sizeInPixels);
+		ptyProcess.sendResizeNotification(size);
 	}
 	
 	private synchronized void processBuffer(char[] buffer, int size) throws IOException {

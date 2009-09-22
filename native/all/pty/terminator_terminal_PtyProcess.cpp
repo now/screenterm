@@ -91,19 +91,16 @@ void terminator_terminal_PtyProcess::nativeStartProcess(jstring javaExecutable, 
     slavePtyName = newStringUtf8(ptyGenerator.getSlavePtyName());
 }
 
-void terminator_terminal_PtyProcess::sendResizeNotification(jobject sizeInChars, jobject sizeInPixels) {
-    if (fd.get() == -1) {
-        // We shouldn't read or write from a closed pty, but this will happen if the user resizes a window whose child has died.
-        // That could just be because they want to read the error message, or because they're fiddling with other tabs.
-        return;
-    }
-    
-    struct winsize size;
-    size.ws_col = JniField<jint, false>(m_env, sizeInChars, "width", "I").get();
-    size.ws_row = JniField<jint, false>(m_env, sizeInChars, "height", "I").get();
-    size.ws_xpixel = JniField<jint, false>(m_env, sizeInPixels, "width", "I").get();
-    size.ws_ypixel = JniField<jint, false>(m_env, sizeInPixels, "height", "I").get();
-    if (ioctl(fd.get(), TIOCSWINSZ, &size) < 0) {
-        throw unix_exception("ioctl(" + toString(fd.get()) + ", TIOCSWINSZ, &size) failed");
-    }
+void
+terminator_terminal_PtyProcess::sendResizeNotification(jobject jSize)
+{
+        if (fd.get() == -1)
+                return;
+
+        struct winsize size;
+        size.ws_col = JniField<jint, false>(m_env, jSize, "width", "I").get();
+        size.ws_row = JniField<jint, false>(m_env, jSize, "height", "I").get();
+        if (ioctl(fd.get(), TIOCSWINSZ, &size) < 0)
+                throw unix_exception("I/O control command TIOCSWINSZ failed on " +
+                                     toString(fd.get()));
 }

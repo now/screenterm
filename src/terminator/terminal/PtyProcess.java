@@ -246,5 +246,5 @@ public class PtyProcess {
     
     private native void nativeStartProcess(String executable, String[] argv, String workingDirectory) throws IOException;
     
-    public native void sendResizeNotification(Dimension sizeInChars, Dimension sizeInPixels) throws IOException;
+    public native void sendResizeNotification(Dimension sizeInChars) throws IOException;
 }
