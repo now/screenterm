@@ -26,17 +26,27 @@ public class TerminalModel {
 	
 	public void sizeChanged(Dimension size) {
 		setSize(size);
-		cursorPosition = getLocationWithinBounds(cursorPosition);
+                clampCursor();
 	}
 	
-	private Location getLocationWithinBounds(Location location) {
-		if (location == null) {
-			return location;
-		}
-		int lineIndex = Math.min(location.getLineIndex(), size.height - 1);
-		int charOffset = Math.min(location.getCharOffset(), size.width - 1);
-		return new Location(lineIndex, charOffset);
+	private void clampCursor() {
+		if (cursorPosition == null)
+                        return;
+                cursorPosition = new Location(clampVertically(cursorPosition.getLineIndex()),
+                                              clampHorizontally(cursorPosition.getCharOffset());
 	}
+	
+        private int clampVertically(int value) {
+                return clamp(value, 0, size.height - 1);
+        }
+
+        private int clampHorizontally(int value) {
+                return clamp(value, 0, size.width - 1);
+        }
+
+        private int clamp(int value, int min, int max) {
+                Math.min(Math.max(min, value), max);
+        }
 	
 	private int getNextTabPosition(int charOffset) {
 		// No special tab to our right; return the default 8-separated tab stop.
@@ -246,25 +256,13 @@ public class TerminalModel {
 	 * If either x or y is -1, that coordinate is left unchanged.
 	 */
 	public void setCursorPosition(int x, int y) {
-		// Although the cursor positions are supposed to be measured
-		// from (1,1), there's nothing to stop a badly-behaved program
-		// from sending (0,0). ASUS routers do this (they're rubbish).
-		
 		int charOffset = cursorPosition.getCharOffset();
-		if (x != -1) {
-			// Translate from 1-based coordinates to 0-based.
-			charOffset = Math.max(0, x - 1);
-			charOffset = Math.min(charOffset, size.width - 1);
-		}
+		if (x != -1)
+                        charOffset = clampHorizontally(x - 1);
 		
 		int lineIndex = cursorPosition.getLineIndex();
-		if (y != -1) {
-			// Translate from 1-based coordinates to 0-based.
-			int lineOffsetFromStartOfDisplay = Math.max(0, y - 1);
-			lineOffsetFromStartOfDisplay = Math.min(lineOffsetFromStartOfDisplay, size.height - 1);
-			// Although the escape sequence was in terms of a line on the display, we need to take the lines above the display into account.
-			lineIndex = lineOffsetFromStartOfDisplay;
-		}
+		if (y != -1)
+                        int lineIndex = clampVertically(y - 1);
 		
 		cursorPosition = new Location(lineIndex, charOffset);
 	}
@@ -285,13 +283,11 @@ public class TerminalModel {
 	}
 	
 	/** Moves the cursor vertically by the number of characters in yDiff, negative for up, positive for down. */
-	public void moveCursorVertically(int yDiff) {
-		int y = cursorPosition.getLineIndex() + yDiff;
-		y = Math.max(0, y);
-		y = Math.min(y, size.height - 1);
+	public void moveCursorVertically(int delta) {
+                int y = clampVertically(cursorPosition.getLineIndex() + delta);
 		cursorPosition = new Location(y, cursorPosition.getCharOffset());
 	}
-	
+
 	/** Sets the first and last lines to scroll.  If both are -1, make the entire screen scroll. */
 	public void setScrollingRegion(int firstLine, int lastLine) {
 		firstScrollLineIndex = ((firstLine == -1) ? 1 : firstLine) - 1;
