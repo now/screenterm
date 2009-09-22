@@ -35,7 +35,7 @@ public class TerminalView extends JComponent implements FocusListener {
 		this.model = new TerminalModel(this, columns, rows);
 
 		ComponentUtilities.disableFocusTraversal(this);
-		setBorder(BorderFactory.createEmptyBorder(1, 4, 4, 4));
+		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setOpaque(true);
 		optionsDidChange();
 		addFocusListener(this);
