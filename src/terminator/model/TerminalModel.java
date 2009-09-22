@@ -7,7 +7,7 @@ import terminator.view.*;
 
 public class TerminalModel {
 	private TerminalView view;
-        private Dimension size;
+        private Dimension size = new Dimension(0, 0);
         private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
@@ -33,7 +33,7 @@ public class TerminalModel {
 		if (cursorPosition == null)
                         return;
                 cursorPosition = new Location(clampVertically(cursorPosition.getLineIndex()),
-                                              clampHorizontally(cursorPosition.getCharOffset());
+                                              clampHorizontally(cursorPosition.getCharOffset()));
 	}
 	
         private int clampVertically(int value) {
@@ -45,7 +45,7 @@ public class TerminalModel {
         }
 
         private int clamp(int value, int min, int max) {
-                Math.min(Math.max(min, value), max);
+                return Math.min(Math.max(min, value), max);
         }
 	
 	private int getNextTabPosition(int charOffset) {
@@ -262,24 +262,15 @@ public class TerminalModel {
 		
 		int lineIndex = cursorPosition.getLineIndex();
 		if (y != -1)
-                        int lineIndex = clampVertically(y - 1);
+                        lineIndex = clampVertically(y - 1);
 		
 		cursorPosition = new Location(lineIndex, charOffset);
 	}
 	
 	/** Moves the cursor horizontally by the number of characters in xDiff, negative for left, positive for right. */
-	public void moveCursorHorizontally(int xDiff) {
-		int charOffset = cursorPosition.getCharOffset() + xDiff;
-		int lineIndex = cursorPosition.getLineIndex();
-		// Test cases:
-		// /bin/echo -e 'hello\n\bhello'
-		// /bin/echo -e 'hello\n\033[1Dhello'
-		if (charOffset < 0) {
-			charOffset = 0;
-		}
-		// Constraining charOffset here stops line editing working properly on Titan serial consoles.
-		//charOffset = Math.min(charOffset, width - 1);
-		cursorPosition = new Location(lineIndex, charOffset);
+	public void moveCursorHorizontally(int delta) {
+                int x = clampHorizontally(cursorPosition.getCharOffset() + delta);
+                cursorPosition = new Location(cursorPosition.getLineIndex(), x);
 	}
 	
 	/** Moves the cursor vertically by the number of characters in yDiff, negative for up, positive for down. */
