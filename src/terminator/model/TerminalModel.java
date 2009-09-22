@@ -64,22 +64,16 @@ public class TerminalModel {
 	
 	public void processActions(TerminalAction[] actions) {
 		firstLineChanged = Integer.MAX_VALUE;
-		boolean wereAtBottom = view.isAtBottom();
-		boolean needsScroll = false;
 		Dimension initialSize = getCurrentSizeInChars();
 		for (TerminalAction action : actions) {
 			action.perform(this);
 		}
 		if (firstLineChanged != Integer.MAX_VALUE) {
-			needsScroll = true;
 			view.linesChangedFrom(firstLineChanged);
 		}
 		Dimension finalSize = getCurrentSizeInChars();
 		if (initialSize.equals(finalSize) == false) {
 			view.sizeChanged(initialSize, finalSize);
-		}
-		if (needsScroll) {
-			view.scrollOnTtyOutput(wereAtBottom);
 		}
 		view.setCursorPosition(cursorPosition);
 	}

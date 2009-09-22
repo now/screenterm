@@ -223,7 +223,6 @@ public class JTerminalPane extends JPanel {
 				}
 				control.sendUtf8String(sequence);
 				view.userIsTyping();
-				scroll();
 				event.consume();
 			}
 		}
@@ -403,18 +402,8 @@ public class JTerminalPane extends JPanel {
 			if (utf8 != null) {
 				control.sendUtf8String(utf8);
 				view.userIsTyping();
-				scroll();
 				event.consume();
 			}
-		}
-		
-		/**
-		 * Scrolls the display to the bottom if we're configured to do so.
-		 * This should be invoked after any action is performed as a
-		 * result of a key press/release/type.
-		 */
-		public void scroll() {
-                        view.scrollToBottomButNotHorizontally();
 		}
 	}
 	

@@ -144,35 +144,6 @@ public class TerminalView extends JComponent implements FocusListener {
 		sizeChanged();
 	}
 	
-	public void scrollToBottomButNotHorizontally() {
-		JScrollPane pane = (JScrollPane) SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
-		
-		BoundedRangeModel verticalModel = pane.getVerticalScrollBar().getModel();
-		verticalModel.setValue(verticalModel.getMaximum() - verticalModel.getExtent());
-	}
-
-	/**
-	 * Scrolls to the bottom of the output if doing so fits the user's
-	 * configuration, or is over-ridden by the fact that we're trying to
-	 * stay where we were but that *was* the bottom.
-	 */
-	public void scrollOnTtyOutput(boolean wereAtBottom) {
-		if (wereAtBottom) {
-			scrollToBottomButNotHorizontally();
-		}
-	}
-	
-	/**
-	 * Tests whether we're currently at the bottom of the output. Code
-	 * that's causing output will need to keep the result of invoking this
-	 * method so it can invoke scrollOnTtyOutput correctly afterwards.
-	 */
-	public boolean isAtBottom() {
-		Rectangle visibleRectangle = getVisibleRect();
-		boolean atBottom = visibleRectangle.y + visibleRectangle.height >= getHeight();
-		return atBottom;
-	}
-	
 	public Location getCursorPosition() {
 		return cursorPosition;
 	}
