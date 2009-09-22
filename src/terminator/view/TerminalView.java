@@ -32,7 +32,7 @@ public class TerminalView extends JComponent implements FocusListener {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 int columns = (int)(screenSize.getWidth() * 0.8 / charBounds.getWidth());
                 int rows = (int)(screenSize.getHeight() * 0.9 / charBounds.getHeight());
-		this.model = new TerminalModel(this, columns, rows);
+		this.model = new TerminalModel(this, new Dimension(columns, rows));
 
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));

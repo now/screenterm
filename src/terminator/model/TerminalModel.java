@@ -1,8 +1,6 @@
 package terminator.model;
 
 import java.awt.*;
-import java.util.*;
-import javax.swing.*;
 import e.util.*;
 import terminator.terminal.*;
 import terminator.view.*;
@@ -11,7 +9,7 @@ public class TerminalModel {
 	private TerminalView view;
 	private int width;
 	private int height;
-        private TextLines textLines = new TextLines(0, 0);
+        private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
@@ -21,14 +19,14 @@ public class TerminalModel {
 	// Used for reducing the number of lines changed events sent up to the view.
 	private int firstLineChanged;
 	
-	public TerminalModel(TerminalView view, int width, int height) {
+	public TerminalModel(TerminalView view, Dimension size) {
 		this.view = view;
-		setSize(width, height);
+		setSize(size);
 		cursorPosition = view.getCursorPosition();
 	}
 	
-	public void sizeChanged(Dimension sizeInChars) {
-		setSize(sizeInChars.width, sizeInChars.height);
+	public void sizeChanged(Dimension size) {
+		setSize(size);
 		cursorPosition = getLocationWithinBounds(cursorPosition);
 	}
 	
@@ -123,12 +121,12 @@ public class TerminalModel {
                 return textLines.get(cursorPosition.getLineIndex());
         }
 	
-	public void setSize(int width, int height) {
-		this.width = width;
-		this.height = height;
-                textLines.setSize(width, height);
+	public void setSize(Dimension size) {
+		this.width = size.width;
+		this.height = size.height;
+                textLines.setSize(size);
 		firstScrollLineIndex = 0;
-		lastScrollLineIndex = height - 1;
+		lastScrollLineIndex = size.height - 1;
 	}
 	
 	public void setInsertMode(boolean insertMode) {

@@ -1,19 +1,20 @@
 package terminator.model;
 
+import java.awt.*;
 import java.util.*;
 import e.util.*;
 
 public class TextLines {
         private LinkedList<TextLine> textLines = new LinkedList<TextLine>();
 
-        public TextLines(int width, int height) {
-                setSize(width, height);
+        public TextLines(Dimension size) {
+                setSize(size);
         }
 
-        public void setSize(int width, int height) {
-                while (textLines.size() > height)
+        public void setSize(Dimension size) {
+                while (textLines.size() > size.height)
                         textLines.removeFirst();
-                while (textLines.size() < height)
+                while (textLines.size() < size.height)
                         textLines.addLast(new TextLine());
         }
 
