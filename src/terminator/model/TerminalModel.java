@@ -118,6 +118,10 @@ public class TerminalModel {
 	public TextLine getTextLine(int index) {
                 return textLines.get(index);
 	}
+
+        private TextLine getCursorTextLine() {
+                return textLines.get(cursorPosition.getLineIndex());
+        }
 	
 	public void setSize(int width, int height) {
 		this.width = width;
@@ -138,7 +142,7 @@ public class TerminalModel {
 	 */
 	public void processLine(String untranslatedLine) {
 		String line = view.getTerminalControl().translate(untranslatedLine);
-		TextLine textLine = getTextLine(cursorPosition.getLineIndex());
+                TextLine textLine = getCursorTextLine();
 		if (insertMode) {
 			//Log.warn("Inserting text \"" + line + "\" at " + cursorPosition + ".");
 			textLine.insertTextAt(cursorPosition.getCharOffset(), line, currentStyle);
@@ -150,7 +154,6 @@ public class TerminalModel {
 	}
 	
 	private void textAdded(int length) {
-		TextLine textLine = getTextLine(cursorPosition.getLineIndex());
 		linesChangedFrom(cursorPosition.getLineIndex());
 		moveCursorHorizontally(length);
 	}
@@ -179,7 +182,7 @@ public class TerminalModel {
 	
 	private void insertTab() {
 		int nextTabLocation = getNextTabPosition(cursorPosition.getCharOffset());
-		TextLine textLine = getTextLine(cursorPosition.getLineIndex());
+		TextLine textLine = getCursorTextLine();
 		int startOffset = cursorPosition.getCharOffset();
 		int tabLength = nextTabLocation - startOffset;
 		// We want to insert our special tabbing characters (see getTabString) when inserting a tab or outputting one at the end of a line, so that text copied from the output of (say) cat(1) will be pasted with tabs preserved.
@@ -198,7 +201,7 @@ public class TerminalModel {
 	}
 	
 	public void deleteCharacters(int count) {
-		TextLine line = getTextLine(cursorPosition.getLineIndex());
+		TextLine line = getCursorTextLine();
 		int start = cursorPosition.getCharOffset();
 		int end = start + count;
 		line.killText(start, end);
@@ -206,7 +209,7 @@ public class TerminalModel {
 	}
 	
 	public void killHorizontally(boolean fromStart, boolean toEnd) {
-		TextLine line = getTextLine(cursorPosition.getLineIndex());
+		TextLine line = getCursorTextLine();
 		int oldLineLength = line.length();
 		int start = fromStart ? 0 : cursorPosition.getCharOffset();
 		int end = toEnd ? oldLineLength : cursorPosition.getCharOffset();
@@ -228,7 +231,7 @@ public class TerminalModel {
 		for (int i = startClearing; i < endClearing; i++) {
 			getTextLine(i).clear();
 		}
-		TextLine line = getTextLine(cursorPosition.getLineIndex());
+		TextLine line = getCursorTextLine();
 		int oldLineLength = line.length();
 		if (fromTop) {
 			// The current position is always erased, hence the + 1.
