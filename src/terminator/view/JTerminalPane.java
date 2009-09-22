@@ -27,7 +27,6 @@ public class JTerminalPane extends JPanel {
 	private String name;
 	private boolean wasCreatedAsNewShell;
 	private Dimension currentSizeInChars;
-	private MenuItemProvider menuItemProvider;
 	
 	/**
 	 * Creates a new terminal with the given name, running the given command.
