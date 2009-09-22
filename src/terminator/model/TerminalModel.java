@@ -11,12 +11,7 @@ public class TerminalModel {
 	private TerminalView view;
 	private int width;
 	private int height;
-        /* TODO: Separate out TextLines object and delegate to it.  It should
-         * be a fixed-size ordered set of lines.  I think an ArrayList of lines
-         * may suffice and then keep an index as to which of the lines is the
-         * first. This should allow for minimal modification to the ArrayList
-         * and also allows for reuse of TextLines. */
-	private ArrayList<TextLine> textLines = new ArrayList<TextLine>();
+        private TextLines textLines = new TextLines(0, 0);
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
@@ -50,7 +45,7 @@ public class TerminalModel {
 		if (location == null) {
 			return location;
 		}
-		int lineIndex = Math.min(location.getLineIndex(), textLines.size() - 1);
+		int lineIndex = Math.min(location.getLineIndex(), height - 1);
 		int charOffset = Math.min(location.getCharOffset(), width - 1);
 		return new Location(lineIndex, charOffset);
 	}
@@ -61,7 +56,7 @@ public class TerminalModel {
 	}
 	
 	public int getLineCount() {
-		return textLines.size();
+                return height;
 	}
 	
 	public void linesChangedFrom(int firstLineChanged) {
@@ -107,54 +102,33 @@ public class TerminalModel {
 	}
 	
 	public void moveToLine(int index) {
-		if (index > getFirstDisplayLine() + lastScrollLineIndex) {
-			insertLine(index);
-		} else {
-			cursorPosition = new Location(index, cursorPosition.getCharOffset());
-		}
+                // NOTE: We only really allow index to be lastScrollLineIndex + 1
+                if (index > lastScrollLineIndex)
+                        insertLines(index, 1);
+                else
+                        cursorPosition = new Location(index, cursorPosition.getCharOffset());
 	}
 	
 	/** Inserts lines at the current cursor position. */
 	public void insertLines(int count) {
-		for (int i = 0; i < count; i++) {
-			insertLine(cursorPosition.getLineIndex());
-		}
-	}
-	
-	private void insertLine(int index) {
-		insertLine(index, new TextLine());
-	}
-	
-	private void insertLine(int index, TextLine lineToInsert) {
-		// Use a private copy of the first display line throughout this method to avoid mutation
-		// caused by textLines.add()/textLines.remove().
-		final int firstDisplayLine = getFirstDisplayLine();
-		if (index > firstDisplayLine + lastScrollLineIndex) {
-			for (int i = firstDisplayLine + lastScrollLineIndex + 1; i <= index; i++) {
-				textLines.add(i, lineToInsert);
-			}
-			if (true || firstScrollLineIndex > 0) {
-				// If the program has defined scroll bounds, newline-adding actually chucks away
-				// the first scroll line, rather than just scrolling everything upwards like we normally
-				// do.  This makes vim work better.  Also, if we're using the alternate buffer, we
-				// don't add anything going off the top into the history.
-				int removeIndex = firstDisplayLine + firstScrollLineIndex;
-				textLines.remove(removeIndex);
-				linesChangedFrom(removeIndex);
-				view.repaint();
-			} else {
-				cursorPosition = new Location(index, cursorPosition.getCharOffset());
-			}
-		} else {
-			textLines.remove(firstDisplayLine + lastScrollLineIndex);
-			textLines.add(index, lineToInsert);
-			linesChangedFrom(index);
-			cursorPosition = new Location(index, cursorPosition.getCharOffset());
-		}
+                insertLines(cursorPosition.getLineIndex(), count);
+        }
+
+        private void insertLines(int at, int count) {
+                int above = textLines.insertLines(at,
+                                                  count,
+                                                  firstScrollLineIndex,
+                                                  lastScrollLineIndex);
+                linesChangedFrom(above == count ? cursorPosition.getLineIndex() : firstScrollLineIndex);
+                if (above > 0)
+                        cursorPosition = new Location(cursorPosition.getLineIndex() + above,
+                                                      cursorPosition.getCharOffset());
+                Log.warn("first changed line:" + firstLineChanged);
+                Log.warn(cursorPosition.toString());
 	}
 	
 	public int getFirstDisplayLine() {
-		return textLines.size() - height;
+                return 0;
 	}
 	
 	public int getWidth() {
@@ -162,35 +136,15 @@ public class TerminalModel {
 	}
 	
 	public TextLine getTextLine(int index) {
-		if (index >= textLines.size()) {
-			Log.warn("TextLine requested for index " + index + ", size of buffer is " + textLines.size() + ".", new Exception("stack trace"));
-			return new TextLine();
-		}
-		return textLines.get(index);
+                return textLines.get(index);
 	}
 	
 	public void setSize(int width, int height) {
 		this.width = width;
-		if (this.height > height && textLines.size() >= this.height) {
-			for (int i = 0; i < (this.height - height); i++) {
-				int lineToRemove = textLines.size() - 1;
-				if (getTextLine(lineToRemove).length() == 0 && cursorPosition.getLineIndex() != lineToRemove) {
-					textLines.remove(lineToRemove);
-				}
-			}
-		} else if (this.height < height) {
-			for (int i = 0; i < (height - this.height); i++) {
-				if (getFirstDisplayLine() <= 0) {
-					textLines.add(new TextLine());
-				}
-			}
-		}
 		this.height = height;
+                textLines.setSize(width, height);
 		firstScrollLineIndex = 0;
 		lastScrollLineIndex = height - 1;
-		while (getFirstDisplayLine() < 0) {
-			textLines.add(new TextLine());
-		}
 	}
 	
 	public void setInsertMode(boolean insertMode) {
@@ -289,7 +243,7 @@ public class TerminalModel {
 		// echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[1J'
 		// Should clear the screen:
 		// echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[2J'
-		int start = fromTop ? getFirstDisplayLine() : cursorPosition.getLineIndex();
+		int start = fromTop ? 0 : cursorPosition.getLineIndex();
 		int startClearing = fromTop ? start : start + 1;
 		int endClearing = toBottom ? getLineCount() : cursorPosition.getLineIndex();
 		for (int i = startClearing; i < endClearing; i++) {
@@ -330,7 +284,7 @@ public class TerminalModel {
 			int lineOffsetFromStartOfDisplay = Math.max(0, y - 1);
 			lineOffsetFromStartOfDisplay = Math.min(lineOffsetFromStartOfDisplay, height - 1);
 			// Although the escape sequence was in terms of a line on the display, we need to take the lines above the display into account.
-			lineIndex = getFirstDisplayLine() + lineOffsetFromStartOfDisplay;
+			lineIndex = lineOffsetFromStartOfDisplay;
 		}
 		
 		cursorPosition = new Location(lineIndex, charOffset);
@@ -354,8 +308,8 @@ public class TerminalModel {
 	/** Moves the cursor vertically by the number of characters in yDiff, negative for up, positive for down. */
 	public void moveCursorVertically(int yDiff) {
 		int y = cursorPosition.getLineIndex() + yDiff;
-		y = Math.max(getFirstDisplayLine(), y);
-		y = Math.min(y, textLines.size() - 1);
+		y = Math.max(0, y);
+		y = Math.min(y, height - 1);
 		cursorPosition = new Location(y, cursorPosition.getCharOffset());
 	}
 	
@@ -367,21 +321,19 @@ public class TerminalModel {
 	
 	/** Scrolls the display up by one line. */
 	public void scrollDisplayUp() {
-		int addIndex = getFirstDisplayLine() + firstScrollLineIndex;
-		int removeIndex = getFirstDisplayLine() + lastScrollLineIndex + 1;
-		textLines.add(addIndex, new TextLine());
-		textLines.remove(removeIndex);
-		linesChangedFrom(addIndex);
-		view.repaint();
+                /* TODO: Can this be implemented with insertLines? */
+                modifyOneLine(firstScrollLineIndex, firstScrollLineIndex, lastScrollLineIndex + 1);
 	}
+
+        private void modifyOneLine(int index, int top, int bottom) {
+                textLines.insertLines(index, 1, 0, bottom);
+                linesChangedFrom(top);
+                view.repaint();
+        }
 	
 	/** Delete one line, moving everything below up and inserting a blank line at the bottom. */
 	public void deleteLine() {
-		int removeIndex = cursorPosition.getLineIndex();
-		int addIndex = getFirstDisplayLine() + lastScrollLineIndex + 1;
-		textLines.add(addIndex, new TextLine());
-		textLines.remove(removeIndex);
-		linesChangedFrom(removeIndex);
-		view.repaint();
+                /* TODO: Can this be implemented with insertLines? */
+                modifyOneLine(lastScrollLineIndex + 1, cursorPosition.getLineIndex(), cursorPosition.getLineIndex());
 	}
 }
