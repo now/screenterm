@@ -7,8 +7,7 @@ import terminator.view.*;
 
 public class TerminalModel {
 	private TerminalView view;
-	private int width;
-	private int height;
+        private Dimension size;
         private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
@@ -34,8 +33,8 @@ public class TerminalModel {
 		if (location == null) {
 			return location;
 		}
-		int lineIndex = Math.min(location.getLineIndex(), height - 1);
-		int charOffset = Math.min(location.getCharOffset(), width - 1);
+		int lineIndex = Math.min(location.getLineIndex(), size.height - 1);
+		int charOffset = Math.min(location.getCharOffset(), size.width - 1);
 		return new Location(lineIndex, charOffset);
 	}
 	
@@ -44,8 +43,9 @@ public class TerminalModel {
 		return (charOffset + 8) & ~7;
 	}
 	
+        // TODO: Should be delegated to textLines.
 	public int getLineCount() {
-                return height;
+                return size.height;
 	}
 	
 	public void linesChangedFrom(int firstLineChanged) {
@@ -53,7 +53,7 @@ public class TerminalModel {
 	}
 	
 	public Dimension getCurrentSizeInChars() {
-		return new Dimension(width, height);
+                return new Dimension(size);
 	}
 	
 	public Location getCursorPosition() {
@@ -122,8 +122,7 @@ public class TerminalModel {
         }
 	
 	public void setSize(Dimension size) {
-		this.width = size.width;
-		this.height = size.height;
+                this.size.setSize(size);
                 textLines.setSize(size);
 		firstScrollLineIndex = 0;
 		lastScrollLineIndex = size.height - 1;
@@ -255,14 +254,14 @@ public class TerminalModel {
 		if (x != -1) {
 			// Translate from 1-based coordinates to 0-based.
 			charOffset = Math.max(0, x - 1);
-			charOffset = Math.min(charOffset, width - 1);
+			charOffset = Math.min(charOffset, size.width - 1);
 		}
 		
 		int lineIndex = cursorPosition.getLineIndex();
 		if (y != -1) {
 			// Translate from 1-based coordinates to 0-based.
 			int lineOffsetFromStartOfDisplay = Math.max(0, y - 1);
-			lineOffsetFromStartOfDisplay = Math.min(lineOffsetFromStartOfDisplay, height - 1);
+			lineOffsetFromStartOfDisplay = Math.min(lineOffsetFromStartOfDisplay, size.height - 1);
 			// Although the escape sequence was in terms of a line on the display, we need to take the lines above the display into account.
 			lineIndex = lineOffsetFromStartOfDisplay;
 		}
@@ -289,14 +288,14 @@ public class TerminalModel {
 	public void moveCursorVertically(int yDiff) {
 		int y = cursorPosition.getLineIndex() + yDiff;
 		y = Math.max(0, y);
-		y = Math.min(y, height - 1);
+		y = Math.min(y, size.height - 1);
 		cursorPosition = new Location(y, cursorPosition.getCharOffset());
 	}
 	
 	/** Sets the first and last lines to scroll.  If both are -1, make the entire screen scroll. */
 	public void setScrollingRegion(int firstLine, int lastLine) {
 		firstScrollLineIndex = ((firstLine == -1) ? 1 : firstLine) - 1;
-		lastScrollLineIndex = ((lastLine == -1) ? height : lastLine) - 1;
+		lastScrollLineIndex = ((lastLine == -1) ? size.height : lastLine) - 1;
 	}
 	
 	/** Scrolls the display up by one line. */
