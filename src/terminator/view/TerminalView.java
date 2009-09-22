@@ -76,12 +76,6 @@ public class TerminalView extends JComponent implements FocusListener {
 		this.terminalControl = terminalControl;
 	}
 	
-	/** Returns our visible size. */
-	public Dimension getVisibleSize() {
-		JScrollPane scrollPane = (JScrollPane) SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
-		return scrollPane.getViewport().getExtentSize();
-	}
-	
 	/**
 	 * Returns the dimensions of an average character. Note that even though
 	 * we use a fixed-width font, some glyphs for non-ASCII characters can
@@ -113,8 +107,8 @@ public class TerminalView extends JComponent implements FocusListener {
 	 * columns and 'height' the number of rows. (In case you were concerned
 	 * about the fact that terminals tend to refer to y,x coordinates.)
 	 */
-	public Dimension getVisibleSizeInCharacters() {
-		Dimension result = getVisibleSize();
+	public Dimension getVisibleSizeInCharacters(Dimension paneSize) {
+		Dimension result = paneSize;
 		Insets insets = getInsets();
 		result.width -= (insets.left + insets.right);
 		result.height -= (insets.top + insets.bottom);
