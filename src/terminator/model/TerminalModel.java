@@ -125,14 +125,6 @@ public class TerminalModel {
                                                       cursorPosition.getCharOffset());
 	}
 	
-	public int getFirstDisplayLine() {
-                return 0;
-	}
-	
-	public int getWidth() {
-		return width;
-	}
-	
 	public TextLine getTextLine(int index) {
                 return textLines.get(index);
 	}
