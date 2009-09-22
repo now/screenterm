@@ -240,9 +240,10 @@ public class TerminalView extends JComponent implements FocusListener {
 	public Dimension getOptimalViewSize() {
 		Dimension character = getCharUnitSize();
 		Insets insets = getInsets();
+                Dimension size = model.getCurrentSizeInChars();
 		// FIXME: really, we need to track the maximum pixel width.
-		final int width = insets.left + model.getMaxLineWidth() * character.width + insets.right;
-		final int height = insets.top + model.getLineCount() * character.height + insets.bottom;
+		final int width = insets.left + size.width * character.width + insets.right;
+		final int height = insets.top + size.height * character.height + insets.bottom;
 		return new Dimension(width, height);
 	}
 	

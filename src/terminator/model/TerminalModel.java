@@ -17,7 +17,6 @@ public class TerminalModel {
 	private int lastScrollLineIndex;
 	private Location cursorPosition;
 	private boolean insertMode = false;
-	private int maxLineWidth = width;
 	
 	// Used for reducing the number of lines changed events sent up to the view.
 	private int firstLineChanged;
@@ -26,14 +25,6 @@ public class TerminalModel {
 		this.view = view;
 		setSize(width, height);
 		cursorPosition = view.getCursorPosition();
-	}
-	
-	public void updateMaxLineWidth(int aLineWidth) {
-		maxLineWidth = Math.max(getMaxLineWidth(), aLineWidth);
-	}
-	
-	public int getMaxLineWidth() {
-		return Math.max(maxLineWidth, width);
 	}
 	
 	public void sizeChanged(Dimension sizeInChars) {
@@ -64,7 +55,7 @@ public class TerminalModel {
 	}
 	
 	public Dimension getCurrentSizeInChars() {
-		return new Dimension(getMaxLineWidth(), getLineCount());
+		return new Dimension(width, height);
 	}
 	
 	public Location getCursorPosition() {
@@ -161,7 +152,6 @@ public class TerminalModel {
 	
 	private void textAdded(int length) {
 		TextLine textLine = getTextLine(cursorPosition.getLineIndex());
-		updateMaxLineWidth(textLine.length());
 		linesChangedFrom(cursorPosition.getLineIndex());
 		moveCursorHorizontally(length);
 	}
