@@ -105,6 +105,11 @@ public class TerminalModel {
                                                   firstScrollLineIndex,
                                                   lastScrollLineIndex);
                 linesChangedFrom(above == count ? cursorPosition.getLineIndex() : firstScrollLineIndex);
+                /* NOTE: This doesn’t seem to be needed, but is what Terminator
+                 * does.
+                if (above != count)
+                        view.repaint();
+                        */
                 if (above > 0)
                         cursorPosition = new Location(cursorPosition.getLineIndex() + above,
                                                       cursorPosition.getCharOffset());
