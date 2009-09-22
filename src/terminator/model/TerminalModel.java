@@ -72,17 +72,10 @@ public class TerminalModel {
 	
 	public void processActions(TerminalAction[] actions) {
 		firstLineChanged = Integer.MAX_VALUE;
-		Dimension initialSize = getCurrentSizeInChars();
-		for (TerminalAction action : actions) {
+		for (TerminalAction action : actions)
 			action.perform(this);
-		}
-		if (firstLineChanged != Integer.MAX_VALUE) {
+		if (firstLineChanged != Integer.MAX_VALUE)
 			view.linesChangedFrom(firstLineChanged);
-		}
-		Dimension finalSize = getCurrentSizeInChars();
-		if (initialSize.equals(finalSize) == false) {
-			view.sizeChanged(initialSize, finalSize);
-		}
 		view.setCursorPosition(cursorPosition);
 	}
 	
