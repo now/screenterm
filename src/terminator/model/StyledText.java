@@ -15,7 +15,7 @@ public class StyledText {
 	private static final int FOREGROUND_MASK = 7;
 	private static final int BACKGROUND_MASK = 7 << BACKGROUND_SHIFT;
 	
-	private static final int IS_BOLD = 1 << 6;
+        /* 1 << 6 used to be bold, now it’s free. */
 	private static final int IS_UNDERLINED = 1 << 7;
 	private static final int IS_REVERSE_VIDEO = 1 << 8;
 	
@@ -30,7 +30,7 @@ public class StyledText {
 	private boolean continueToEnd = false;
 	
 	public StyledText(String text, short style) {
-		this(text, new Style(getForegroundColor(style), getBackgroundColor(style), Boolean.valueOf(isBold(style)), Boolean.valueOf(isUnderlined(style)), isReverseVideo(style)));
+		this(text, new Style(getForegroundColor(style), getBackgroundColor(style), Boolean.valueOf(isUnderlined(style)), isReverseVideo(style)));
 	}
 	
 	public StyledText(String text, Style style) {
@@ -59,29 +59,20 @@ public class StyledText {
 	}
 	
 	private static Color getForegroundColor(int style) {
-		return getColor(style, getForeground(style), isBold(style), true);
+		return getColor(style, getForeground(style), true);
 	}
 	
 	private static Color getBackgroundColor(int style) {
-		return getColor(style, getBackground(style), false, false);  // Background is never considered to be bold.
+		return getColor(style, getBackground(style), false);
 	}
 	
-	private static Color getColor(int style, int colorIndex, boolean isBold, boolean isForeground) {
+	private static Color getColor(int style, int colorIndex, boolean isForeground) {
 		boolean hasSpecifiedColor = (isForeground ? hasForeground(style) : hasBackground(style));
 		Color result = null;
-		if (isBold && isForeground) {
-			if (hasSpecifiedColor == false && isForeground) {
-				result = Terminator.getSharedInstance().getBoldColor();
-			} else if (colorIndex < 8) {
-				result = Palettes.getColor(colorIndex, true);
-			}
-		}
-		if (result == null && hasSpecifiedColor == false) {
+		if (hasSpecifiedColor == false)
 			result = isForeground ? FOREGROUND_COLOR : BACKGROUND_COLOR;
-		}
-		if (result == null) {
+		if (result == null)
 			result = Palettes.getColor(colorIndex, false);
-		}
 		return result;
 	}
 	
@@ -101,10 +92,6 @@ public class StyledText {
 		return hasBackground(style) ? ((style & BACKGROUND_MASK) >> BACKGROUND_SHIFT) : 0;
 	}
 	
-	public static boolean isBold(int style) {
-		return (style & IS_BOLD) != 0;
-	}
-	
 	public static boolean isUnderlined(int style) {
 		return (style & IS_UNDERLINED) != 0;
 	}
@@ -114,16 +101,16 @@ public class StyledText {
 	}
 	
 	public static short getDefaultStyle() {
-		return getStyle(0, false, 0, false, false, false, false);
+		return getStyle(0, false, 0, false, false, false);
 	}
 	
-	public static short getStyle(int foreground, boolean hasForeground, int background, boolean hasBackground, boolean isBold, boolean isUnderlined, boolean isReverseVideo) {
+	public static short getStyle(int foreground, boolean hasForeground, int background, boolean hasBackground, boolean isUnderlined, boolean isReverseVideo) {
 		// It's important that if hasForeground or hasBackground is false, we leave the corresponding color field 0.
 		// This ensures that no matter how we arrive at the "default" style, it has the same value.
-		return (short) ((isBold ? IS_BOLD : 0) | (isUnderlined ? IS_UNDERLINED : 0) | (hasForeground ? (HAS_FOREGROUND | (foreground & FOREGROUND_MASK)) : 0) | (hasBackground ? (HAS_BACKGROUND | ((background << BACKGROUND_SHIFT) & BACKGROUND_MASK)) : 0) | (isReverseVideo ? IS_REVERSE_VIDEO : 0));
+		return (short) ((isUnderlined ? IS_UNDERLINED : 0) | (hasForeground ? (HAS_FOREGROUND | (foreground & FOREGROUND_MASK)) : 0) | (hasBackground ? (HAS_BACKGROUND | ((background << BACKGROUND_SHIFT) & BACKGROUND_MASK)) : 0) | (isReverseVideo ? IS_REVERSE_VIDEO : 0));
 	}
 	
 	public String getDescription() {
-		return "StyledText[foreground=" + style.getForeground() + ",background=" + style.getBackground() + ",bold=" + style.isBold() + ",underlined=" + style.isUnderlined() + ",reverse=" + style.isReverseVideo() + "]";
+		return "StyledText[foreground=" + style.getForeground() + ",background=" + style.getBackground() + ",bold=" + ",underlined=" + style.isUnderlined() + ",reverse=" + style.isReverseVideo() + "]";
 	}
 }

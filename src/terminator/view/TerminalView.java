@@ -331,19 +331,6 @@ public class TerminalView extends JComponent implements FocusListener {
 			}
 			g.setColor(foreground);
 			g.drawString(text.getText(), x, y);
-			if (style.isBold()) {
-				// A font doesn't necessarily have a bold.
-				// Mac OS X's "Monaco" font is an example.
-				// The trouble is, you can't tell from the Font you get back from deriveFont.
-				// isBold will always return true, and getting the WEIGHT attribute will give you WEIGHT_BOLD.
-				// So we don't know how to test for a bold font.
-				
-				// Worse, if we actually get a bold font, it doesn't necessarily have metrics compatible with the plain variant.
-				// ProggySquare (http://www.proggyfonts.com/) is an example: the bold variant is significantly wider.
-				
-				// The old-fashioned "overstrike" method of faking bold doesn't look too bad, and it works in these awkward cases.
-				g.drawString(text.getText(), x + 1, y);
-			}
 			return textWidth;
 		} finally {
 			timer.stop();

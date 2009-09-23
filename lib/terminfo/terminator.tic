@@ -40,7 +40,6 @@ terminator|Terminator no line wrap,
     is2=\E[r\E[m\E[2J\E[H\E[4l,
 # Attributes
     smul=\E[4m,
-    bold=\E[1m,
     rev=\E[7m,
     smso=\E[7m,
     rmul=\E[24m,

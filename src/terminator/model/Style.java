@@ -35,14 +35,12 @@ public class Style {
 	// can be used to represent 3 states - null, TRUE and FALSE.
 	private Color foreground;
 	private Color background;
-	private Boolean isBold;
 	private Boolean isUnderlined;
 	private boolean isReverseVideo;
 	
-	public Style(Color foreground, Color background, Boolean isBold, Boolean isUnderlined, boolean isReverseVideo) {
+	public Style(Color foreground, Color background, Boolean isUnderlined, boolean isReverseVideo) {
 		this.foreground = foreground;
 		this.background = background;
-		this.isBold = isBold;
 		this.isUnderlined = isUnderlined;
 		this.isReverseVideo = isReverseVideo;
 	}
@@ -61,10 +59,9 @@ public class Style {
 	public Style appliedTo(Style originalStyle) {
 		Color mutatedForeground = hasForeground() ? getForeground() : originalStyle.getForeground();
 		Color mutatedBackground = hasBackground() ? getBackground() : originalStyle.getBackground();
-		Boolean mutatedBold = Boolean.valueOf(hasBold() ? isBold() : originalStyle.isBold());
 		Boolean mutatedUnderlined = Boolean.valueOf(hasUnderlined() ? isUnderlined() : originalStyle.isUnderlined());
 		boolean mutatedReverseVideo = isReverseVideo() || originalStyle.isReverseVideo();
-		return new Style(mutatedForeground, mutatedBackground, mutatedBold, mutatedUnderlined, mutatedReverseVideo);
+		return new Style(mutatedForeground, mutatedBackground, mutatedUnderlined, mutatedReverseVideo);
 	}
 
 	public boolean hasForeground() {
@@ -81,14 +78,6 @@ public class Style {
 	
 	public Color getBackground() {
 		return background;
-	}
-	
-	public boolean hasBold() {
-		return isBold != null;
-	}
-	
-	public boolean isBold() {
-		return hasBold() && isBold.booleanValue();
 	}
 	
 	public boolean hasUnderlined() {

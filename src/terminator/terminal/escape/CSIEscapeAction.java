@@ -190,7 +190,6 @@ public class CSIEscapeAction implements TerminalAction {
 		int oldStyle = model.getStyle();
 		int foreground = StyledText.getForeground(oldStyle);
 		int background = StyledText.getBackground(oldStyle);
-		boolean isBold = StyledText.isBold(oldStyle);
 		boolean isReverseVideo = StyledText.isReverseVideo(oldStyle);
 		boolean isUnderlined = StyledText.isUnderlined(oldStyle);
 		boolean hasForeground = StyledText.hasForeground(oldStyle);
@@ -203,24 +202,14 @@ public class CSIEscapeAction implements TerminalAction {
 				// Clear all attributes.
 				hasForeground = false;
 				hasBackground = false;
-				isBold = false;
 				isReverseVideo = false;
 				isUnderlined = false;
-				break;
-			case 1:
-				isBold = true;
 				break;
 			case 4:
 				isUnderlined = true;
 				break;
 			case 7:
 				isReverseVideo = true;
-				break;
-			case 22:
-				// ECMA-048 says "normal colour or normal intensity (neither bold nor faint)".
-				// xterm clears the bold flag.
-				// gnome-terminal clears the bold and half-intensity flags.
-				isBold = false;
 				break;
 			case 24:
 				isUnderlined = false;
@@ -265,7 +254,7 @@ public class CSIEscapeAction implements TerminalAction {
 				break;
 			}
 		}
-		model.setStyle(StyledText.getStyle(foreground, hasForeground, background, hasBackground, isBold, isUnderlined, isReverseVideo));
+		model.setStyle(StyledText.getStyle(foreground, hasForeground, background, hasBackground, isUnderlined, isReverseVideo));
 		return true;
 	}
 }
