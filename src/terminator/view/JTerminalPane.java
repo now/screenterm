@@ -195,19 +195,6 @@ public class JTerminalPane extends JPanel {
 					// "ESC[22~" isn't used.
 					return functionKeySequence(23, keyCode, KeyEvent.VK_F11, event);
 					// The function key codes from here on are VT220 codes.
-				case KeyEvent.VK_F13:
-				case KeyEvent.VK_F14:
-					// Java has a discontinuity between VK_F12 and VK_F13.
-					return functionKeySequence(25, keyCode, KeyEvent.VK_F13, event);
-				case KeyEvent.VK_F15:
-				case KeyEvent.VK_F16:
-					// "ESC[27~" isn't used.
-					return functionKeySequence(28, keyCode, KeyEvent.VK_F15, event);
-					// X11 key codes go up to F35.
-					// Java key codes goes up to F24.
-					// Escape sequences mentioned in XTerm's "ctlseqs.ms" go up to F20 (VT220).
-					// Current Apple keyboards go up to F16, so that's where we stop.
-					
 				default:
 					return null;
 			}
