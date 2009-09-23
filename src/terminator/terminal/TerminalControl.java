@@ -163,21 +163,8 @@ public class TerminalControl {
 	}
 	
 	public void invokeCharacterSet(int index) {
-		this.characterSet = index;
-	}
-	
-	/**
-	 * Ensures that ^N and ^O are handled at the proper time.
-	 * If we just call invokeCharacterSet they jump any pending text in the terminalActions queue.
-	 * Before this fix, "echo hello ^N world" would all appear in character set 1.
-	 */
-	public void invokeCharacterSetLater(final int index) {
 		flushLineBuffer();
-		terminalActions.add(new TerminalAction() {
-			public void perform(TerminalModel model) {
-				invokeCharacterSet(index);
-			}
-		});
+		this.characterSet = index;
 	}
 	
 	/**
@@ -356,9 +343,9 @@ public class TerminalControl {
 			doStep();
 			processSpecialCharacter(ch);
 		} else if (ch == Ascii.SO) {
-			invokeCharacterSetLater(1);
+			invokeCharacterSet(1);
 		} else if (ch == Ascii.SI) {
-			invokeCharacterSetLater(0);
+			invokeCharacterSet(0);
 		} else if (ch == Ascii.NUL) {
 			// Most telnetd(1) implementations seem to have a bug whereby
 			// they send the NUL byte at the end of the C strings they want to
@@ -381,7 +368,7 @@ public class TerminalControl {
 			if (DEBUG) {
 				Log.warn("Processing line \"" + line + "\"");
 			}
-			model.processLine(line);
+			model.processLine((line));
 		}
 		
 		public String toString() {
@@ -412,7 +399,7 @@ public class TerminalControl {
 		doStep();
 		
 		// Conform to the stated claim that the model's always mutated in the AWT dispatch thread.
-		terminalActions.add(new PlainTextAction(line));
+		terminalActions.add(new PlainTextAction(translate(line)));
 	}
 	
 	public synchronized void processSpecialCharacter(final char ch) {

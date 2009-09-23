@@ -140,8 +140,7 @@ public class TerminalModel {
 	 * normal printable characters, escape sequences having been extracted
 	 * elsewhere.
 	 */
-	public void processLine(String untranslatedLine) {
-		String line = view.getTerminalControl().translate(untranslatedLine);
+	public void processLine(String line) {
                 TextLine textLine = getCursorTextLine();
 		if (insertMode) {
 			//Log.warn("Inserting text \"" + line + "\" at " + cursorPosition + ".");

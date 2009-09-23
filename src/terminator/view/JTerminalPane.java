@@ -67,7 +67,6 @@ public class JTerminalPane extends JPanel {
 		view.sizeChanged();
 		try {
 			control = new TerminalControl(view.getModel());
-			view.setTerminalControl(control);
 			control.initProcess(command, workingDirectory);
 			initSizeMonitoring();
 		} catch (final Throwable th) {

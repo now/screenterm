@@ -66,16 +66,6 @@ public class TerminalView extends JComponent implements FocusListener {
 		return model;
 	}
 	
-	private TerminalControl terminalControl;
-	
-	public TerminalControl getTerminalControl() {
-		return terminalControl;
-	}
-	
-	public void setTerminalControl(TerminalControl terminalControl) {
-		this.terminalControl = terminalControl;
-	}
-	
 	/**
 	 * Returns the dimensions of an average character. Note that even though
 	 * we use a fixed-width font, some glyphs for non-ASCII characters can
