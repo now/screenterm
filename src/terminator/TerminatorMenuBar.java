@@ -76,45 +76,30 @@ public class TerminatorMenuBar extends EMenuBar {
 		return KeyboardFocusManager.getCurrentKeyboardFocusManager().getPermanentFocusOwner();
 	}
 	
-	private static JTerminalPane getFocusedTerminalPane() {
-		return (JTerminalPane) SwingUtilities.getAncestorOfClass(JTerminalPane.class, getFocusedComponent());
-	}
-	
 	public static TerminatorFrame getFocusedTerminatorFrame() {
 		return (TerminatorFrame) SwingUtilities.getAncestorOfClass(TerminatorFrame.class, getFocusedComponent());
 	}
 	
-	//
-	// Any new Action should probably subclass one of these abstract
-	// classes. Only if your action requires neither a frame nor a
-	// terminal pane (i.e. acts upon the application as a whole) should
-	// you subclass AbstractAction directly.
-	//
-	
-	/**
-	 * Superclass for actions that need a JTerminalPane (that may or may
-	 * not have a frame to itself).
-	 */
-	private abstract static class AbstractPaneAction extends AbstractAction {
-		public AbstractPaneAction(String name) {
+	private abstract static class AbstractFrameAction extends AbstractAction {
+		public AbstractFrameAction(String name) {
 			super(name);
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			JTerminalPane terminalPane = getFocusedTerminalPane();
-			if (terminalPane != null) {
-				performPaneAction(terminalPane);
+			TerminatorFrame frame = getFocusedTerminatorFrame();
+			if (frame != null) {
+				performFrameAction(frame);
 			}
 		}
 		
-		protected abstract void performPaneAction(JTerminalPane terminalPane);
+		protected abstract void performFrameAction(TerminatorFrame frame);
 		
 		@Override
 		public boolean isEnabled() {
 			return (getFocusedTerminatorFrame() != null);
 		}
 	}
-	
+
 	//
 	// Terminator's Actions.
 	//
@@ -130,16 +115,16 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 	}
 	
-	public static class CloseAction extends AbstractPaneAction {
+	public static class CloseAction extends AbstractFrameAction {
 		public CloseAction() {
 			super("Close");
-			putValue(ACCELERATOR_KEY, TerminatorMenuBar.makeKeyStroke("W"));
+			putValue(ACCELERATOR_KEY, makeKeyStroke("W"));
 			GnomeStockIcon.configureAction(this);
 		}
 		
 		@Override
-		protected void performPaneAction(JTerminalPane terminalPane) {
-			terminalPane.doCloseAction();
+		protected void performFrameAction(TerminatorFrame frame) {
+                        frame.handleWindowCloseRequestFromUser();
 		}
 	}
 }

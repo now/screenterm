@@ -21,7 +21,6 @@ public class JTerminalPane extends JPanel {
 	// Search the change log for "backspace" for more information.
 	private static final String ERASE_STRING = String.valueOf(GuiUtilities.isWindows() ? Ascii.BS : Ascii.DEL);
 	
-	private TerminalPaneHost host;
 	private TerminalControl control;
 	private TerminalView view;
 	private Dimension currentSizeInChars;
@@ -111,8 +110,7 @@ public class JTerminalPane extends JPanel {
 	 * 
 	 * @param host Reference to the environment hosting this JTerminalPane.
 	 */
-	public void start(TerminalPaneHost host) {
-		this.host = host;
+	public void start() {
 		control.start();
 	}
 	
@@ -302,10 +300,5 @@ public class JTerminalPane extends JPanel {
 	}
 	public void destroyProcess() {
 		control.destroyProcess();
-	}
-	
-	public void doCloseAction() {
-		destroyProcess();
-		host.closeTerminalPane();
 	}
 }

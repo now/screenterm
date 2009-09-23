@@ -10,7 +10,7 @@ import javax.swing.*;
 import javax.swing.Timer;
 import terminator.view.*;
 
-public class TerminatorFrame extends JFrame implements TerminalPaneHost {
+public class TerminatorFrame extends JFrame {
 	private JTerminalPane terminal;
 	
 	private Timer terminalSizeTimer;
@@ -22,7 +22,7 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		terminal = initialTerminalPane;
 		initFrame();
 		terminal.requestFocus();
-                terminal.start(this);
+                terminal.start();
 	}
 	
 	private void initFrame() {
@@ -132,16 +132,9 @@ public class TerminatorFrame extends JFrame implements TerminalPaneHost {
 		setSize(size);
 	}
 	
-	/**
-	 * Removes the given terminal. If this is the last terminal, close
-	 * the window.
-	 */
-	public void closeTerminalPane() {
-                setVisible(false);
-	}
-	
 	public void handleWindowCloseRequestFromUser() {
-                terminal.doCloseAction();
+                terminal.destroyProcess();
+                setVisible(false);
 	}
 	
 	/**
