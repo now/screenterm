@@ -24,64 +24,31 @@ public class JTerminalPane extends JPanel {
 	private TerminalPaneHost host;
 	private TerminalControl control;
 	private TerminalView view;
-	private String name;
 	private Dimension currentSizeInChars;
 	
 	/**
 	 * Creates a new terminal with the given name, running the given command.
 	 */
-	private JTerminalPane(String name, String workingDirectory, List<String> command) {
+	private JTerminalPane(String workingDirectory, List<String> command) {
 		super(new BorderLayout());
-		this.name = name;
 		init(command, workingDirectory);
 	}
 	
 	/**
 	 * For XTerm-like "-e" support.
 	 */
-	public static JTerminalPane newCommandWithArgV(String name, String workingDirectory, List<String> argV) {
+	public static JTerminalPane newCommandWithArgV(String workingDirectory, List<String> argV) {
 		if (argV.size() == 0) {
 			argV = TerminalControl.getDefaultShell();
 		}
-		if (name == null) {
-			name = argV.get(0);
-		}
-		return new JTerminalPane(name, workingDirectory, argV);
-	}
-	
-	/**
-	 * Creates a new terminal running the given command, with the given
-	 * name. If 'name' is null, we use the command as the the name.
-	 */
-	public static JTerminalPane newCommandWithName(String originalCommand, String name, String workingDirectory) {
-		if (name == null) {
-			name = originalCommand;
-		}
-		
-		// Avoid having to interpret the command (as java.lang.Process brokenly does) by passing it to the shell as-is.
-		ArrayList<String> command = TerminalControl.getDefaultShell();
-		command.add("-c");
-		command.add(originalCommand);
-		
-		return new JTerminalPane(name, workingDirectory, command);
+		return new JTerminalPane(workingDirectory, argV);
 	}
 	
 	/**
 	 * Creates a new terminal running the user's shell.
 	 */
 	public static JTerminalPane newShell() {
-		return newShellWithName(null, null);
-	}
-	
-	/**
-	 * Creates a new terminal running the user's shell with the given name.
-	 */
-	public static JTerminalPane newShellWithName(String name, String workingDirectory) {
-		if (name == null) {
-			String user = System.getProperty("user.name");
-			name = user + "@localhost";
-		}
-		return new JTerminalPane(name, workingDirectory, TerminalControl.getDefaultShell());
+                return new JTerminalPane(null, TerminalControl.getDefaultShell());
 	}
 	
 	public void optionsDidChange() {
