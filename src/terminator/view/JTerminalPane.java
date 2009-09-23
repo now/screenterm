@@ -38,9 +38,8 @@ public class JTerminalPane extends JPanel {
 	 * For XTerm-like "-e" support.
 	 */
 	public static JTerminalPane newCommandWithArgV(String workingDirectory, List<String> argV) {
-		if (argV.size() == 0) {
+		if (argV.size() == 0)
 			argV = TerminalControl.getDefaultShell();
-		}
 		return new JTerminalPane(workingDirectory, argV);
 	}
 	
@@ -100,9 +99,8 @@ public class JTerminalPane extends JPanel {
 			try {
 				control.sizeChanged(size);
 			} catch (Exception ex) {
-				if (control != null) {
+				if (control != null)
 					Log.warn("Failed to notify " + control.getPtyProcess() + " of size change", ex);
-				}
 			}
 			currentSizeInChars = size;
 		}
@@ -121,18 +119,16 @@ public class JTerminalPane extends JPanel {
 	private class KeyHandler implements KeyListener {
 		public void keyPressed(KeyEvent event) {
 			// Leave the event for TerminatorMenuBar if it has appropriate modifiers.
-			if (TerminatorMenuBar.isKeyboardEquivalent(event)) {
+			if (TerminatorMenuBar.isKeyboardEquivalent(event))
 				return;
-			}
 			String sequence = getEscapeSequenceForKeyCode(event);
 			if (sequence != null) {
 				if (sequence.length() == 1) {
 					char ch = sequence.charAt(0);
 					// We don't get a KEY_TYPED event for the escape key or keypad enter on Mac OS, where we have to handle it in keyPressed.
 					// We can't tell the difference between control-tab and control-i in keyTyped, so we have to handle that here too.
-					if (ch != Ascii.ESC && ch != Ascii.CR && ch != Ascii.HT) {
+					if (ch != Ascii.ESC && ch != Ascii.CR && ch != Ascii.HT)
 						Log.warn("The constraint about not handling keys that generate KEY_TYPED events in keyPressed was probably violated when handling " + event);
-					}
 				}
 				control.sendUtf8String(sequence);
 				view.userIsTyping();
@@ -148,10 +144,9 @@ public class JTerminalPane extends JPanel {
 				// Here's our first awkward case: tab.
 				// In keyTyped, we can't tell the difference between control-tab and control-i.
 				// We have to handle both here.
-				if (event.isControlDown() && keyCode == KeyEvent.VK_TAB) {
-					// Control-tab: no corresponding text.
+                                // Control-tab: no corresponding text.
+				if (event.isControlDown() && keyCode == KeyEvent.VK_TAB)
 					return null;
-				}
 				// Plain old tab, or control-i: insert a tab.
 				return "\t";
 			}
@@ -224,21 +219,20 @@ public class JTerminalPane extends JPanel {
 		}
 		
 		private String functionKeyModifiers(KeyEvent event) {
-			if (event.isShiftDown() && event.isAltDown() && event.isControlDown()) {
+			if (event.isShiftDown() && event.isAltDown() && event.isControlDown())
 				return ";8";
-			} else if (event.isAltDown() && event.isControlDown()) {
+			else if (event.isAltDown() && event.isControlDown())
 				return ";7";
-			} else if (event.isShiftDown() && event.isControlDown()) {
+			else if (event.isShiftDown() && event.isControlDown())
 				return ";6";
-			} else if (event.isControlDown()) {
+			else if (event.isControlDown())
 				return ";5";
-			} else if (event.isShiftDown() && event.isAltDown()) {
+			else if (event.isShiftDown() && event.isAltDown())
 				return ";4";
-			} else if (event.isAltDown()) {
+			else if (event.isAltDown())
 				return ";3";
-			} else if (event.isShiftDown()) {
+			else if (event.isShiftDown())
 				return ";2";
-			}
 			return "";
 		}
 		
@@ -257,48 +251,41 @@ public class JTerminalPane extends JPanel {
 		// Handle key presses which generate keyTyped events.
 		private String getUtf8ForKeyEvent(KeyEvent e) {
 			char ch = e.getKeyChar();
-			if (ch == '\t') {
-				// We handled tab in keyPressed because only there can we distinguish control-i and control-tab.
+                        // We handled tab in keyPressed because only there can we distinguish control-i and control-tab.
+			if (ch == '\t')
 				return null;
-			}
 			// This modifier test lets Ctrl-H and Ctrl-J generate ^H and ^J instead of
 			// mangling them into ^? and ^M.
 			// That's useful on those rare but annoying occasions where Backspace and
 			// Enter aren't working and it's how other terminals behave.
-			if (e.isControlDown() && ch < ' ') {
+			if (e.isControlDown() && ch < ' ')
 				return String.valueOf(ch);
-			}
 			// Work around Sun bug 6320676, and provide support for various terminal eccentricities.
 			if (e.isControlDown()) {
 				// Control characters are usually typed unshifted, for convenience...
-				if (ch >= 'a' && ch <= 'z') {
+				if (ch >= 'a' && ch <= 'z')
 					return String.valueOf((char) (ch - '`'));
-				}
 				// ...but the complete range is really from ^@ (ASCII NUL) to ^_ (ASCII US).
-				if (ch >= '@' && ch <= '_') {
+				if (ch >= '@' && ch <= '_')
 					return String.valueOf((char) (ch - '@'));
-				}
 				// There are two special cases that correspond to ASCII NUL.
 				// Control-' ' is important for emacs(1).
-				if (ch == ' ' || ch == '`') {
+				if (ch == ' ' || ch == '`')
 					return "\u0000";
-				}
 				// And one last special case: control-/ is ^_ (ASCII US).
-				if (ch == '/') {
+				if (ch == '/')
 					return String.valueOf(Ascii.US);
-				}
 			}
-			if (ch == Ascii.LF) {
+			if (ch == Ascii.LF)
 				return String.valueOf(Ascii.CR);
-			} else if (ch == Ascii.CR) {
+			else if (ch == Ascii.CR)
 				return "\r";
-			} else if (ch == Ascii.BS) {
+			else if (ch == Ascii.BS)
 				return ERASE_STRING;
-			} else if (ch == Ascii.DEL) {
+			else if (ch == Ascii.DEL)
 				return editingKeypadSequence(e, 3);
-			} else {
+			else
 				return String.valueOf(ch);
-			}
 		}
 		
 		/**
