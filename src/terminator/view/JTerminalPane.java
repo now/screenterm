@@ -25,16 +25,14 @@ public class JTerminalPane extends JPanel {
 	private TerminalControl control;
 	private TerminalView view;
 	private String name;
-	private boolean wasCreatedAsNewShell;
 	private Dimension currentSizeInChars;
 	
 	/**
 	 * Creates a new terminal with the given name, running the given command.
 	 */
-	private JTerminalPane(String name, String workingDirectory, List<String> command, boolean wasCreatedAsNewShell) {
+	private JTerminalPane(String name, String workingDirectory, List<String> command) {
 		super(new BorderLayout());
 		this.name = name;
-		this.wasCreatedAsNewShell = wasCreatedAsNewShell;
 		init(command, workingDirectory);
 	}
 	
@@ -48,7 +46,7 @@ public class JTerminalPane extends JPanel {
 		if (name == null) {
 			name = argV.get(0);
 		}
-		return new JTerminalPane(name, workingDirectory, argV, false);
+		return new JTerminalPane(name, workingDirectory, argV);
 	}
 	
 	/**
@@ -65,7 +63,7 @@ public class JTerminalPane extends JPanel {
 		command.add("-c");
 		command.add(originalCommand);
 		
-		return new JTerminalPane(name, workingDirectory, command, false);
+		return new JTerminalPane(name, workingDirectory, command);
 	}
 	
 	/**
@@ -83,7 +81,7 @@ public class JTerminalPane extends JPanel {
 			String user = System.getProperty("user.name");
 			name = user + "@localhost";
 		}
-		return new JTerminalPane(name, workingDirectory, TerminalControl.getDefaultShell(), true);
+		return new JTerminalPane(name, workingDirectory, TerminalControl.getDefaultShell());
 	}
 	
 	public void optionsDidChange() {
