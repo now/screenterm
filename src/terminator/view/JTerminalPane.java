@@ -122,12 +122,6 @@ public class JTerminalPane extends JPanel {
 	private void initSizeMonitoring() {
 		class SizeMonitor extends ComponentAdapter {
 			@Override
-			public void componentShown(ComponentEvent event) {
-				// Force a size check whenever we're shown in case we're a tab whose window resized while we weren't showing, because in that case we wouldn't have received a componentResized notification.
-				componentResized(event);
-			}
-			
-			@Override
 			public void componentResized(ComponentEvent event) {
 				updateTerminalSize();
 			}
