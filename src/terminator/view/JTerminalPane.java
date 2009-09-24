@@ -56,7 +56,8 @@ public class JTerminalPane extends JPanel {
 	}
 	
 	private void init(List<String> command, String workingDirectory) {
-		view = new TerminalView(new TerminalModel());
+                TerminalModel model = new TerminalModel();
+		view = new TerminalView(model);
 		view.addKeyListener(new KeyHandler());
 		
 		optionsDidChange();
@@ -64,7 +65,7 @@ public class JTerminalPane extends JPanel {
 		add(view, BorderLayout.CENTER);
 		
 		try {
-			control = new TerminalControl(view.getModel());
+			control = new TerminalControl(model);
 			control.initProcess(command, workingDirectory);
 			initSizeMonitoring();
 		} catch (final Throwable th) {

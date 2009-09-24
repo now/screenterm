@@ -57,10 +57,6 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
-	public TerminalModel getModel() {
-		return model;
-	}
-	
 	/**
 	 * Returns the dimensions of an average character. Note that even though
 	 * we use a fixed-width font, some glyphs for non-ASCII characters can
