@@ -1,12 +1,11 @@
 package terminator.model;
 
 import java.awt.*;
+import java.util.*;
 import e.util.*;
 import terminator.terminal.*;
-import terminator.view.*;
 
-public class TerminalModel {
-	private TerminalView view;
+public class TerminalModel extends Observable {
         private Dimension size = new Dimension(0, 0);
         private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
@@ -14,12 +13,11 @@ public class TerminalModel {
 	private int lastScrollLineIndex;
 	private Location cursorPosition = new Location(0, 0);
 	private boolean insertMode = false;
+        private boolean cursorVisible = true;
 	
-	// Used for reducing the number of lines changed events sent up to the view.
-	private int firstLineChanged;
+	private int firstLineChanged = Integer.MAX_VALUE;
 	
-	public TerminalModel(TerminalView view, Dimension size) {
-		this.view = view;
+	public TerminalModel(Dimension size) {
 		setSize(size);
 	}
 	
@@ -60,6 +58,18 @@ public class TerminalModel {
 	public void linesChangedFrom(int firstLineChanged) {
 		this.firstLineChanged = Math.min(this.firstLineChanged, firstLineChanged);
 	}
+
+        public int getFirstLineChanged() {
+                return firstLineChanged;
+        }
+
+        public boolean linesHaveChanged() {
+                return firstLineChanged != Integer.MAX_VALUE;
+        }
+
+        public boolean getCursorVisible() {
+                return cursorVisible;
+        }
 	
 	public Dimension getCurrentSizeInChars() {
                 return new Dimension(size);
@@ -73,9 +83,8 @@ public class TerminalModel {
 		firstLineChanged = Integer.MAX_VALUE;
 		for (TerminalAction action : actions)
 			action.perform(this);
-		if (firstLineChanged != Integer.MAX_VALUE)
-			view.linesChangedFrom(firstLineChanged);
-		view.setCursorPosition(cursorPosition);
+                setChanged();
+                notifyObservers();
 	}
 	
 	public void setStyle(short style) {
@@ -105,11 +114,6 @@ public class TerminalModel {
                                                   firstScrollLineIndex,
                                                   lastScrollLineIndex);
                 linesChangedFrom(above == count ? cursorPosition.getLineIndex() : firstScrollLineIndex);
-                /* NOTE: This doesn’t seem to be needed, but is what Terminator
-                 * does.
-                if (above != count)
-                        view.repaint();
-                        */
                 if (above > 0)
                         cursorPosition = new Location(cursorPosition.getLineIndex() + above,
                                                       cursorPosition.getCharOffset());
@@ -194,8 +198,10 @@ public class TerminalModel {
 	}
 	
 	/** Sets whether the cursor should be visible. */
-	public void setCursorVisible(boolean isDisplayed) {
-		view.setCursorVisible(isDisplayed);
+	public void setCursorVisible(boolean cursorVisible) {
+                this.cursorVisible = cursorVisible;
+                setChanged();
+                notifyObservers();
 	}
 	
 	public void deleteCharacters(int count) {
@@ -285,7 +291,6 @@ public class TerminalModel {
         private void modifyOneLine(int index, int top, int bottom) {
                 textLines.insertLines(index, 1, 0, bottom);
                 linesChangedFrom(top);
-                view.repaint();
         }
 	
 	/** Delete one line, moving everything below up and inserting a blank line at the bottom. */

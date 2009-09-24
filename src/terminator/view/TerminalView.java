@@ -15,7 +15,7 @@ import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
 
-public class TerminalView extends JComponent implements FocusListener {
+public class TerminalView extends JComponent implements FocusListener, Observer {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
 	private static final Stopwatch paintStyledTextStopwatch = Stopwatch.get("TerminalView.paintStyledText");
         private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
@@ -23,7 +23,7 @@ public class TerminalView extends JComponent implements FocusListener {
 	private TerminalModel model;
 	private Location cursorPosition;
 	private boolean hasFocus = false;
-	private boolean displayCursor = true;
+	private boolean displayCursor;
 	
 	public TerminalView() {
                 /* TODO: Or just set to 80×24 and then maximize the window and
@@ -32,7 +32,10 @@ public class TerminalView extends JComponent implements FocusListener {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 int columns = (int)(screenSize.getWidth() * 0.8 / charBounds.getWidth());
                 int rows = (int)(screenSize.getHeight() * 0.9 / charBounds.getHeight());
-		this.model = new TerminalModel(this, new Dimension(columns, rows));
+		model = new TerminalModel(new Dimension(columns, rows));
+                cursorPosition = model.getCursorPosition();
+                displayCursor = model.getCursorVisible();
+                model.addObserver(this);
 
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
@@ -110,12 +113,6 @@ public class TerminalView extends JComponent implements FocusListener {
 	
 	// Methods used by TerminalModel in order to update the display.
 	
-	public void linesChangedFrom(int lineIndex) {
-		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
-		Dimension size = getSize();
-		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
-	}
-	
 	public void sizeChanged() {
 		Dimension size = getOptimalViewSize();
 		setMaximumSize(size);
@@ -126,6 +123,21 @@ public class TerminalView extends JComponent implements FocusListener {
 	
 	public void sizeChanged(Dimension oldSizeInChars, Dimension newSizeInChars) {
 		sizeChanged();
+	}
+
+        public void update(Observable o, Object arg) {
+                if (o != model)
+                        return;
+                if (model.linesHaveChanged())
+                        linesChangedFrom(model.getFirstLineChanged());
+                setCursorPosition(model.getCursorPosition());
+                setCursorVisible(model.getCursorVisible());
+        }
+	
+	public void linesChangedFrom(int lineIndex) {
+		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
+		Dimension size = getSize();
+		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
 	
 	public void setCursorPosition(Location newCursorPosition) {
