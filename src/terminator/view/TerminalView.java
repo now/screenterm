@@ -75,7 +75,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	 * This isn't exactly deprecated, but you should really think hard
 	 * before using it.
 	 */
-	public Dimension getCharUnitSize() {
+	private Dimension getCharUnitSize() {
 		FontMetrics metrics = getFontMetrics(getFont());
 		int width = metrics.charWidth('W');
 		int height = metrics.getHeight();
@@ -118,10 +118,6 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 repaint();
 	}
 	
-	public void sizeChanged(Dimension oldSizeInChars, Dimension newSizeInChars) {
-		sizeChanged();
-	}
-
         public void update(Observable o, Object arg) {
                 if (o != model)
                         return;
@@ -131,13 +127,13 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 setCursorVisible(model.getCursorVisible());
         }
 	
-	public void linesChangedFrom(int lineIndex) {
+	private void linesChangedFrom(int lineIndex) {
 		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
 	
-	public void setCursorPosition(Location newCursorPosition) {
+	private void setCursorPosition(Location newCursorPosition) {
 		if (cursorPosition.equals(newCursorPosition)) {
 			return;
 		}
@@ -147,18 +143,18 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	}
 	
 	/** Sets whether the cursor should be displayed. */
-	public void setCursorVisible(boolean displayCursor) {
+	private void setCursorVisible(boolean displayCursor) {
 		if (this.displayCursor != displayCursor) {
 			this.displayCursor = displayCursor;
 			redrawCursorPosition();
 		}
 	}
 	
-	public boolean shouldShowCursor() {
+	private boolean shouldShowCursor() {
 		return displayCursor;
 	}
 	
-	public Rectangle modelToView(Location charCoords) {
+	private Rectangle modelToView(Location charCoords) {
 		// We can be asked the view rectangle of locations that are past the bottom of the text in various circumstances. Examples:
 		// 1. If the user sweeps a selection too far.
 		// 2. If the user starts a new shell, types "man bash", and then clears the history; we move the cursor, and want to know the old cursor location to remove the cursor from, even though there's no longer any text there.
@@ -197,7 +193,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		return new Rectangle(x, y, width, height);
 	}
 	
-	public Dimension getOptimalViewSize() {
+	private Dimension getOptimalViewSize() {
 		Dimension character = getCharUnitSize();
 		Insets insets = getInsets();
                 Dimension size = model.getCurrentSizeInChars();
@@ -330,10 +326,6 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		} finally {
 			timer.stop();
 		}
-	}
-	
-	public boolean hasFocus() {
-		return hasFocus;
 	}
 	
 	//
