@@ -49,18 +49,10 @@ public class JTerminalPane extends JPanel {
                 return new JTerminalPane(null, TerminalControl.getDefaultShell());
 	}
 	
-	public void optionsDidChange() {
-		// We're called before start().
-		updateTerminalSize();
-		validate();
-	}
-	
 	private void init(List<String> command, String workingDirectory) {
                 TerminalModel model = new TerminalModel();
 		view = new TerminalView(model);
 		view.addKeyListener(new KeyHandler());
-		
-		optionsDidChange();
 		
 		add(view, BorderLayout.CENTER);
 		
@@ -96,8 +88,7 @@ public class JTerminalPane extends JPanel {
 			try {
 				control.sizeChanged(size);
 			} catch (Exception ex) {
-				if (control != null)
-					Log.warn("Failed to notify " + control.getPtyProcess() + " of size change", ex);
+                                Log.warn("Failed to notify " + control.getPtyProcess() + " of size change", ex);
 			}
 			currentSizeInChars = size;
 		}
