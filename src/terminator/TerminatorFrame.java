@@ -67,6 +67,7 @@ public class TerminatorFrame extends JFrame {
 		optionsDidChange();
 		
 		pack();
+                setLocationRelativeTo(null);
 		setVisible(true);
 		
 		if (GuiUtilities.isMacOs()) {
