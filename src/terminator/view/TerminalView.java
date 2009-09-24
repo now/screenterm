@@ -21,7 +21,7 @@ public class TerminalView extends JComponent implements FocusListener {
         private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
 	
 	private TerminalModel model;
-	private Location cursorPosition = new Location(0, 0);
+	private Location cursorPosition;
 	private boolean hasFocus = false;
 	private boolean displayCursor = true;
 	
@@ -126,10 +126,6 @@ public class TerminalView extends JComponent implements FocusListener {
 	
 	public void sizeChanged(Dimension oldSizeInChars, Dimension newSizeInChars) {
 		sizeChanged();
-	}
-	
-	public Location getCursorPosition() {
-		return cursorPosition;
 	}
 	
 	public void setCursorPosition(Location newCursorPosition) {

@@ -12,7 +12,7 @@ public class TerminalModel {
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
-	private Location cursorPosition;
+	private Location cursorPosition = new Location(0, 0);
 	private boolean insertMode = false;
 	
 	// Used for reducing the number of lines changed events sent up to the view.
@@ -21,7 +21,6 @@ public class TerminalModel {
 	public TerminalModel(TerminalView view, Dimension size) {
 		this.view = view;
 		setSize(size);
-		cursorPosition = view.getCursorPosition();
 	}
 	
 	public void sizeChanged(Dimension size) {
