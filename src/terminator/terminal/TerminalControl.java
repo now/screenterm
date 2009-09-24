@@ -248,7 +248,7 @@ public class TerminalControl {
 	public void sizeChanged(final Dimension size) throws IOException {
 		TerminalAction sizeChangeAction = new TerminalAction() {
 			public void perform(TerminalModel model) {
-				model.sizeChanged(size);
+				model.setSize(size);
 			}
 			
 			public String toString() {

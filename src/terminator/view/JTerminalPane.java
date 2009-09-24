@@ -56,7 +56,7 @@ public class JTerminalPane extends JPanel {
 	}
 	
 	private void init(List<String> command, String workingDirectory) {
-		view = new TerminalView();
+		view = new TerminalView(new TerminalModel());
 		view.addKeyListener(new KeyHandler());
 		
 		optionsDidChange();

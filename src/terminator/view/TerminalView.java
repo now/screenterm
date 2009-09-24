@@ -25,22 +25,22 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	private boolean hasFocus = false;
 	private boolean displayCursor;
 	
-	public TerminalView() {
-                /* TODO: Or just set to 80×24 and then maximize the window and
-                 * have the model resize itself? */
-                Rectangle2D charBounds = font.getMaxCharBounds(new FontRenderContext(null, true, true));
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                int columns = (int)(screenSize.getWidth() * 0.8 / charBounds.getWidth());
-                int rows = (int)(screenSize.getHeight() * 0.9 / charBounds.getHeight());
-		model = new TerminalModel(new Dimension(columns, rows));
-                cursorPosition = model.getCursorPosition();
-                displayCursor = model.getCursorVisible();
-                model.addObserver(this);
-
+	public TerminalView(TerminalModel model) {
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setOpaque(true);
                 setFont(font);
+
+                this.model = model;
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
+                Dimension sizeInCharacters = getVisibleSizeInCharacters(adjustedSize);
+                sizeInCharacters.width = Math.min(sizeInCharacters.width, 132);
+                model.setSize(sizeInCharacters);
+                cursorPosition = model.getCursorPosition();
+                displayCursor = model.getCursorVisible();
+                model.addObserver(this);
+
                 sizeChanged();
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {

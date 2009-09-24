@@ -17,15 +17,6 @@ public class TerminalModel extends Observable {
 	
 	private int firstLineChanged = Integer.MAX_VALUE;
 	
-	public TerminalModel(Dimension size) {
-		setSize(size);
-	}
-	
-	public void sizeChanged(Dimension size) {
-		setSize(size);
-                clampCursor();
-	}
-	
 	private void clampCursor() {
 		if (cursorPosition == null)
                         return;
@@ -132,6 +123,7 @@ public class TerminalModel extends Observable {
                 textLines.setSize(size);
 		firstScrollLineIndex = 0;
 		lastScrollLineIndex = size.height - 1;
+                clampCursor();
 	}
 	
 	public void setInsertMode(boolean insertMode) {
