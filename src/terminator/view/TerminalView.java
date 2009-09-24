@@ -32,16 +32,12 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 setFont(font);
 
                 this.model = model;
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
-                Dimension sizeInCharacters = getVisibleSizeInCharacters(adjustedSize);
-                sizeInCharacters.width = Math.min(sizeInCharacters.width, 132);
-                model.setSize(sizeInCharacters);
                 cursorPosition = model.getCursorPosition();
                 displayCursor = model.getCursorVisible();
                 model.addObserver(this);
 
-                sizeChanged();
+                setFixedSize(getOptimalViewSize());
+
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
@@ -109,8 +105,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	
 	// Methods used by TerminalModel in order to update the display.
 	
-	private void sizeChanged() {
-		Dimension size = getOptimalViewSize();
+	private void setFixedSize(Dimension size) {
 		setMaximumSize(size);
 		setPreferredSize(size);
 		setSize(size);
@@ -194,10 +189,12 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	}
 	
 	private Dimension getOptimalViewSize() {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
+                Dimension size = getVisibleSizeInCharacters(adjustedSize);
+                size.width = Math.min(size.width, 132);
 		Dimension character = getCharUnitSize();
 		Insets insets = getInsets();
-                Dimension size = model.getCurrentSizeInChars();
-		// FIXME: really, we need to track the maximum pixel width.
 		final int width = insets.left + size.width * character.width + insets.right;
 		final int height = insets.top + size.height * character.height + insets.bottom;
 		return new Dimension(width, height);
