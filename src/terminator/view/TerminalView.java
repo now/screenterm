@@ -40,7 +40,8 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setOpaque(true);
-		optionsDidChange();
+                setFont(font);
+                sizeChanged();
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
@@ -53,11 +54,6 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                         }
                 });
 		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
-	}
-	
-	public void optionsDidChange() {
-		setFont(font);
-		sizeChanged();
 	}
 	
 	public void userIsTyping() {

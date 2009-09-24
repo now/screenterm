@@ -51,7 +51,6 @@ public class JTerminalPane extends JPanel {
 	
 	public void optionsDidChange() {
 		// We're called before start().
-		view.optionsDidChange();
 		updateTerminalSize();
 		validate();
 	}
