@@ -115,6 +115,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		setPreferredSize(size);
 		setSize(size);
 		revalidate();
+                repaint();
 	}
 	
 	public void sizeChanged(Dimension oldSizeInChars, Dimension newSizeInChars) {
