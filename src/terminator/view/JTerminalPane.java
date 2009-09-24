@@ -64,7 +64,6 @@ public class JTerminalPane extends JPanel {
 		
 		add(view, BorderLayout.CENTER);
 		
-		view.sizeChanged();
 		try {
 			control = new TerminalControl(view.getModel());
 			control.initProcess(command, workingDirectory);

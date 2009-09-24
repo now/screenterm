@@ -113,7 +113,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	
 	// Methods used by TerminalModel in order to update the display.
 	
-	public void sizeChanged() {
+	private void sizeChanged() {
 		Dimension size = getOptimalViewSize();
 		setMaximumSize(size);
 		setPreferredSize(size);
