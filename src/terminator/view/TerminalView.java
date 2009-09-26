@@ -238,15 +238,14 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 					x += paintStyledText(g, metrics, chunk, x, baseline);
 					String chunkText = chunk.getText();
 					if (drawCursor && cursorPosition.charOffsetInRange(startOffset, startOffset + chunkText.length())) {
-						final int charOffsetUnderCursor = cursorPosition.getCharOffset() - startOffset;
-						paintCursor(g, chunkText.substring(charOffsetUnderCursor, charOffsetUnderCursor + 1), baseline);
+						paintCursor(g);
 						drawCursor = false;
 					}
 					startOffset += chunkText.length();
 				}
 				if (drawCursor) {
 					// A cursor at the end of the line is in a position past the end of the text.
-					paintCursor(g, "", baseline);
+					paintCursor(g);
 				}
 			}
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasHint);
@@ -264,24 +263,15 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	 * The cursor may actually be invisible because it's blinking and in
 	 * the 'off' state.
 	 */
-	private void paintCursor(Graphics2D g, String characterUnderCursor, int baseline) {
+	private void paintCursor(Graphics2D g) {
 		g.setColor(Color.black);
-		Rectangle cursorRect = modelToView(cursorPosition);
-		final int bottomY = cursorRect.y + cursorRect.height - 1;
+		Rectangle r = modelToView(cursorPosition);
 		if (hasFocus) {
-                        // Paint over the character underneath.
-                        g.fill(cursorRect);
-                        // Redraw the character in the
-                        // background color.
-                        g.setColor(getBackground());
-                        g.drawString(characterUnderCursor, cursorRect.x, baseline);
+                        g.setXORMode(Color.white);
+                        g.fill(r);
+                        g.setPaintMode();
 		} else {
-			// For some reason, terminals always seem to use an
-			// empty block for the unfocused cursor, regardless
-			// of what shape they're using for the focused cursor.
-			// It's not obvious what else they could do that would
-			// look better.
-			g.drawRect(cursorRect.x, cursorRect.y, cursorRect.width - 1, cursorRect.height - 1);
+			g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
 		}
 	}
 	
