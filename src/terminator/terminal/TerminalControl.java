@@ -238,7 +238,7 @@ public class TerminalControl {
 	}
 	
 	/** Must be called in the AWT dispatcher thread. */
-	public void sizeChanged(final Dimension size) throws IOException {
+	public void sizeChanged(final Dimension size) {
 		TerminalAction sizeChangeAction = new TerminalAction() {
 			public void perform(TerminalModel model) {
 				model.setSize(size);
@@ -249,8 +249,13 @@ public class TerminalControl {
 			}
 		};
 		model.processActions(new TerminalAction[] { sizeChangeAction });
-		// Notify the pty that the size has changed.
-		ptyProcess.sendResizeNotification(size);
+
+                try {
+                        ptyProcess.sendResizeNotification(size);
+                } catch (Exception e) {
+                        Log.warn("Failed to notify " + ptyProcess + " of size change", e);
+                        return;
+                }
 	}
 	
 	private synchronized void processBuffer(char[] buffer, int size) throws IOException {
