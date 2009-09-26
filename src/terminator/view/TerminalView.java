@@ -15,13 +15,12 @@ import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
 
-public class TerminalView extends JComponent implements FocusListener, Observer {
+public class TerminalView extends JComponent implements FocusListener, TerminalListener {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
 	private static final Stopwatch paintStyledTextStopwatch = Stopwatch.get("TerminalView.paintStyledText");
         private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
 	
 	private TerminalModel model;
-	private Location cursorPosition;
         private CursorPainter cursorPainter;
 	
 	public TerminalView(TerminalModel model) {
@@ -31,9 +30,8 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 setFont(font);
 
                 this.model = model;
-                cursorPosition = model.getCursorPosition();
                 cursorPainter = new UnfocusedCursorPainter();
-                model.addObserver(this);
+                model.addListener(this);
 
                 setFixedSize(getOptimalViewSize());
 
@@ -107,34 +105,21 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		revalidate();
                 repaint();
 	}
-	
-        public void update(Observable o, Object arg) {
-                if (o != model)
-                        return;
-                if (model.linesHaveChanged())
-                        linesChangedFrom(model.getFirstLineChanged());
-                setCursorPosition(model.getCursorPosition());
-                switch ((TerminalModel.Change)arg) {
-                case CURSOR_VISIBLITY:
-                        redrawCursorPosition();
-                        break;
-                }
-        }
 
-	private void linesChangedFrom(int lineIndex) {
+	public void contentsChanged(int lineIndex) {
 		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
 	
-	private void setCursorPosition(Location newCursorPosition) {
-		if (cursorPosition.equals(newCursorPosition)) {
-			return;
-		}
-		redrawCursorPosition();
-		cursorPosition = newCursorPosition;
+	public void cursorPositionChanged(Location oldCursorPosition, Location newCursorPosition) {
+                redrawPosition(oldCursorPosition);
 		redrawCursorPosition();
 	}
+
+        public void cursorVisibilityChanged(boolean isVisible) {
+                redrawCursorPosition();
+        }
 	
 	private Rectangle modelToView(Location charCoords) {
 		// We can be asked the view rectangle of locations that are past the bottom of the text in various circumstances. Examples:
@@ -190,9 +175,12 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	// Redraw code.
 	
 	private void redrawCursorPosition() {
-		Rectangle cursorRect = modelToView(cursorPosition);
-		repaint(cursorRect);
+                redrawPosition(model.getCursorPosition());
 	}
+
+        private void redrawPosition(Location p) {
+                repaint(modelToView(p));
+        }
 	
 	public void paintComponent(Graphics oldGraphics) {
 		Stopwatch.Timer timer = paintComponentStopwatch.start();
@@ -226,12 +214,8 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 					StyledText chunk = it.next();
 					x += paintStyledText(g, metrics, chunk, x, baseline);
 				}
-
-                                // TODO: this test can be removed and moved
-                                // outside the for loop.
-                                if (cursorPosition.getLineIndex() == i && model.getCursorVisible())
-                                        cursorPainter.paint(g);
 			}
+                        cursorPainter.paint(g, firstTextLine, lastTextLine);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasHint);
 		} finally {
 			timer.stop();
@@ -243,9 +227,14 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	}
 	
         private abstract class CursorPainter {
-                public void paint(Graphics2D g) {
+                public void paint(Graphics2D g, int firstLine, int lastLine) {
+                        if (!model.getCursorVisible())
+                                return;
+                        Location p = model.getCursorPosition();
+                        if (p.getLineIndex() < firstLine || p.getLineIndex() > lastLine)
+                                return;
                         g.setColor(Color.black);
-                        paintCursor(g, modelToView(cursorPosition));
+                        paintCursor(g, modelToView(p));
                 }
 
                 protected abstract void paintCursor(Graphics2D g, Rectangle r);

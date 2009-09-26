@@ -1,15 +1,11 @@
 package terminator.model;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.util.*;
 import e.util.*;
 import terminator.terminal.*;
 
-public class TerminalModel extends Observable {
-        public enum Change {
-                CURSOR_VISIBLITY,
-                OTHER
-        };
+public class TerminalModel {
         private Dimension size = new Dimension(0, 0);
         private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
@@ -18,6 +14,8 @@ public class TerminalModel extends Observable {
 	private Location cursorPosition = new Location(0, 0);
         private boolean cursorVisible = true;
 	private boolean insertMode = false;
+
+	private List<TerminalListener> listeners = new ArrayList<TerminalListener>();
 	
 	private int firstLineChanged = Integer.MAX_VALUE;
 	
@@ -57,10 +55,6 @@ public class TerminalModel extends Observable {
         public int getFirstLineChanged() {
                 return firstLineChanged;
         }
-
-        public boolean linesHaveChanged() {
-                return firstLineChanged != Integer.MAX_VALUE;
-        }
 	
 	public Dimension getCurrentSizeInChars() {
                 return new Dimension(size);
@@ -71,11 +65,16 @@ public class TerminalModel extends Observable {
 	}
 	
 	public void processActions(TerminalAction[] actions) {
+                Location oldCursorPosition = cursorPosition;
 		firstLineChanged = Integer.MAX_VALUE;
 		for (TerminalAction action : actions)
 			action.perform(this);
-                setChanged();
-                notifyObservers(Change.OTHER);
+                if (!oldCursorPosition.equals(cursorPosition))
+                        for (TerminalListener l : listeners)
+                                l.cursorPositionChanged(oldCursorPosition, cursorPosition);
+                if (firstLineChanged != Integer.MAX_VALUE)
+                        for (TerminalListener l : listeners)
+                                l.contentsChanged(firstLineChanged);
 	}
 	
 	public void setStyle(short style) {
@@ -191,8 +190,8 @@ public class TerminalModel extends Observable {
 	
 	public void setCursorVisible(boolean cursorVisible) {
                 this.cursorVisible = cursorVisible;
-                setChanged();
-                notifyObservers(Change.CURSOR_VISIBLITY);
+                for (TerminalListener l : listeners)
+                        l.cursorVisibilityChanged(this.cursorVisible);
 	}
 
         public boolean getCursorVisible() {
@@ -292,5 +291,9 @@ public class TerminalModel extends Observable {
 	public void deleteLine() {
                 /* TODO: Can this be implemented with insertLines? */
                 modifyOneLine(lastScrollLineIndex + 1, cursorPosition.getLineIndex(), cursorPosition.getLineIndex());
+	}
+
+	public void addListener(TerminalListener l) {
+		listeners.add(l);
 	}
 }
