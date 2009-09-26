@@ -23,7 +23,6 @@ public class JTerminalPane extends JPanel {
 	
 	private TerminalControl control;
 	private TerminalView view;
-	private Dimension currentSizeInChars;
 	
 	/**
 	 * Creates a new terminal with the given name, running the given command.
@@ -73,25 +72,26 @@ public class JTerminalPane extends JPanel {
 	}
 	
 	private void initSizeMonitoring() {
-		class SizeMonitor extends ComponentAdapter {
+		addComponentListener(new ComponentAdapter() {
+                        private Dimension currentSize;
+
 			@Override
 			public void componentResized(ComponentEvent event) {
-				updateTerminalSize();
+                                Dimension size = view.getVisibleSizeInCharacters(getSize());
+                                if (size.equals(currentSize))
+                                        return;
+
+                                try {
+                                        control.sizeChanged(size);
+                                } catch (Exception ex) {
+                                        Log.warn("Failed to notify " +
+                                                 control.getPtyProcess() +
+                                                 " of size change", ex);
+                                }
+                                currentSize = size;
 			}
-		};
-		addComponentListener(new SizeMonitor());
-	}
 	
-	private void updateTerminalSize() {
-		Dimension size = view.getVisibleSizeInCharacters(getSize());
-		if (size.equals(currentSizeInChars) == false) {
-			try {
-				control.sizeChanged(size);
-			} catch (Exception ex) {
-                                Log.warn("Failed to notify " + control.getPtyProcess() + " of size change", ex);
-			}
-			currentSizeInChars = size;
-		}
+		});
 	}
 	
 	/** 
