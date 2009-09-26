@@ -254,17 +254,10 @@ public class TerminalControl {
 	}
 	
 	private synchronized void processBuffer(char[] buffer, int size) throws IOException {
-		boolean sawNewline = false;
-		for (int i = 0; i < size; ++i) {
-			char ch = buffer[i];
-			if (ch == '\n') {
-				sawNewline = true;
-			}
-			processChar(ch);
-		}
+		for (int i = 0; i < size; ++i)
+			processChar(buffer[i]);
 		flushLineBuffer();
 		flushTerminalActions();
-		fireChangeListeners();
 	}
 	
 	private synchronized void flushTerminalActions() {
