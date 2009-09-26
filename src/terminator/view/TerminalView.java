@@ -187,7 +187,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		try {
 			Graphics2D g = (Graphics2D) oldGraphics;
 			
-			Object antiAliasHint = g.getRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING);
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			FontMetrics metrics = getFontMetrics(getFont());
@@ -216,7 +215,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 				}
 			}
                         cursorPainter.paint(g, firstTextLine, lastTextLine);
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasHint);
 		} finally {
 			timer.stop();
 		}
