@@ -46,11 +46,9 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                                 setCursor(Cursor.getDefaultCursor());
                         }
                 });
-		addMouseWheelListener(HorizontalScrollWheelListener.INSTANCE);
 	}
 	
 	public void userIsTyping() {
-		redrawCursorPosition();
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
@@ -208,11 +206,11 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			for (int i = firstTextLine; i <= lastTextLine; i++) {
 				int x = insets.left;
 				int baseline = insets.top + charUnitSize.height * (i + 1) - metrics.getMaxDescent();
-				Iterator<StyledText> it = getLineStyledText(i, widthHintInChars).iterator();
-				while (it.hasNext() && x < maxX) {
-					StyledText chunk = it.next();
-					x += paintStyledText(g, metrics, chunk, x, baseline);
-				}
+                                for (StyledText text : getLineStyledText(i, widthHintInChars)) {
+                                        if (x >= maxX) // XXX: Off by one here?
+                                                break;
+                                        x += paintStyledText(g, metrics, text, x, baseline);
+                                }
 			}
                         cursorPainter.paint(g, firstTextLine, lastTextLine);
 		} finally {
