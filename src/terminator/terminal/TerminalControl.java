@@ -58,8 +58,8 @@ public class TerminalControl {
 	private Semaphore flowControl = new Semaphore(30);
 	
 	public TerminalControl(TerminalModel model) {
-		reset();
 		this.model = model;
+		reset();
 	}
 	
 	public void initProcess(List<String> command, String workingDirectory) throws Throwable {
@@ -170,9 +170,7 @@ public class TerminalControl {
 		invokeCharacterSet(0);
 		designateCharacterSet(0, 'B');
 		designateCharacterSet(1, '0');
-		if (model != null) {
-			model.setStyle(StyledText.getDefaultStyle());
-		}
+                model.setStyle(StyledText.getDefaultStyle());
 	}
 	
 	public void designateCharacterSet(int index, char set) {
