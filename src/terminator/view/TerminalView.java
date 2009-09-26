@@ -22,8 +22,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	
 	private TerminalModel model;
 	private Location cursorPosition;
-	private boolean hasFocus = false;
-	private boolean displayCursor;
+        private CursorPainter cursorPainter;
 	
 	public TerminalView(TerminalModel model) {
 		ComponentUtilities.disableFocusTraversal(this);
@@ -33,7 +32,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 
                 this.model = model;
                 cursorPosition = model.getCursorPosition();
-                displayCursor = model.getCursorVisible();
+                cursorPainter = new UnfocusedCursorPainter(model.getCursorVisible());
                 model.addObserver(this);
 
                 setFixedSize(getOptimalViewSize());
@@ -133,16 +132,9 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		redrawCursorPosition();
 	}
 	
-	/** Sets whether the cursor should be displayed. */
 	private void setCursorVisible(boolean displayCursor) {
-		if (this.displayCursor != displayCursor) {
-			this.displayCursor = displayCursor;
-			redrawCursorPosition();
-		}
-	}
-	
-	private boolean shouldShowCursor() {
-		return displayCursor;
+                if (cursorPainter.changeVisibility(displayCursor))
+                        redrawCursorPosition();
 	}
 	
 	private Rectangle modelToView(Location charCoords) {
@@ -228,25 +220,18 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 			int lastTextLine = (rect.y - insets.top + rect.height + charUnitSize.height - 1) / charUnitSize.height;
 			lastTextLine = Math.min(lastTextLine, model.getLineCount() - 1);
 			for (int i = firstTextLine; i <= lastTextLine; i++) {
-				boolean drawCursor = (shouldShowCursor() && i == cursorPosition.getLineIndex());
 				int x = insets.left;
 				int baseline = insets.top + charUnitSize.height * (i + 1) - metrics.getMaxDescent();
-				int startOffset = 0;
 				Iterator<StyledText> it = getLineStyledText(i, widthHintInChars).iterator();
 				while (it.hasNext() && x < maxX) {
 					StyledText chunk = it.next();
 					x += paintStyledText(g, metrics, chunk, x, baseline);
-					String chunkText = chunk.getText();
-					if (drawCursor && cursorPosition.charOffsetInRange(startOffset, startOffset + chunkText.length())) {
-						paintCursor(g);
-						drawCursor = false;
-					}
-					startOffset += chunkText.length();
 				}
-				if (drawCursor) {
-					// A cursor at the end of the line is in a position past the end of the text.
-					paintCursor(g);
-				}
+
+                                // TODO: this test can be removed and moved
+                                // outside the for loop.
+                                if (cursorPosition.getLineIndex() == i)
+                                        cursorPainter.paint(g);
 			}
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasHint);
 		} finally {
@@ -258,23 +243,61 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		return model.getTextLine(line).getStyledTextSegments(widthHintInChars);
 	}
 	
-	/**
-	 * Paints the cursor, which is either a solid block or an underline.
-	 * The cursor may actually be invisible because it's blinking and in
-	 * the 'off' state.
-	 */
-	private void paintCursor(Graphics2D g) {
-		g.setColor(Color.black);
-		Rectangle r = modelToView(cursorPosition);
-		if (hasFocus) {
+        private abstract class CursorPainter {
+                private boolean isVisible;
+
+                public CursorPainter(boolean isVisible) {
+                        isVisible = isVisible;
+                }
+
+                public CursorPainter(CursorPainter previous) {
+                        isVisible = previous.isVisible;
+                }
+
+                public boolean changeVisibility(boolean isVisible) {
+                        if (this.isVisible == isVisible)
+                                return false;
+                        this.isVisible = isVisible;
+                        return true;
+                }
+
+                public void paint(Graphics2D g) {
+                        if (!isVisible)
+                                return;
+                        g.setColor(Color.black);
+                        paintCursor(g, modelToView(cursorPosition));
+                }
+
+                protected abstract void paintCursor(Graphics2D g, Rectangle r);
+        }
+
+        private class FocusedCursorPainter extends CursorPainter {
+                public FocusedCursorPainter(CursorPainter previous) {
+                        super(previous);
+                }
+
+                protected void paintCursor(Graphics2D g, Rectangle r) {
                         g.setXORMode(Color.white);
                         g.fill(r);
                         g.setPaintMode();
-		} else {
-			g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
-		}
-	}
-	
+                }
+        }
+
+
+        private class UnfocusedCursorPainter extends CursorPainter {
+                public UnfocusedCursorPainter(boolean isVisible) {
+                        super(isVisible);
+                }
+
+                public UnfocusedCursorPainter(CursorPainter previous) {
+                        super(previous);
+                }
+
+                protected void paintCursor(Graphics2D g, Rectangle r) {
+                        g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
+                }
+        }
+
 	/**
 	 * Paints the text. Returns how many pixels wide the text was.
 	 */
@@ -316,12 +339,15 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	//
 	
 	public void focusGained(FocusEvent event) {
-		hasFocus = true;
-		redrawCursorPosition();
+                setCursorPainter(new FocusedCursorPainter(this.cursorPainter));
 	}
 	
 	public void focusLost(FocusEvent event) {
-		hasFocus = false;
-		redrawCursorPosition();
+                setCursorPainter(new UnfocusedCursorPainter(this.cursorPainter));
 	}
+
+        private void setCursorPainter(CursorPainter cursorPainter) {
+                this.cursorPainter = cursorPainter;
+                redrawCursorPosition();
+        }
 }
