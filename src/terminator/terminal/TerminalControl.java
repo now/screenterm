@@ -35,7 +35,6 @@ public class TerminalControl {
 	
 	private static BufferedReader stepModeReader;
 	
-	private List<ChangeListener> changeListeners = new ArrayList<ChangeListener>();
 	private TerminalModel model;
 	private PtyProcess ptyProcess;
 	private boolean processIsRunning;
@@ -558,22 +557,5 @@ public class TerminalControl {
 	
 	public PtyProcess getPtyProcess() {
 		return ptyProcess;
-	}
-	
-	/**
-	 * Adds a change listener to be notified when the terminal's content changes.
-	 */
-	public void addChangeListener(final ChangeListener l) {
-		changeListeners.add(l);
-	}
-	
-	public void removeChangeListener(final ChangeListener l) {
-		changeListeners.remove(l);
-	}
-	
-	private void fireChangeListeners() {
-		for (ChangeListener l : changeListeners) {
-			l.stateChanged(null);
-		}
 	}
 }
