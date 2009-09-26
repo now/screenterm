@@ -166,10 +166,6 @@ public class TerminalControl {
 		this.characterSet = index;
 	}
 	
-	/**
-	 * Invoked both on construction to set the defaults and by the "Reset"
-	 * action in the UI.
-	 */
 	private void reset() {
 		invokeCharacterSet(0);
 		designateCharacterSet(0, 'B');
