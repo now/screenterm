@@ -20,8 +20,8 @@ public class EscapeParser {
 	
 	private static final HashMap<Character, SequenceRecognizer> SEQ_RECOGNIZERS = new HashMap<Character, SequenceRecognizer>();
 	static {
-		addSequenceRecognizers("6789=>DEHMZcno", new SingleCharSequenceRecognizer());
-		addSequenceRecognizers("#()*+$@", new TwoCharSequenceRecognizer());
+		addSequenceRecognizers("M", new SingleCharSequenceRecognizer());
+		addSequenceRecognizers("()", new TwoCharSequenceRecognizer());
 		addSequenceRecognizers("[", new CSISequenceRecognizer());
 	}
 	private static void addSequenceRecognizers(String chars, SequenceRecognizer recognizer) {
