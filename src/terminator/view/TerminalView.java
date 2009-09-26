@@ -88,7 +88,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	 * columns and 'height' the number of rows. (In case you were concerned
 	 * about the fact that terminals tend to refer to y,x coordinates.)
 	 */
-	public Dimension getVisibleSizeInCharacters(Dimension paneSize) {
+	public Dimension getSizeInChars(Dimension paneSize) {
 		Dimension result = paneSize;
 		Insets insets = getInsets();
 		result.width -= (insets.left + insets.right);
@@ -187,7 +187,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	private Dimension getOptimalViewSize() {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
-                Dimension size = getVisibleSizeInCharacters(adjustedSize);
+                Dimension size = getSizeInChars(adjustedSize);
                 size.width = Math.min(size.width, 132);
 		Dimension character = getCharUnitSize();
 		Insets insets = getInsets();
