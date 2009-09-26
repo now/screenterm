@@ -32,7 +32,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 
                 this.model = model;
                 cursorPosition = model.getCursorPosition();
-                cursorPainter = new UnfocusedCursorPainter(model.getCursorVisible());
+                cursorPainter = new UnfocusedCursorPainter();
                 model.addObserver(this);
 
                 setFixedSize(getOptimalViewSize());
@@ -114,9 +114,13 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 if (model.linesHaveChanged())
                         linesChangedFrom(model.getFirstLineChanged());
                 setCursorPosition(model.getCursorPosition());
-                setCursorVisible(model.getCursorVisible());
+                switch ((TerminalModel.Change)arg) {
+                case CURSOR_VISIBLITY:
+                        redrawCursorPosition();
+                        break;
+                }
         }
-	
+
 	private void linesChangedFrom(int lineIndex) {
 		Point redrawTop = modelToView(new Location(lineIndex, 0)).getLocation();
 		Dimension size = getSize();
@@ -130,11 +134,6 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		redrawCursorPosition();
 		cursorPosition = newCursorPosition;
 		redrawCursorPosition();
-	}
-	
-	private void setCursorVisible(boolean displayCursor) {
-                if (cursorPainter.changeVisibility(displayCursor))
-                        redrawCursorPosition();
 	}
 	
 	private Rectangle modelToView(Location charCoords) {
@@ -230,7 +229,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 
                                 // TODO: this test can be removed and moved
                                 // outside the for loop.
-                                if (cursorPosition.getLineIndex() == i)
+                                if (cursorPosition.getLineIndex() == i && model.getCursorVisible())
                                         cursorPainter.paint(g);
 			}
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, antiAliasHint);
@@ -244,25 +243,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 	}
 	
         private abstract class CursorPainter {
-                private boolean isVisible;
-
-                public CursorPainter(boolean isVisible) {
-                        isVisible = isVisible;
-                }
-
-                public CursorPainter(CursorPainter previous) {
-                        isVisible = previous.isVisible;
-                }
-
-                public boolean changeVisibility(boolean isVisible) {
-                        boolean oldVisibility = this.isVisible;
-                        this.isVisible = isVisible;
-                        return oldVisibility == this.isVisible;
-                }
-
                 public void paint(Graphics2D g) {
-                        if (!isVisible)
-                                return;
                         g.setColor(Color.black);
                         paintCursor(g, modelToView(cursorPosition));
                 }
@@ -271,10 +252,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
         }
 
         private class FocusedCursorPainter extends CursorPainter {
-                public FocusedCursorPainter(CursorPainter previous) {
-                        super(previous);
-                }
-
+                @Override
                 protected void paintCursor(Graphics2D g, Rectangle r) {
                         g.setXORMode(Color.white);
                         g.fill(r);
@@ -284,14 +262,7 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 
 
         private class UnfocusedCursorPainter extends CursorPainter {
-                public UnfocusedCursorPainter(boolean isVisible) {
-                        super(isVisible);
-                }
-
-                public UnfocusedCursorPainter(CursorPainter previous) {
-                        super(previous);
-                }
-
+                @Override
                 protected void paintCursor(Graphics2D g, Rectangle r) {
                         g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
                 }
@@ -333,16 +304,12 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
 		}
 	}
 	
-	//
-	// FocusListener interface.
-	//
-	
 	public void focusGained(FocusEvent event) {
-                setCursorPainter(new FocusedCursorPainter(this.cursorPainter));
+                setCursorPainter(new FocusedCursorPainter());
 	}
 	
 	public void focusLost(FocusEvent event) {
-                setCursorPainter(new UnfocusedCursorPainter(this.cursorPainter));
+                setCursorPainter(new UnfocusedCursorPainter());
 	}
 
         private void setCursorPainter(CursorPainter cursorPainter) {

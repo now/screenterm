@@ -6,14 +6,18 @@ import e.util.*;
 import terminator.terminal.*;
 
 public class TerminalModel extends Observable {
+        public enum Change {
+                CURSOR_VISIBLITY,
+                OTHER
+        };
         private Dimension size = new Dimension(0, 0);
         private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
 	private Location cursorPosition = new Location(0, 0);
-	private boolean insertMode = false;
         private boolean cursorVisible = true;
+	private boolean insertMode = false;
 	
 	private int firstLineChanged = Integer.MAX_VALUE;
 	
@@ -57,10 +61,6 @@ public class TerminalModel extends Observable {
         public boolean linesHaveChanged() {
                 return firstLineChanged != Integer.MAX_VALUE;
         }
-
-        public boolean getCursorVisible() {
-                return cursorVisible;
-        }
 	
 	public Dimension getCurrentSizeInChars() {
                 return new Dimension(size);
@@ -75,7 +75,7 @@ public class TerminalModel extends Observable {
 		for (TerminalAction action : actions)
 			action.perform(this);
                 setChanged();
-                notifyObservers();
+                notifyObservers(Change.OTHER);
 	}
 	
 	public void setStyle(short style) {
@@ -189,12 +189,15 @@ public class TerminalModel extends Observable {
 		textAdded(tabLength);
 	}
 	
-	/** Sets whether the cursor should be visible. */
 	public void setCursorVisible(boolean cursorVisible) {
                 this.cursorVisible = cursorVisible;
                 setChanged();
-                notifyObservers();
+                notifyObservers(Change.CURSOR_VISIBLITY);
 	}
+
+        public boolean getCursorVisible() {
+                return cursorVisible;
+        }
 	
 	public void deleteCharacters(int count) {
 		TextLine line = getCursorTextLine();
