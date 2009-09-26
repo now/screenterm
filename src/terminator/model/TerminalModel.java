@@ -15,7 +15,30 @@ public class TerminalModel {
         private boolean cursorVisible = true;
 	private boolean insertMode = false;
 
-	private List<TerminalListener> listeners = new ArrayList<TerminalListener>();
+        private class TerminalListeners implements TerminalListener {
+                private List<TerminalListener> listeners = new ArrayList<TerminalListener>();
+
+                public void add(TerminalListener l) {
+                        listeners.add(l);
+                }
+
+                public void contentsChanged(int fromLine) {
+                        for (TerminalListener l : listeners)
+                                l.contentsChanged(fromLine);
+                }
+
+                public void cursorPositionChanged(Location oldPosition, Location newPosition) {
+                        for (TerminalListener l : listeners)
+                                l.cursorPositionChanged(oldPosition, newPosition);
+                }
+
+                public void cursorVisibilityChanged(boolean isVisible) {
+                        for (TerminalListener l : listeners)
+                                l.cursorVisibilityChanged(isVisible);
+                }
+        }
+
+        private TerminalListeners listeners = new TerminalListeners();
 	
 	private int firstLineChanged = Integer.MAX_VALUE;
 	
@@ -70,11 +93,9 @@ public class TerminalModel {
 		for (TerminalAction action : actions)
 			action.perform(this);
                 if (!oldCursorPosition.equals(cursorPosition))
-                        for (TerminalListener l : listeners)
-                                l.cursorPositionChanged(oldCursorPosition, cursorPosition);
+                        listeners.cursorPositionChanged(oldCursorPosition, cursorPosition);
                 if (firstLineChanged != Integer.MAX_VALUE)
-                        for (TerminalListener l : listeners)
-                                l.contentsChanged(firstLineChanged);
+                        listeners.contentsChanged(firstLineChanged);
 	}
 	
 	public void setStyle(short style) {
@@ -190,8 +211,7 @@ public class TerminalModel {
 	
 	public void setCursorVisible(boolean cursorVisible) {
                 this.cursorVisible = cursorVisible;
-                for (TerminalListener l : listeners)
-                        l.cursorVisibilityChanged(this.cursorVisible);
+                listeners.cursorVisibilityChanged(this.cursorVisible);
 	}
 
         public boolean getCursorVisible() {
