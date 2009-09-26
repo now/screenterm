@@ -255,10 +255,9 @@ public class TerminalView extends JComponent implements FocusListener, Observer 
                 }
 
                 public boolean changeVisibility(boolean isVisible) {
-                        if (this.isVisible == isVisible)
-                                return false;
+                        boolean oldVisibility = this.isVisible;
                         this.isVisible = isVisible;
-                        return true;
+                        return oldVisibility == this.isVisible;
                 }
 
                 public void paint(Graphics2D g) {
