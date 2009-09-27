@@ -546,8 +546,4 @@ public class TerminalControl {
 	private void reportFailedSend(String kind, String value, Exception ex) {
 		Log.warn("Couldn't send " + kind + " \"" + StringUtilities.escapeForJava(value) + "\" to " + ptyProcess, ex);
 	}
-	
-	public PtyProcess getPtyProcess() {
-		return ptyProcess;
-	}
 }
