@@ -109,16 +109,12 @@ public class TerminalControl {
 	 * invoked when all the user interface stuff is set up.
 	 */
 	public void start() {
-		if (readerThread != null) {
-			// Detaching a tab causes start to be invoked again, but we shouldn't do anything.
-			return;
-		}
-		
-		if (ptyProcess == null) {
-			// If the PtyProcess couldn't start, there's no point carrying on.
-			return;
-		}
-		
+		if (readerThread != null)
+                        return;
+
+		if (ptyProcess == null)
+                        return;
+
 		readerThread = startThread("Reader", new ReaderRunnable());
 	}
 	
