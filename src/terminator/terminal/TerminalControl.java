@@ -40,7 +40,6 @@ public class TerminalControl {
 	private boolean processIsRunning;
 	
 	private InputStreamReader in;
-	private OutputStream out;
 	
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
@@ -84,7 +83,6 @@ public class TerminalControl {
 		this.processIsRunning = true;
 		Log.warn("Created " + ptyProcess);
 		this.in = new InputStreamReader(ptyProcess.getInputStream(), CHARSET_NAME);
-		this.out = ptyProcess.getOutputStream();
 		writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
 	}
 	
@@ -518,11 +516,13 @@ public class TerminalControl {
 	public void sendUtf8String(final String s) {
 		writerExecutor.execute(new Runnable() {
 			public void run() {
+                                if (!processIsRunning)
+                                        return;
+
 				try {
-					if (processIsRunning) {
-						out.write(s.getBytes(CHARSET_NAME));
-						out.flush();
-					}
+                                        OutputStream out = ptyProcess.getOutputStream();
+                                        out.write(s.getBytes(CHARSET_NAME));
+                                        out.flush();
 				} catch (IOException ex) {
 					reportFailedSend("string", s, ex);
 				}
