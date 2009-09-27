@@ -45,8 +45,8 @@ public class TerminalControl {
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
 	
-	private int characterSet;
-	private char[] g = new char[2];
+	private int characterSet = 0;
+	private char[] g = { 'B', '0' };
 	
 	private StringBuilder lineBuffer = new StringBuilder();
 	
@@ -59,7 +59,6 @@ public class TerminalControl {
 	
 	public TerminalControl(TerminalModel model) {
 		this.model = model;
-		reset();
 	}
 	
 	public void initProcess(List<String> command, String workingDirectory) throws Throwable {
@@ -164,13 +163,6 @@ public class TerminalControl {
 	public void invokeCharacterSet(int index) {
 		flushLineBuffer();
 		this.characterSet = index;
-	}
-	
-	private void reset() {
-		invokeCharacterSet(0);
-		designateCharacterSet(0, 'B');
-		designateCharacterSet(1, '0');
-                model.setStyle(StyledText.getDefaultStyle());
 	}
 	
 	public void designateCharacterSet(int index, char set) {
