@@ -254,7 +254,6 @@ public class TerminalControl {
                         ptyProcess.sendResizeNotification(size);
                 } catch (Exception e) {
                         Log.warn("Failed to notify " + ptyProcess + " of size change", e);
-                        return;
                 }
 	}
 	
