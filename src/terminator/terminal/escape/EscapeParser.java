@@ -4,14 +4,6 @@ import java.util.*;
 import e.util.*;
 import terminator.terminal.*;
 
-/**
-
-Stuff we're unsure about:
-G - process graphics.
-
-@author Phil Norman
-*/
-
 public class EscapeParser {
 	private boolean isComplete = false;
 	private String sequence = "";
@@ -46,7 +38,6 @@ public class EscapeParser {
 	}
 	
 	public TerminalAction getAction(TerminalControl terminalControl) {
-		//Log.warn("Getting action for ESC sequence \"" + StringUtilities.escapeForJava(sequence) + "\"");
 		return (seqRecognizer == null) ? null : seqRecognizer.getTerminalAction(terminalControl, sequence);
 	}
 	
@@ -81,8 +72,6 @@ public class EscapeParser {
 	
 	private static class CSISequenceRecognizer implements SequenceRecognizer {
 		public boolean isAtEnd(String sequence) {
-			// We don't need to check for sequence.length() == 0, since SequenceRecognizers are always
-			// created after the first char has been read.
 			if (sequence.length() == 1) {
 				return false;
 			}
