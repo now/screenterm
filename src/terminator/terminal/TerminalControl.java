@@ -174,43 +174,38 @@ public class TerminalControl {
 	private void handleProcessTermination() {
 		processIsRunning = false;
 
-		// The readerThread will have shut itself down by now.
-		// We need to handle the writer ExecutorService ourselves.
-		if (writerExecutor != null) {
+		if (writerExecutor != null)
 			writerExecutor.shutdownNow();
-		}
-		
-		// If the JNI side failed to start, ptyProcess can be null.
-		// In that case, we'll already have reported the error.
-		if (ptyProcess == null) {
+
+		if (ptyProcess == null)
 			return;
-		}
 
 		Log.warn("calling waitFor on " + ptyProcess);
 		try {
 			ptyProcess.waitFor();
 		} catch (Exception ex) {
 			Log.warn("Problem waiting for " + ptyProcess, ex);
-			String exceptionDetails = StringUtilities.stackTraceFromThrowable(ex).replaceAll("\n", "\n\r");
-			announceConnectionLost(exceptionDetails + "[Problem waiting for process.]");
+                        announceConnectionLost(StringUtilities.
+                                stackTraceFromThrowable(ex).replaceAll("\n", "\n\r") +
+                                "[Problem waiting for process.]");
 			return;
 		}
 		Log.warn("waitFor returned on " + ptyProcess);
-		if (ptyProcess.didExitNormally()) {
-                        announceConnectionLost("\n\r[Process exited with status " + ptyProcess.getExitStatus() + ".]");
-                        return;
-		} else if (ptyProcess.wasSignaled()) {
-			announceConnectionLost("\n\r[Process killed by " + ptyProcess.getSignalDescription() + ".]");
-			return;
-		} else {
+		if (ptyProcess.didExitNormally())
+                        announceConnectionLost("\n\r[Process exited with status " +
+                                               ptyProcess.getExitStatus() +
+                                               ".]");
+		else if (ptyProcess.wasSignaled())
+			announceConnectionLost("\n\r[Process killed by " +
+                                               ptyProcess.getSignalDescription() +
+                                               ".]");
+		else
 			announceConnectionLost("\n\r[Lost contact with process.]");
-			return;
-		}
 	}
 	
 	public void announceConnectionLost(String message) {
 		try {
-			final char[] buffer = message.toCharArray();
+			char[] buffer = message.toCharArray();
 			processBuffer(buffer, buffer.length);
 			model.setCursorVisible(false);
 		} catch (Exception ex) {
