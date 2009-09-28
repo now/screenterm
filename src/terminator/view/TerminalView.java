@@ -49,6 +49,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	}
 	
 	public void userIsTyping() {
+                redrawCursorPosition();
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
