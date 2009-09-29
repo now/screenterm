@@ -14,8 +14,6 @@ import terminator.view.*;
 public class Terminator {
 	private static final Terminator INSTANCE = new Terminator();
 	
-	private Color boldForegroundColor;
-	
 	private Frames frames = new Frames();
 	
 	public static Terminator getSharedInstance() {
@@ -24,10 +22,6 @@ public class Terminator {
 	
 	private Terminator() {
 		initMacOsEventHandlers();
-	}
-	
-	public Color getBoldColor() {
-		return boldForegroundColor;
 	}
 	
 	private void initMacOsEventHandlers() {
