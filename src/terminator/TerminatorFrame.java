@@ -53,10 +53,6 @@ public class TerminatorFrame extends JFrame {
 		pack();
                 setLocationRelativeTo(null);
 		setVisible(true);
-		
-		if (GuiUtilities.isMacOs()) {
-			WindowMenu.getSharedInstance().addWindow(this);
-		}
 	}
 	
 	private void initTerminal() {
