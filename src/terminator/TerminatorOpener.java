@@ -48,17 +48,17 @@ public class TerminatorOpener implements Runnable {
     }
     
     public TerminatorFrame createUi() {
-        try {
-            this.window = new TerminatorFrame(JTerminalPane.newShell());
-            return window;
-        } catch (UsageError ex) {
-            err.println(ex.getMessage());
-            showUsage(err);
-        } catch (Exception ex) {
-            err.println(ex.getMessage());
-            Log.warn("failed to open window", ex);
-        }
-        return null;
+            try {
+                    this.window = Terminator.getSharedInstance().openFrame(JTerminalPane.newShell());
+                    return window;
+            } catch (UsageError ex) {
+                    err.println(ex.getMessage());
+                    showUsage(err);
+            } catch (Exception ex) {
+                    err.println(ex.getMessage());
+                    Log.warn("Failed to open window", ex);
+            }
+            return null;
     }
     
     public void run() {
