@@ -16,6 +16,7 @@ public class TerminatorMenuBar extends EMenuBar {
 	
 	public TerminatorMenuBar() {
 		add(makeFileMenu());
+                add(WindowMenu.getSharedInstance().makeJMenu(new Action[]{}));
 		add(makeHelpMenu());
 	}
 	

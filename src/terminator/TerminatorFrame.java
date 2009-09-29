@@ -30,29 +30,13 @@ public class TerminatorFrame extends JFrame {
 		
 		JFrameUtilities.setFrameIcon(this);
 		
-		Terminator.getSharedInstance().getFrames().addFrame(this);
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowOpened(WindowEvent event) {
-				Terminator.getSharedInstance().getFrames().frameStateChanged();
-			}
-			
+                addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent event) {
 				handleWindowCloseRequestFromUser();
 			}
+                });
 			
-			@Override
-			public void windowIconified(WindowEvent event) {
-				Terminator.getSharedInstance().getFrames().frameStateChanged();
-			}
-			
-			@Override
-			public void windowDeiconified(WindowEvent event) {
-				Terminator.getSharedInstance().getFrames().frameStateChanged();
-			}
-		});
-		
 		// Work around Sun bug 6526971 (quick alt-tabbing on Windows can give focus to menu bar).
 		if (GuiUtilities.isWindows()) {
 			addWindowFocusListener(new WindowAdapter() {
@@ -148,7 +132,6 @@ public class TerminatorFrame extends JFrame {
                         return;
                 terminal.destroyProcess();
                 dispose();
-                Terminator.getSharedInstance().getFrames().removeFrame(this);
 	}
 	
 	public void optionsDidChange() {

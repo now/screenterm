@@ -98,12 +98,10 @@ public class Terminator {
 		return true;
 	}
 	
-	public Frames getFrames() {
-		return frames;
-	}
-	
 	public TerminatorFrame openFrame(JTerminalPane terminalPane) {
-		return new TerminatorFrame(terminalPane);
+		TerminatorFrame frame = new TerminatorFrame(terminalPane);
+                frames.addFrame(frame);
+                return frame;
 	}
 	
 	private void optionsDidChange() {

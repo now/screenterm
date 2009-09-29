@@ -1,6 +1,7 @@
 package terminator;
 
 import e.util.*;
+import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -35,12 +36,33 @@ public class Frames implements Iterable<TerminatorFrame> {
         return hiddenFrame;
     }
     
-    public void addFrame(TerminatorFrame frame) {
-        list.add(frame);
-        if (GuiUtilities.isMacOs()) {
+    public void addFrame(final TerminatorFrame frame) {
+            list.add(frame);
             // Make the hidden frame invisible so that Mac OS won't give it the focus if the user hits C-` or C-~.
-            frameStateChanged();
-        }
+            if (GuiUtilities.isMacOs())
+                    frameStateChanged();
+            frame.addWindowListener(new WindowAdapter() {
+                    @Override
+                    public void windowOpened(WindowEvent event) {
+                            frameStateChanged();
+                    }
+
+                    @Override
+                    public void windowClosed(WindowEvent event) {
+                            Log.warn("removing frame: " + frame);
+                            removeFrame(frame);
+                    }
+
+                    @Override
+                    public void windowIconified(WindowEvent event) {
+                            frameStateChanged();
+                    }
+
+                    @Override
+                    public void windowDeiconified(WindowEvent event) {
+                            frameStateChanged();
+                    }
+            });
     }
     
     public void removeFrame(TerminatorFrame frame) {
