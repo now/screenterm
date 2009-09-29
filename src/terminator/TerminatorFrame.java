@@ -134,7 +134,6 @@ public class TerminatorFrame extends JFrame {
 	}
 	
 	public void handleWindowCloseRequestFromUser() {
-                terminal.destroyProcess();
                 setVisible(false);
 	}
 	
@@ -143,13 +142,13 @@ public class TerminatorFrame extends JFrame {
 	 * We can't use a ComponentListener because that's invoked on the EDT, as is handleQuit, which relies on us tidying up while it goes.
 	 */
 	@Override
-	public void setVisible(boolean newState) {
-		super.setVisible(newState);
-		if (newState == false) {
-                        terminal.destroyProcess();
-			dispose();
-			Terminator.getSharedInstance().getFrames().removeFrame(this);
-		}
+	public void setVisible(boolean visible) {
+		super.setVisible(visible);
+                if (visible)
+                        return;
+                terminal.destroyProcess();
+                dispose();
+                Terminator.getSharedInstance().getFrames().removeFrame(this);
 	}
 	
 	public void optionsDidChange() {

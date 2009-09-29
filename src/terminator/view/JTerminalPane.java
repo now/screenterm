@@ -280,6 +280,7 @@ public class JTerminalPane extends JPanel {
 	public void requestFocus() {
 		view.requestFocus();
 	}
+
 	public void destroyProcess() {
 		control.destroyProcess();
 	}

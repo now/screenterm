@@ -92,13 +92,12 @@ public class TerminalControl {
 	}
 	
 	public void destroyProcess() {
-		if (processIsRunning) {
-			try {
-				ptyProcess.destroy();
-			} catch (IOException ex) {
-				Log.warn("Failed to destroy process " + ptyProcess, ex);
-			}
-		}
+		if (!processIsRunning)
+                        return;
+
+                try { ptyProcess.destroy(); } catch (IOException ex) {
+                        Log.warn("Failed to destroy process " + ptyProcess, ex);
+                }
 	}
 	
 	/**
