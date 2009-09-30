@@ -47,7 +47,7 @@ public class Frames {
                 frameStateChanged();
         }
     
-        public void frameStateChanged() {
+        private void frameStateChanged() {
                 if (!GuiUtilities.isMacOs())
                         return;
 
@@ -77,6 +77,6 @@ public class Frames {
                 // We need to copy frames as we will be mutating it.
                 for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
                         frame.handleWindowCloseRequestFromUser();
-                return isEmpty();
+                return true;
         }
 }
