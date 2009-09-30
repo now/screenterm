@@ -68,12 +68,11 @@ public class Frames {
             });
     }
     
-    public void removeFrame(TerminatorFrame frame) {
-        list.remove(frame);
-        if (GuiUtilities.isMacOs()) {
-            frameStateChanged();
+        public void removeFrame(TerminatorFrame frame) {
+                list.remove(frame);
+                if (GuiUtilities.isMacOs())
+                        frameStateChanged();
         }
-    }
     
     public void frameStateChanged() {
             if (!GuiUtilities.isMacOs())
