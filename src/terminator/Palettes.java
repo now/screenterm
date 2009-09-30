@@ -1,7 +1,6 @@
 package terminator;
 
 import java.awt.Color;
-import java.util.*;
 
 public class Palettes {
         /** Tango palette from gnome-terminal 2.24. */
