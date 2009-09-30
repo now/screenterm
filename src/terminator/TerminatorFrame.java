@@ -112,6 +112,10 @@ public class TerminatorFrame extends JFrame {
 		
 		setSize(size);
 	}
+
+        public boolean isShowingOnScreen() {
+                return isShowing() && (getExtendedState() & ICONIFIED) == 0;
+        }
 	
 	public void handleWindowCloseRequestFromUser() {
                 setVisible(false);

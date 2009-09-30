@@ -76,15 +76,13 @@ public class Frames {
     }
     
     public void frameStateChanged() {
-        if (GuiUtilities.isMacOs()) {
-            for (TerminatorFrame frame : list) {
-                if (frame.isShowing() && (frame.getExtendedState() & TerminatorFrame.ICONIFIED) == 0) {
-                    getHiddenFrame().setVisible(false);
+            if (!GuiUtilities.isMacOs())
                     return;
-                }
-            }
-            getHiddenFrame().setVisible(true);
-        }
+
+            boolean noFramesVisible = true;
+            for (TerminatorFrame frame : list)
+                    noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
+            getHiddenFrame().setVisible(noFramesVisible);
     }
     
     public boolean isEmpty() {
