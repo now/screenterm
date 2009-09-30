@@ -17,9 +17,6 @@ public class Frames {
     private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
     private JFrame hiddenFrame; // Mac OS X only.
     
-    public Frames() {
-    }
-    
     private synchronized void initHiddenFrame() {
         if (hiddenFrame == null) {
             String name = "Mac OS Hidden Frame";
