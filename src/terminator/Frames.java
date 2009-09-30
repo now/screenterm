@@ -44,8 +44,7 @@ public class Frames {
     
         public void removeFrame(TerminatorFrame frame) {
                 list.remove(frame);
-                if (GuiUtilities.isMacOs())
-                        frameStateChanged();
+                frameStateChanged();
         }
     
         public void frameStateChanged() {
