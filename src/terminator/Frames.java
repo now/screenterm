@@ -87,10 +87,6 @@ public class Frames {
         }
     }
     
-    public TerminatorFrame get(int i) {
-        return list.get(i);
-    }
-    
     public boolean isEmpty() {
         return list.isEmpty();
     }
