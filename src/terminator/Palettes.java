@@ -38,41 +38,4 @@ public class Palettes {
                         return currentPalette()[index + 8];
                 }
         }
-
-        /**
-         * Tries to get a good bold foreground color.
-         * This is equivalent to "colorBD" in XTerm, but isn't under the control of the user.
-         * This is mainly a historical accident.
-         * (But as long as no-one cares, it's quite nice that we automatically choose a good bold color.)
-         */
-        public static Color getBrightColorFor(Color color) {
-                // If the color is one of the "standard" colors, use the corresponding bright variant.
-                // We try the user's preferred palette first in case of conflicts.
-                for (Color[] palette : new Color[][] { currentPalette() }) {
-                        for (int i = 0; i < 8; ++i) {
-                                if (color.equals(palette[i])) {
-                                        return palette[i + 8];
-                                }
-                        }
-                }
-
-                // That didn't work, so try to invent a suitable color.
-                // The typical use of boldForegroundColor is to turn off-white into pure white or off-black.
-                // One approach might be to use the NTSC or HDTV luminance formula, but it's not obvious that they generalize to other colors.
-                // Adjusting each component individually if it's close to full-on or full-off is simple and seems like it might generalize.
-                return new Color(adjustForBD(color.getRed()), adjustForBD(color.getGreen()), adjustForBD(color.getBlue()));
-        }
-
-        private static int adjustForBD(int component) {
-                // These limits are somewhat arbitrary "round" hex numbers.
-                // 0x11 would be too close to the LCD "blacker than black".
-                // The default XTerm normal-intensity and bold blacks differ by 0x30.
-                if (component < 0x33) {
-                        return 0x00;
-                } else if (component > 0xcc) {
-                        return 0xff;
-                } else {
-                        return component;
-                }
-        }
 }
