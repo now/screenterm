@@ -46,11 +46,8 @@ public class Terminator {
 			
 			@Override
 			public void handleQuit(ApplicationEvent e) {
-				// We can't iterate over "frames" directly because we're causing frames to close and be removed from the list.
-				for (TerminatorFrame frame : frames.toArrayList()) {
-					frame.handleWindowCloseRequestFromUser();
-				}
-				
+                                frames.closeAll();
+
 				// If there are windows still open, the user changed their mind; otherwise quit.
 				e.setHandled(frames.isEmpty());
 			}

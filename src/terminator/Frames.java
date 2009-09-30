@@ -13,7 +13,7 @@ import javax.swing.*;
  * but the application is focused, this hidden window gets the focus,
  * and its menu is used for the screen menu bar.
  */
-public class Frames implements Iterable<TerminatorFrame> {
+public class Frames {
     private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
     private JFrame hiddenFrame; // Mac OS X only.
     
@@ -99,20 +99,9 @@ public class Frames implements Iterable<TerminatorFrame> {
         return list.size();
     }
     
-    /**
-     * Implements java.lang.Iterable so we can be used with the new for loop.
-     */
-    public Iterator<TerminatorFrame> iterator() {
-        return list.iterator();
-    }
-    
-    /**
-     * Allows convenient cloning of the underlying list.
-     * You might think you could use our iterator() with Collections.list(), but you'd be wrong, because it uses Enumeration instead.
-     */
-    public ArrayList<TerminatorFrame> toArrayList() {
-        ArrayList<TerminatorFrame> result = new ArrayList<TerminatorFrame>();
-        result.addAll(list);
-        return result;
+    public void closeAll() {
+            // We need to copy frames as we will be mutating it.
+            for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
+                    frame.handleWindowCloseRequestFromUser();
     }
 }
