@@ -94,11 +94,7 @@ public class Frames {
     public boolean isEmpty() {
         return list.isEmpty();
     }
-    
-    public int size() {
-        return list.size();
-    }
-    
+
     public void closeAll() {
             // We need to copy frames as we will be mutating it.
             for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
