@@ -37,36 +37,36 @@ public class Frames {
         return hiddenFrame;
     }
     
-    public void addFrame(final TerminatorFrame frame) {
-            list.add(frame);
-            // Make the hidden frame invisible so that Mac OS won't give it the focus if the user hits C-` or C-~.
-            if (GuiUtilities.isMacOs()) {
-                    WindowMenu.getSharedInstance().addWindow(frame);
-                    frameStateChanged();
-            }
-            frame.addWindowListener(new WindowAdapter() {
-                    @Override
-                    public void windowOpened(WindowEvent event) {
-                            frameStateChanged();
-                    }
+        public void addFrame(final TerminatorFrame frame) {
+                list.add(frame);
 
-                    @Override
-                    public void windowClosed(WindowEvent event) {
-                            Log.warn("removing frame: " + frame);
-                            removeFrame(frame);
-                    }
+                frame.addWindowListener(new WindowAdapter() {
+                        @Override
+                        public void windowOpened(WindowEvent event) {
+                                frameStateChanged();
+                        }
 
-                    @Override
-                    public void windowIconified(WindowEvent event) {
-                            frameStateChanged();
-                    }
+                        @Override
+                        public void windowClosed(WindowEvent event) {
+                                removeFrame(frame);
+                        }
 
-                    @Override
-                    public void windowDeiconified(WindowEvent event) {
-                            frameStateChanged();
-                    }
-            });
-    }
+                        @Override
+                        public void windowIconified(WindowEvent event) {
+                                frameStateChanged();
+                        }
+
+                        @Override
+                        public void windowDeiconified(WindowEvent event) {
+                                frameStateChanged();
+                        }
+                });
+
+                if (GuiUtilities.isMacOs())
+                        WindowMenu.getSharedInstance().addWindow(frame);
+
+                frameStateChanged();
+        }
     
         public void removeFrame(TerminatorFrame frame) {
                 list.remove(frame);
@@ -74,24 +74,24 @@ public class Frames {
                         frameStateChanged();
         }
     
-    public void frameStateChanged() {
-            if (!GuiUtilities.isMacOs())
-                    return;
+        public void frameStateChanged() {
+                if (!GuiUtilities.isMacOs())
+                        return;
 
-            boolean noFramesVisible = true;
-            for (TerminatorFrame frame : list)
-                    noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
-            getHiddenFrame().setVisible(noFramesVisible);
-    }
-    
-    public boolean isEmpty() {
-        return list.isEmpty();
-    }
+                boolean noFramesVisible = true;
+                for (TerminatorFrame frame : list)
+                        noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
+                getHiddenFrame().setVisible(noFramesVisible);
+        }
+        
+        public boolean isEmpty() {
+                return list.isEmpty();
+        }
 
-    public boolean closeAll() {
-            // We need to copy frames as we will be mutating it.
-            for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
-                    frame.handleWindowCloseRequestFromUser();
-            return isEmpty();
-    }
+        public boolean closeAll() {
+                // We need to copy frames as we will be mutating it.
+                for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
+                        frame.handleWindowCloseRequestFromUser();
+                return isEmpty();
+        }
 }
