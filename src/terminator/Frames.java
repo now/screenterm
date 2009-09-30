@@ -91,9 +91,10 @@ public class Frames {
         return list.isEmpty();
     }
 
-    public void closeAll() {
+    public boolean closeAll() {
             // We need to copy frames as we will be mutating it.
             for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
                     frame.handleWindowCloseRequestFromUser();
+            return list.isEmpty();
     }
 }

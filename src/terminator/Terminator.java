@@ -46,10 +46,7 @@ public class Terminator {
 			
 			@Override
 			public void handleQuit(ApplicationEvent e) {
-                                frames.closeAll();
-
-				// If there are windows still open, the user changed their mind; otherwise quit.
-				e.setHandled(frames.isEmpty());
+                                e.setHandled(frames.closeAll());
 			}
 		});
 	}
