@@ -2,6 +2,7 @@ package terminator;
 
 import e.gui.*;
 import e.util.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
@@ -14,26 +15,9 @@ import javax.swing.*;
  * and its menu is used for the screen menu bar.
  */
 public class Frames {
-    private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
-    private JFrame hiddenFrame; // Mac OS X only.
-    
-    private synchronized void initHiddenFrame() {
-        if (hiddenFrame == null) {
-            String name = "Mac OS Hidden Frame";
-            hiddenFrame = new JFrame(name);
-            hiddenFrame.setName(name);
-            hiddenFrame.setJMenuBar(new TerminatorMenuBar());
-            hiddenFrame.setUndecorated(true);
-            // Move the window off-screen so that when we're forced to setVisible(true) it doesn't actually disturb the user.
-            hiddenFrame.setLocation(new java.awt.Point(-100, -100));
-        }
-    }
-    
-    private JFrame getHiddenFrame() {
-        initHiddenFrame();
-        return hiddenFrame;
-    }
-    
+        private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
+        private JFrame hiddenMacOSXFrame;
+
         public void addFrame(final TerminatorFrame frame) {
                 list.add(frame);
 
@@ -78,9 +62,21 @@ public class Frames {
                 boolean noFramesVisible = true;
                 for (TerminatorFrame frame : list)
                         noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
-                getHiddenFrame().setVisible(noFramesVisible);
+                getHiddenMacOSXFrame().setVisible(noFramesVisible);
         }
-        
+
+        private synchronized JFrame getHiddenMacOSXFrame() {
+                if (hiddenMacOSXFrame != null)
+                        return hiddenMacOSXFrame;
+
+                hiddenMacOSXFrame = new JFrame("Mac OS X Hidden Frame");
+                hiddenMacOSXFrame.setJMenuBar(new TerminatorMenuBar());
+                hiddenMacOSXFrame.setUndecorated(true);
+                hiddenMacOSXFrame.setLocation(new Point(-100, -100));
+
+                return hiddenMacOSXFrame;
+        }
+
         public boolean isEmpty() {
                 return list.isEmpty();
         }
