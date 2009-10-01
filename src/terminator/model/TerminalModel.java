@@ -298,7 +298,6 @@ public class TerminalModel {
 	
 	/** Scrolls the display up by one line. */
 	public void scrollDisplayUp() {
-                /* TODO: Can this be implemented with insertLines? */
                 modifyOneLine(firstScrollLineIndex, firstScrollLineIndex, lastScrollLineIndex + 1);
 	}
 
@@ -309,8 +308,7 @@ public class TerminalModel {
 	
 	/** Delete one line, moving everything below up and inserting a blank line at the bottom. */
 	public void deleteLine() {
-                /* TODO: Can this be implemented with insertLines? */
-                modifyOneLine(lastScrollLineIndex + 1, cursorPosition.getLineIndex(), cursorPosition.getLineIndex());
+                modifyOneLine(lastScrollLineIndex + 1, cursorPosition.getLineIndex(), lastScrollLineIndex);
 	}
 
 	public void addListener(TerminalListener l) {
