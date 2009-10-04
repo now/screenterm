@@ -61,7 +61,7 @@ terminator|Terminator no line wrap,
 # Character sets
     smacs=^N,
     rmacs=^O,
-    acsc=``aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+    acsc=++\,\,--..00``aaffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
     enacs=\E(B\E)0,
 # Keys
     kf1=\EOP,

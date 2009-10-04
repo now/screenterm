@@ -31,39 +31,22 @@ class TerminalCharacterSet {
 		}
 	}
 
-	/**
-	 * Translate ASCII to the nearest Unicode characters to the special
-	 * graphics and line drawing characters.
-	 * 
-	 * Run this in xterm(1) for reference:
-	 * 
-	 *   ruby -e 'cs="abcdefghijklmnopqrstuvwxyz"; puts(cs); \
-	 *            print("\x1b(0\x1b)B\x0f");puts(cs);print("\x0e")'
-	 * 
-	 * Or try test 3 of vttest.
-	 * 
-	 * We use the Unicode box-drawing characters, but the characters
-	 * extend out of the bottom of the font's bounding box, spoiling
-	 * the effect. Bug parade #4896465.
-	 * 
-	 * Konsole initially used fonts but switched to doing actual drawing
-	 * because of this kind of problem. (Konsole has a menu item to run
-	 * a new instance of mc(1), so they need this.)
-	 */
 	private char translateToGraphicalCharacterSet(char ch) {
 		switch (ch) {
+                case '+':
+                        return '\u2192'; // RIGHTWARDS ARROW
+                case ',':
+                        return '\u2190'; // LEFTWARDS ARROW
+                case '-':
+                        return '\u2191'; // UPWARDS ARROW
+                case '.':
+                        return '\u2193'; // DOWNWARDS ARROW
+                case '0':
+                        return '\u2588'; // FULL BLOCK
 		case '`':
 			return '\u2666'; // BLACK DIAMOND SUIT
 		case 'a':
 			return '\u2591'; // LIGHT SHADE
-		case 'b':
-			return '\u2409'; // SYMBOL FOR HORIZONTAL TABULATION
-		case 'c':
-			return '\u240c'; // SYMBOL FOR FORM FEED
-		case 'd':
-			return '\u240d'; // SYMBOL FOR CARRIAGE RETURN
-		case 'e':
-			return '\u240a'; // SYMBOL FOR LINE FEED
 		case 'f':
 			return '\u00b0'; // DEGREE SIGN
 		case 'g':
@@ -82,22 +65,24 @@ class TerminalCharacterSet {
 			return '\u2514'; // BOX DRAWINGS LIGHT UP AND RIGHT
 		case 'n':
 			return '\u253c'; // BOX DRAWINGS LIGHT VERTICAL AND HORIZONTAL
-		case 'v':
-			return '\u2534'; // BOX DRAWINGS LIGHT UP AND HORIZONTAL
-		case 'w':
-			return '\u252c'; // BOX DRAWINGS LIGHT DOWN AND HORIZONTAL
 		case 'o':
+                        return '\u23ba'; // HORIZONTAL SCAN LINE-1
 		case 'p':
+                        return '\u23bb'; // HORIZONTAL SCAN LINE-3
 		case 'q':
-		case 'r':
-		case 's':
-			// These should all be different characters,
-			// but Unicode only offers one of them.
 			return '\u2500'; // BOX DRAWINGS LIGHT HORIZONTAL
+		case 'r':
+                        return '\u23bc'; // HORIZONTAL SCAN LINE-7
+		case 's':
+			return '\u25bd'; // HORIZONTAL SCAN LINE-9
 		case 't':
 			return '\u251c'; // BOX DRAWINGS LIGHT VERTICAL AND RIGHT
 		case 'u':
 			return '\u2524'; // BOX DRAWINGS LIGHT VERTICAL AND LEFT
+		case 'v':
+			return '\u2534'; // BOX DRAWINGS LIGHT UP AND HORIZONTAL
+		case 'w':
+			return '\u252c'; // BOX DRAWINGS LIGHT DOWN AND HORIZONTAL
 		case 'x':
 			return '\u2502'; // BOX DRAWINGS LIGHT VERTICAL
 		case 'y':
@@ -111,7 +96,7 @@ class TerminalCharacterSet {
 		case '}':
 			return '\u00a3'; // POUND SIGN
 		case '~':
-			return '\u00b7'; // MIDDLE DOT
+			return '\u2022'; // BULLET
 		default:
 			return ch;
 		}
