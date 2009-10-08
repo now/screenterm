@@ -6,12 +6,11 @@ import e.util.*;
 import terminator.terminal.*;
 
 public class TerminalModel {
-        private Dimension size = new Dimension(0, 0);
-        private TextLines textLines = new TextLines(size);
+        private TextLines textLines = new TextLines(new Dimension(0, 0));
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
-	private Location cursorPosition = new Location(size, 0, 0);
+	private Location cursorPosition = new Location(new Dimension(0, 0), 0, 0);
         private boolean cursorVisible = true;
 	private boolean insertMode = false;
 
@@ -41,14 +40,6 @@ public class TerminalModel {
         private TerminalListeners listeners = new TerminalListeners();
 	
 	private int firstLineChanged = Integer.MAX_VALUE;
-	
-	private void clampCursor() {
-		if (cursorPosition == null)
-                        return;
-                cursorPosition = new Location(size,
-                                              cursorPosition.getLineIndex(),
-                                              cursorPosition.getCharOffset());
-	}
 	
 	private int getNextTabPosition(int charOffset) {
 		// No special tab to our right; return the default 8-separated tab stop.
@@ -126,11 +117,12 @@ public class TerminalModel {
         }
 	
 	public void setSize(Dimension size) {
-                this.size.setSize(size);
                 textLines.setSize(size);
 		firstScrollLineIndex = 0;
-		lastScrollLineIndex = size.height - 1;
-                clampCursor();
+		lastScrollLineIndex = getLineCount() - 1;
+                cursorPosition = new Location(size,
+                                              cursorPosition.getLineIndex(),
+                                              cursorPosition.getCharOffset());
 	}
 	
 	public void setInsertMode(boolean insertMode) {
@@ -269,7 +261,7 @@ public class TerminalModel {
 	/** Sets the first and last lines to scroll.  If both are -1, make the entire screen scroll. */
 	public void setScrollingRegion(int firstLine, int lastLine) {
 		firstScrollLineIndex = ((firstLine == -1) ? 1 : firstLine) - 1;
-		lastScrollLineIndex = ((lastLine == -1) ? size.height : lastLine) - 1;
+		lastScrollLineIndex = ((lastLine == -1) ? getLineCount() : lastLine) - 1;
 	}
 	
 	/** Scrolls the display up by one line. */
