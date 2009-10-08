@@ -211,14 +211,14 @@ public class TerminalModel {
         }
 	
 	public void deleteCharacters(int count) {
-                getCursorTextLine().killtext(cursorPosition.getCharOffset(),
+                getCursorTextLine().killText(cursorPosition.getCharOffset(),
                                              cursorPosition.getCharOffset() + count);
 		linesChangedFromCursorPosition();
 	}
 	
 	public void killHorizontally(boolean fromStart, boolean toEnd) {
 		TextLine line = getCursorTextLine();
-                like.killText(fromStart ? 0 : cursorPosition.getCharOffset(),
+                line.killText(fromStart ? 0 : cursorPosition.getCharOffset(),
 		              toEnd ? line.length() : cursorPosition.getCharOffset());
 		linesChangedFromCursorPosition();
 	}
