@@ -55,9 +55,8 @@ public class TerminalModel {
 		return (charOffset + 8) & ~7;
 	}
 	
-        // TODO: Should be delegated to textLines.
 	public int getLineCount() {
-                return size.height;
+                return textLines.count();
 	}
 	
 	private void linesChangedFrom(int firstLineChanged) {

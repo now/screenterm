@@ -44,6 +44,10 @@ public class TextLines {
                 }
         }
 
+        public int count() {
+                return textLines.size();
+        }
+
         public TextLine get(int index) {
                 return textLines.get(index);
         }
