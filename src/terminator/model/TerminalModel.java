@@ -7,7 +7,7 @@ import terminator.terminal.*;
 
 public class TerminalModel {
         private Dimension size = new Dimension(0, 0);
-        private TextLines textLines = new TextLines(new Dimension(0, 0));
+        private TextLines textLines = new TextLines(size);
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
@@ -71,10 +71,6 @@ public class TerminalModel {
         public int getFirstLineChanged() {
                 return firstLineChanged;
         }
-	
-	public Dimension getCurrentSizeInChars() {
-                return new Dimension(size);
-	}
 	
 	public Location getCursorPosition() {
 		return cursorPosition;
