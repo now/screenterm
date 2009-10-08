@@ -220,9 +220,8 @@ public class TerminalModel {
 	
 	public void killHorizontally(boolean fromStart, boolean toEnd) {
 		TextLine line = getCursorTextLine();
-		int oldLineLength = line.length();
 		int start = fromStart ? 0 : cursorPosition.getCharOffset();
-		int end = toEnd ? oldLineLength : cursorPosition.getCharOffset();
+		int end = toEnd ? line.length() : cursorPosition.getCharOffset();
 		line.killText(start, end);
 		linesChangedFromCursorPosition();
 	}
