@@ -11,7 +11,7 @@ public class TerminalModel {
 	private short currentStyle = StyledText.getDefaultStyle();
 	private int firstScrollLineIndex;
 	private int lastScrollLineIndex;
-	private Location cursorPosition = new Location(0, 0);
+	private Location cursorPosition = new Location(size, 0, 0);
         private boolean cursorVisible = true;
 	private boolean insertMode = false;
 
@@ -45,21 +45,10 @@ public class TerminalModel {
 	private void clampCursor() {
 		if (cursorPosition == null)
                         return;
-                cursorPosition = new Location(clampVertically(cursorPosition.getLineIndex()),
-                                              clampHorizontally(cursorPosition.getCharOffset()));
+                cursorPosition = new Location(size,
+                                              cursorPosition.getLineIndex(),
+                                              cursorPosition.getCharOffset());
 	}
-	
-        private int clampVertically(int value) {
-                return clamp(value, 0, size.height - 1);
-        }
-
-        private int clampHorizontally(int value) {
-                return clamp(value, 0, size.width - 1);
-        }
-
-        private int clamp(int value, int min, int max) {
-                return Math.min(Math.max(min, value), max);
-        }
 	
 	private int getNextTabPosition(int charOffset) {
 		// No special tab to our right; return the default 8-separated tab stop.
@@ -111,7 +100,7 @@ public class TerminalModel {
                 if (index > lastScrollLineIndex)
                         insertLines(index, 1);
                 else
-                        cursorPosition = new Location(index, cursorPosition.getCharOffset());
+                        cursorPosition = cursorPosition.moveToLine(index);
 	}
 	
 	/** Inserts lines at the current cursor position. */
@@ -126,8 +115,7 @@ public class TerminalModel {
                                                   lastScrollLineIndex);
                 linesChangedFrom(above == count ? cursorPosition.getLineIndex() : firstScrollLineIndex);
                 if (above > 0)
-                        cursorPosition = new Location(cursorPosition.getLineIndex() + above,
-                                                      cursorPosition.getCharOffset());
+                        moveCursorVertically(above);
 	}
 	
 	public TextLine getTextLine(int index) {
@@ -175,7 +163,7 @@ public class TerminalModel {
 	public void processSpecialCharacter(char ch) {
 		switch (ch) {
 		case Ascii.CR:
-			cursorPosition = new Location(cursorPosition.getLineIndex(), 0);
+                        cursorPosition = cursorPosition.moveToChar(0);
 			return;
 		case Ascii.LF:
 			moveToLine(cursorPosition.getLineIndex() + 1);
@@ -267,27 +255,20 @@ public class TerminalModel {
 	 * If either x or y is -1, that coordinate is left unchanged.
 	 */
 	public void setCursorPosition(int x, int y) {
-		int charOffset = cursorPosition.getCharOffset();
-		if (x != -1)
-                        charOffset = clampHorizontally(x - 1);
-		
-		int lineIndex = cursorPosition.getLineIndex();
-		if (y != -1)
-                        lineIndex = clampVertically(y - 1);
-		
-		cursorPosition = new Location(lineIndex, charOffset);
+                if (x != -1)
+                        cursorPosition = cursorPosition.moveToChar(x - 1);
+                if (y != -1)
+                        cursorPosition = cursorPosition.moveToLine(y - 1);
 	}
 	
 	/** Moves the cursor horizontally by the number of characters in xDiff, negative for left, positive for right. */
 	public void moveCursorHorizontally(int delta) {
-                int x = clampHorizontally(cursorPosition.getCharOffset() + delta);
-                cursorPosition = new Location(cursorPosition.getLineIndex(), x);
+                cursorPosition = cursorPosition.adjustCharOffset(delta);
 	}
 	
 	/** Moves the cursor vertically by the number of characters in yDiff, negative for up, positive for down. */
 	public void moveCursorVertically(int delta) {
-                int y = clampVertically(cursorPosition.getLineIndex() + delta);
-		cursorPosition = new Location(y, cursorPosition.getCharOffset());
+                cursorPosition = cursorPosition.adjustLineIndex(delta);
 	}
 
 	/** Sets the first and last lines to scroll.  If both are -1, make the entire screen scroll. */
