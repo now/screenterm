@@ -211,10 +211,8 @@ public class TerminalModel {
         }
 	
 	public void deleteCharacters(int count) {
-		TextLine line = getCursorTextLine();
-		int start = cursorPosition.getCharOffset();
-		int end = start + count;
-		line.killText(start, end);
+                getCursorTextLine().killtext(cursorPosition.getCharOffset(),
+                                             cursorPosition.getCharOffset() + count);
 		linesChangedFromCursorPosition();
 	}
 	
