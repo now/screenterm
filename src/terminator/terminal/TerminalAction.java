@@ -3,5 +3,5 @@ package terminator.terminal;
 import terminator.model.*;
 
 public interface TerminalAction {
-    public void perform(TerminalModel model);
+    public void perform(TerminalModelModifier model);
 }

@@ -13,7 +13,7 @@ public class TwoCharEscapeAction implements TerminalAction {
 		this.sequence = sequence;
 	}
 
-	public void perform(TerminalModel model) {
+	public void perform(TerminalModelModifier model) {
 		switch (sequence.charAt(0)) {
 			case '(':
 			case ')':

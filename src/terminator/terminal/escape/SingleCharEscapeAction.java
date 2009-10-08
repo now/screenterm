@@ -17,7 +17,7 @@ public class SingleCharEscapeAction implements TerminalAction {
 		this.escChar = escChar;
 	}
 
-	public void perform(TerminalModel model) {
+	public void perform(TerminalModelModifier model) {
 		switch (escChar) {
 			case 'M':  // Move cursor up one line, scrolling if it reaches the top of scroll region.  Opposite of NL.
 				model.scrollDisplayUp();

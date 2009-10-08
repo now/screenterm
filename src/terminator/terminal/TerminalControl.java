@@ -206,7 +206,15 @@ public class TerminalControl {
 		try {
 			char[] buffer = message.toCharArray();
 			processBuffer(buffer, buffer.length);
-			model.setCursorVisible(false);
+                        model.processActions(new TerminalAction[] { new TerminalAction() {
+                                public void perform(TerminalModelModifier model) {
+                                        model.setCursorVisible(false);
+                                }
+                                
+                                public String toString() {
+                                        return "TerminalAction[Hide cursor]";
+                                }
+                        } });
 		} catch (Exception ex) {
 			Log.warn("Couldn't say \"" + message + "\"", ex);
 		}
@@ -215,7 +223,7 @@ public class TerminalControl {
 	/** Must be called in the AWT dispatcher thread. */
 	public void sizeChanged(final Dimension size) {
 		TerminalAction sizeChangeAction = new TerminalAction() {
-			public void perform(TerminalModel model) {
+			public void perform(TerminalModelModifier model) {
 				model.setSize(size);
 			}
 			
@@ -329,7 +337,7 @@ public class TerminalControl {
 			this.line = line;
 		}
 		
-		public void perform(TerminalModel model) {
+		public void perform(TerminalModelModifier model) {
 			if (DEBUG) {
 				Log.warn("Processing line \"" + line + "\"");
 			}
@@ -358,7 +366,7 @@ public class TerminalControl {
 	
 	public synchronized void processSpecialCharacter(final char ch) {
 		terminalActions.add(new TerminalAction() {
-			public void perform(TerminalModel model) {
+			public void perform(TerminalModelModifier model) {
 				if (DEBUG) {
 					Log.warn("Processing special char \"" + getCharDesc(ch) + "\"");
 				}

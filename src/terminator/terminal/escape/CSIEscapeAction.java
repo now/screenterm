@@ -22,7 +22,7 @@ public class CSIEscapeAction implements TerminalAction {
 		this.sequence = sequence;
 	}
 
-	public void perform(TerminalModel model) {
+	public void perform(TerminalModelModifier model) {
 		if (processSequence(model) == false) {
 			Log.warn("Unimplemented escape sequence: \"" + StringUtilities.escapeForJava(sequence) + "\"");
 		}
@@ -53,7 +53,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return "CSIEscapeAction[" + getSequenceType(lastChar) + "]";
 	}
 	
-	private boolean processSequence(TerminalModel model) {
+	private boolean processSequence(TerminalModelModifier model) {
 		char lastChar = sequence.charAt(sequence.length() - 1);
 		String midSequence = sequence.substring(1, sequence.length() - 1);
 		switch (lastChar) {
@@ -91,7 +91,7 @@ public class CSIEscapeAction implements TerminalAction {
 		}
 	}
 	
-	public boolean deleteLines(TerminalModel model, String seq) {
+	public boolean deleteLines(TerminalModelModifier model, String seq) {
 		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
 		for (int i = 0; i < count; i++) {
 			model.deleteLine();
@@ -99,13 +99,13 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean insertLines(TerminalModel model, String seq) {
+	public boolean insertLines(TerminalModelModifier model, String seq) {
 		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
 		model.insertLines(count);
 		return true;
 	}
 	
-	private boolean setDecPrivateMode(TerminalModel model, String seq, boolean value) {
+	private boolean setDecPrivateMode(TerminalModelModifier model, String seq, boolean value) {
 		boolean isPrivateMode = seq.startsWith("?");
 		String[] modes = (isPrivateMode ? seq.substring(1) : seq).split(";");
 		for (String modeString : modes) {
@@ -131,7 +131,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean setScrollingRegion(TerminalModel model, String seq) {
+	public boolean setScrollingRegion(TerminalModelModifier model, String seq) {
 		int index = seq.indexOf(';');
 		if (index == -1) {
 			model.setScrollingRegion(-1, -1);
@@ -141,13 +141,13 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 
-	public boolean deleteCharacters(TerminalModel model, String seq) {
+	public boolean deleteCharacters(TerminalModelModifier model, String seq) {
 		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
 		model.deleteCharacters(count);
 		return true;
 	}
 	
-	public boolean killLineContents(TerminalModel model, String seq) {
+	public boolean killLineContents(TerminalModelModifier model, String seq) {
 		int type = (seq.length() == 0) ? 0 : Integer.parseInt(seq);
 		boolean fromStart = (type >= 1);
 		boolean toEnd = (type != 1);
@@ -155,7 +155,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean eraseInPage(TerminalModel model, String seq) {
+	public boolean eraseInPage(TerminalModelModifier model, String seq) {
 		int type = (seq.length() == 0) ? 0 : Integer.parseInt(seq);
 		boolean fromTop = (type >= 1);
 		boolean toBottom = (type != 1);
@@ -163,7 +163,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean moveCursorTo(TerminalModel model, String seq) {
+	public boolean moveCursorTo(TerminalModelModifier model, String seq) {
 		int x = 1;
 		int y = 1;
 		int splitIndex = seq.indexOf(';');
@@ -175,7 +175,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean moveCursor(TerminalModel model, String countString, int xDirection, int yDirection) {
+	public boolean moveCursor(TerminalModelModifier model, String countString, int xDirection, int yDirection) {
 		int count = (countString.length() == 0) ? 1 : Integer.parseInt(countString);
 		if (xDirection != 0) {
 			model.moveCursorHorizontally(xDirection * count);
@@ -186,7 +186,7 @@ public class CSIEscapeAction implements TerminalAction {
 		return true;
 	}
 	
-	public boolean processFontEscape(TerminalModel model, String sequence) {
+	public boolean processFontEscape(TerminalModelModifier model, String sequence) {
 		int oldStyle = model.getStyle();
 		int foreground = StyledText.getForeground(oldStyle);
 		int background = StyledText.getBackground(oldStyle);
