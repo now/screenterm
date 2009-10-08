@@ -60,9 +60,13 @@ public class TerminalModel {
                 return size.height;
 	}
 	
-	public void linesChangedFrom(int firstLineChanged) {
+	private void linesChangedFrom(int firstLineChanged) {
 		this.firstLineChanged = Math.min(this.firstLineChanged, firstLineChanged);
 	}
+
+        private void linesChangedFromCursorPosition() {
+		linesChangedFrom(cursorPosition.getLineIndex());
+        }
 
         public int getFirstLineChanged() {
                 return firstLineChanged;
@@ -156,8 +160,8 @@ public class TerminalModel {
 	}
 	
 	private void textAdded(int length) {
-		linesChangedFrom(cursorPosition.getLineIndex());
 		moveCursorHorizontally(length);
+		linesChangedFromCursorPosition();
 	}
 	
 	public void processSpecialCharacter(char ch) {
@@ -211,7 +215,7 @@ public class TerminalModel {
 		int start = cursorPosition.getCharOffset();
 		int end = start + count;
 		line.killText(start, end);
-		linesChangedFrom(cursorPosition.getLineIndex());
+		linesChangedFromCursorPosition();
 	}
 	
 	public void killHorizontally(boolean fromStart, boolean toEnd) {
@@ -220,7 +224,7 @@ public class TerminalModel {
 		int start = fromStart ? 0 : cursorPosition.getCharOffset();
 		int end = toEnd ? oldLineLength : cursorPosition.getCharOffset();
 		line.killText(start, end);
-		linesChangedFrom(cursorPosition.getLineIndex());
+		linesChangedFromCursorPosition();
 	}
 	
 	/** Erases from either the top or the cursor, to either the bottom or the cursor. */
