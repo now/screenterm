@@ -18,6 +18,10 @@ public final class Cursor implements Comparable<Cursor> {
                 this.charOffset = clamp(charOffset, 0, area.width - 1);
         }
 
+        public Cursor constrain(Dimension area) {
+                return new Cursor(area, lineIndex, charOffset);
+        }
+
         public Cursor moveToLine(int lineIndex) {
                 return new Cursor(area, lineIndex, charOffset);
         }

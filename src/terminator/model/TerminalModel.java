@@ -93,9 +93,7 @@ public class TerminalModel {
                         textLines.setSize(size);
                         firstScrollLineIndex = 0;
                         lastScrollLineIndex = getLineCount() - 1;
-                        cursorPosition = new Cursor(size,
-                                                      cursorPosition.getLineIndex(),
-                                                      cursorPosition.getCharOffset());
+                        cursorPosition = cursorPosition.constraint(size);
                 }
 
                 public void setStyle(short style) {
