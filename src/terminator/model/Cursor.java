@@ -3,7 +3,7 @@ package terminator.model;
 import java.awt.Dimension;
 import e.util.*;
 
-public final class Cursor implements Comparable<Cursor> {
+public final class Cursor {
         private Dimension area;
         private int lineIndex;
         private int charOffset;
@@ -79,11 +79,5 @@ public final class Cursor implements Comparable<Cursor> {
 
         public boolean isInsideLines(int first, int last) {
                 return visible && (first <= lineIndex && lineIndex <= last);
-        }
-
-        public int compareTo(Cursor other) {
-                if (other.getLineIndex() != getLineIndex())
-                        return getLineIndex() - other.getLineIndex();
-                return getCharOffset() - other.getCharOffset();
         }
 }
