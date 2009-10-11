@@ -35,7 +35,6 @@ public class TerminalModel {
         private int firstScrollLineIndex;
         private int lastScrollLineIndex;
         private Cursor cursorPosition = Cursor.origo();
-        private boolean cursorVisible = true;
         private boolean insertMode = false;
 
 	public void addListener(TerminalListener l) {
@@ -53,10 +52,6 @@ public class TerminalModel {
 	public Cursor getCursorPosition() {
 		return cursorPosition;
 	}
-
-        public boolean getCursorVisible() {
-                return cursorVisible;
-        }
 
 	public void processActions(TerminalAction[] actions) {
                 modifier.reset();
@@ -201,7 +196,9 @@ public class TerminalModel {
                 }
 
                 public void setCursorVisible(boolean visible) {
-                        cursorVisible = visible;
+                        if (cursorPosition.isVisible() && visible)
+                                return;
+                        cursorPosition = cursorPosition.setVisible(visible);
                         listeners.cursorVisibilityChanged(visible);
                 }
 

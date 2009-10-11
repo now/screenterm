@@ -7,39 +7,44 @@ public final class Cursor implements Comparable<Cursor> {
         private Dimension area;
         private int lineIndex;
         private int charOffset;
+        private boolean visible;
 
         private static int clamp(int value, int min, int max) {
                 return Math.max(Math.min(Math.max(min, value), max), 0);
         }
 
         public static Cursor origo() {
-                return new Cursor(new Dimension(0, 0), 0, 0);
+                return new Cursor(new Dimension(0, 0), 0, 0, true);
         }
 
-        private Cursor(Dimension area, int lineIndex, int charOffset) {
+        private Cursor(Dimension area, int lineIndex, int charOffset, boolean visible) {
                 this.area = area;
                 this.lineIndex = clamp(lineIndex, 0, area.height - 1);
                 this.charOffset = clamp(charOffset, 0, area.width - 1);
         }
 
         public Cursor constrain(Dimension area) {
-                return new Cursor(area, lineIndex, charOffset);
+                return new Cursor(area, lineIndex, charOffset, visible);
         }
 
         public Cursor moveToLine(int lineIndex) {
-                return new Cursor(area, lineIndex, charOffset);
+                return new Cursor(area, lineIndex, charOffset, visible);
         }
 
         public Cursor moveToChar(int charOffset) {
-                return new Cursor(area, lineIndex, charOffset);
+                return new Cursor(area, lineIndex, charOffset, visible);
         }
 
         public Cursor adjustLineIndex(int delta) {
-                return new Cursor(area, lineIndex + delta, charOffset);
+                return new Cursor(area, lineIndex + delta, charOffset, visible);
         }
 
         public Cursor adjustCharOffset(int delta) {
-                return new Cursor(area, lineIndex, charOffset + delta);
+                return new Cursor(area, lineIndex, charOffset + delta, visible);
+        }
+
+        public Cursor setVisible(boolean visible) {
+                return new Cursor(area, lineIndex, charOffset, visible);
         }
 
         public int getLineIndex() {
@@ -48,6 +53,10 @@ public final class Cursor implements Comparable<Cursor> {
 
         public int getCharOffset() {
                 return charOffset;
+        }
+
+        public boolean isVisible() {
+                return visible;
         }
 
         public String toString() {
