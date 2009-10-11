@@ -106,7 +106,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	}
 
 	public void contentsChanged(int lineIndex) {
-		Point redrawTop = modelToView(model.getCursorPosition().moveToLine(lineIndex).moveToChar(0)).getLocation();
+		Point redrawTop = modelToView(model.getCursor().moveToLine(lineIndex).moveToChar(0)).getLocation();
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
@@ -174,7 +174,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	// Redraw code.
 	
 	private void redrawCursorPosition() {
-                redrawPosition(model.getCursorPosition());
+                redrawPosition(model.getCursor());
 	}
 
         private void redrawPosition(terminator.model.Cursor p) {
@@ -225,7 +225,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	
         private abstract class CursorPainter {
                 public void paint(Graphics2D g, int firstLine, int lastLine) {
-                        terminator.model.Cursor p = model.getCursorPosition();
+                        terminator.model.Cursor p = model.getCursor();
 
                         if (!p.isInsideLines(firstLine, lastLine))
                                 return;
