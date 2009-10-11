@@ -21,6 +21,7 @@ public final class Cursor {
                 this.area = area;
                 this.lineIndex = clamp(lineIndex, 0, area.height - 1);
                 this.charOffset = clamp(charOffset, 0, area.width - 1);
+                this.visible = visible;
         }
 
         public Cursor constrain(Dimension area) {
