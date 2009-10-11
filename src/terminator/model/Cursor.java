@@ -3,7 +3,7 @@ package terminator.model;
 import java.awt.Dimension;
 import e.util.*;
 
-public final class Location implements Comparable<Location> {
+public final class Cursor implements Comparable<Cursor> {
         private Dimension area;
         private int lineIndex;
         private int charOffset;
@@ -12,26 +12,26 @@ public final class Location implements Comparable<Location> {
                 return Math.max(Math.min(Math.max(min, value), max), 0);
         }
 
-        Location(Dimension area, int lineIndex, int charOffset) {
+        Cursor(Dimension area, int lineIndex, int charOffset) {
                 this.area = area;
                 this.lineIndex = clamp(lineIndex, 0, area.height - 1);
                 this.charOffset = clamp(charOffset, 0, area.width - 1);
         }
 
-        public Location moveToLine(int lineIndex) {
-                return new Location(area, lineIndex, charOffset);
+        public Cursor moveToLine(int lineIndex) {
+                return new Cursor(area, lineIndex, charOffset);
         }
 
-        public Location moveToChar(int charOffset) {
-                return new Location(area, lineIndex, charOffset);
+        public Cursor moveToChar(int charOffset) {
+                return new Cursor(area, lineIndex, charOffset);
         }
 
-        public Location adjustLineIndex(int delta) {
-                return new Location(area, lineIndex + delta, charOffset);
+        public Cursor adjustLineIndex(int delta) {
+                return new Cursor(area, lineIndex + delta, charOffset);
         }
 
-        public Location adjustCharOffset(int delta) {
-                return new Location(area, lineIndex, charOffset + delta);
+        public Cursor adjustCharOffset(int delta) {
+                return new Cursor(area, lineIndex, charOffset + delta);
         }
 
         public int getLineIndex() {
@@ -43,7 +43,7 @@ public final class Location implements Comparable<Location> {
         }
 
         public String toString() {
-                return "Location[line " + lineIndex + ", char " + charOffset + "]";
+                return "Cursor[line " + lineIndex + ", char " + charOffset + "]";
         }
 
         // Ought to use a prime, but I can't be bothered to work one out.
@@ -52,10 +52,10 @@ public final class Location implements Comparable<Location> {
         }
 
         public boolean equals(Object o) {
-                if (!(o instanceof Location))
+                if (!(o instanceof Cursor))
                         return false;
 
-                Location other = (Location)o;
+                Cursor other = (Cursor)o;
                 return other.getLineIndex() == getLineIndex() &&
                        other.getCharOffset() == getCharOffset();
         }
@@ -64,7 +64,7 @@ public final class Location implements Comparable<Location> {
                 return getCharOffset() >= begin && getCharOffset() < end;
         }
 
-        public int compareTo(Location other) {
+        public int compareTo(Cursor other) {
                 if (other.getLineIndex() != getLineIndex())
                         return getLineIndex() - other.getLineIndex();
                 return getCharOffset() - other.getCharOffset();

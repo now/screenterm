@@ -1,6 +1,9 @@
 Should provide a list of active screen sockets.  Need to process output of
 $(screen -ls) and display it in a dialog as a list.
 
-In the end, all we’ll have is $LINES lines of $COLUMNS columns that we treat
-like a ring.  Anything pushed off the screen reappears at the bottom as an
-empty line.
+TextLine should be TextRow and should contain a list of StyledText that gets
+created during insertTextAt and writeTextAt.
+
+/* TODO: Comparable not needed and, once we move visibility into this class,
+ * rename it to Cursor and alter everything from cursorPosition to cursor.
+ * Rename lineIndex to row and charOffset to column. */

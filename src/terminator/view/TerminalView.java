@@ -43,7 +43,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		});
                 addMouseMotionListener(new MouseMotionAdapter() {
                         public void mouseMoved(MouseEvent event) {
-                                setCursor(Cursor.getDefaultCursor());
+                                setCursor(java.awt.Cursor.getDefaultCursor());
                         }
                 });
 	}
@@ -111,7 +111,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
 	
-	public void cursorPositionChanged(Location oldCursorPosition, Location newCursorPosition) {
+	public void cursorPositionChanged(terminator.model.Cursor oldCursorPosition, terminator.model.Cursor newCursorPosition) {
                 redrawPosition(oldCursorPosition);
 		redrawCursorPosition();
 	}
@@ -120,7 +120,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 redrawCursorPosition();
         }
 	
-	private Rectangle modelToView(Location charCoords) {
+	private Rectangle modelToView(terminator.model.Cursor charCoords) {
 		// We can be asked the view rectangle of locations that are past the bottom of the text in various circumstances. Examples:
 		// 1. If the user sweeps a selection too far.
 		// 2. If the user starts a new shell, types "man bash", and then clears the history; we move the cursor, and want to know the old cursor location to remove the cursor from, even though there's no longer any text there.
@@ -177,7 +177,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 redrawPosition(model.getCursorPosition());
 	}
 
-        private void redrawPosition(Location p) {
+        private void redrawPosition(terminator.model.Cursor p) {
                 repaint(modelToView(p));
         }
 	
@@ -227,7 +227,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 public void paint(Graphics2D g, int firstLine, int lastLine) {
                         if (!model.getCursorVisible())
                                 return;
-                        Location p = model.getCursorPosition();
+                        terminator.model.Cursor p = model.getCursorPosition();
                         if (p.getLineIndex() < firstLine || p.getLineIndex() > lastLine)
                                 return;
                         g.setColor(Color.black);

@@ -18,7 +18,7 @@ public class TerminalModel {
                                 l.contentsChanged(fromLine);
                 }
 
-                public void cursorPositionChanged(Location oldPosition, Location newPosition) {
+                public void cursorPositionChanged(Cursor oldPosition, Cursor newPosition) {
                         for (TerminalListener l : listeners)
                                 l.cursorPositionChanged(oldPosition, newPosition);
                 }
@@ -34,7 +34,7 @@ public class TerminalModel {
         private short currentStyle = StyledText.getDefaultStyle();
         private int firstScrollLineIndex;
         private int lastScrollLineIndex;
-        private Location cursorPosition = new Location(new Dimension(0, 0), 0, 0);
+        private Cursor cursorPosition = new Cursor(new Dimension(0, 0), 0, 0);
         private boolean cursorVisible = true;
         private boolean insertMode = false;
 
@@ -50,7 +50,7 @@ public class TerminalModel {
                 return textLines.get(index);
 	}
 
-	public Location getCursorPosition() {
+	public Cursor getCursorPosition() {
 		return cursorPosition;
 	}
 
@@ -67,7 +67,7 @@ public class TerminalModel {
 
         private TerminalModelModifier modifier = new TerminalModelModifier() {
                 private int firstLineChanged;
-                private Location oldCursorPosition;
+                private Cursor oldCursorPosition;
 
                 public void reset() {
                         firstLineChanged = Integer.MAX_VALUE;
@@ -93,7 +93,7 @@ public class TerminalModel {
                         textLines.setSize(size);
                         firstScrollLineIndex = 0;
                         lastScrollLineIndex = getLineCount() - 1;
-                        cursorPosition = new Location(size,
+                        cursorPosition = new Cursor(size,
                                                       cursorPosition.getLineIndex(),
                                                       cursorPosition.getCharOffset());
                 }
