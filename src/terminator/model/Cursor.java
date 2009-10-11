@@ -59,6 +59,10 @@ public final class Cursor {
                 return visible;
         }
 
+        public boolean isInsideLines(int first, int last) {
+                return visible && (first <= lineIndex && lineIndex <= last);
+        }
+
         public String toString() {
                 return "Cursor[line " + lineIndex + ", char " + charOffset + "]";
         }
@@ -75,9 +79,5 @@ public final class Cursor {
                 Cursor other = (Cursor)o;
                 return other.getLineIndex() == getLineIndex() &&
                        other.getCharOffset() == getCharOffset();
-        }
-
-        public boolean isInsideLines(int first, int last) {
-                return visible && (first <= lineIndex && lineIndex <= last);
         }
 }
