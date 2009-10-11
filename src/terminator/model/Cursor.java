@@ -12,7 +12,11 @@ public final class Cursor implements Comparable<Cursor> {
                 return Math.max(Math.min(Math.max(min, value), max), 0);
         }
 
-        Cursor(Dimension area, int lineIndex, int charOffset) {
+        public static Cursor origo() {
+                return new Cursor(new Dimension(0, 0), 0, 0);
+        }
+
+        private Cursor(Dimension area, int lineIndex, int charOffset) {
                 this.area = area;
                 this.lineIndex = clamp(lineIndex, 0, area.height - 1);
                 this.charOffset = clamp(charOffset, 0, area.width - 1);

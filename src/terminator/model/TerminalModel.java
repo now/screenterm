@@ -34,7 +34,7 @@ public class TerminalModel {
         private short currentStyle = StyledText.getDefaultStyle();
         private int firstScrollLineIndex;
         private int lastScrollLineIndex;
-        private Cursor cursorPosition = new Cursor(new Dimension(0, 0), 0, 0);
+        private Cursor cursorPosition = Cursor.origo();
         private boolean cursorVisible = true;
         private boolean insertMode = false;
 
@@ -93,7 +93,7 @@ public class TerminalModel {
                         textLines.setSize(size);
                         firstScrollLineIndex = 0;
                         lastScrollLineIndex = getLineCount() - 1;
-                        cursorPosition = cursorPosition.constraint(size);
+                        cursorPosition = cursorPosition.constrain(size);
                 }
 
                 public void setStyle(short style) {
