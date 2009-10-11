@@ -196,7 +196,7 @@ public class TerminalModel {
                 }
 
                 public void setCursorVisible(boolean visible) {
-                        if (cursor.isVisible() && visible)
+                        if (cursor.isVisible() == visible)
                                 return;
                         cursor = cursor.setVisible(visible);
                         listeners.cursorVisibilityChanged(visible);
