@@ -106,7 +106,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	}
 
 	public void contentsChanged(int lineIndex) {
-		Point redrawTop = modelToView(model.getCursor().moveToLine(lineIndex).moveToChar(0)).getLocation();
+		Point redrawTop = modelToView(lineIndex, 0).getLocation();
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
@@ -119,44 +119,26 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         public void cursorVisibilityChanged(boolean isVisible) {
                 redrawCursorPosition();
         }
-	
-	private Rectangle modelToView(terminator.model.Cursor charCoords) {
-		// We can be asked the view rectangle of locations that are past the bottom of the text in various circumstances. Examples:
-		// 1. If the user sweeps a selection too far.
-		// 2. If the user starts a new shell, types "man bash", and then clears the history; we move the cursor, and want to know the old cursor location to remove the cursor from, even though there's no longer any text there.
-		// Rather than have special case code in each caller, simply return a reasonable result.
-		// Note that it's okay to have the empty string as the default here because we'll pad if necessary later in this method.
-		String line = "";
-		if (charCoords.getLineIndex() < model.getLineCount()) {
-			line = model.getTextLine(charCoords.getLineIndex()).getString();
-		}
-		
-		final int offset = Math.max(0, charCoords.getCharOffset());
-		
-		String characterAtLocation;
-		if (line.length() == offset) {
-			// A very common case is where the location is one past the end of the line.
-			// We don't need to add a single space if we're just going to  pull it off again.
-			// This might not seem like much, but it can be costly if you've got very long lines.
-			characterAtLocation = " ";
-		} else {
-			// Pad the line if we need to.
-			final int desiredLength = offset + 1;
-			if (line.length() < desiredLength) {
-				final int charactersOfPaddingRequired = desiredLength - line.length();
-				line += StringUtilities.nCopies(charactersOfPaddingRequired, " ");
-			}
-			characterAtLocation = line.substring(offset, offset + 1);
-		}
-		
-		String lineBeforeOffset = line.substring(0, offset);
-		FontMetrics fontMetrics = getFontMetrics(getFont());
-		Insets insets = getInsets();
-		final int x = insets.left + fontMetrics.stringWidth(lineBeforeOffset);
-		final int width = fontMetrics.stringWidth(characterAtLocation);
-		final int height = getCharUnitSize().height;
-		final int y = insets.top + charCoords.getLineIndex() * height;
-		return new Rectangle(x, y, width, height);
+
+        private Rectangle modelToView(terminator.model.Cursor cursor) {
+                return modelToView(cursor.getLineIndex(), cursor.getCharOffset());
+        }
+
+	private Rectangle modelToView(int row, int column) {
+                String line = model.getTextLine(row).getString();
+                String c = column < line.length() ? line.substring(column, column + 1) : " ";
+                String prefix = column < line.length() ? line.substring(0, column) : line;
+                FontMetrics metrics = getFontMetrics(getFont());
+                Insets insets = getInsets();
+                int x = insets.left +
+                        metrics.stringWidth(prefix) +
+                        (column < line.length() ?
+                                0 :
+                                metrics.stringWidth(" ") * (column - line.length()));
+                int width = metrics.stringWidth(c);
+                int height = metrics.getHeight();
+                int y = insets.top + row * height;
+                return new Rectangle(x, y, width, height);
 	}
 	
 	private Dimension getOptimalViewSize() {
