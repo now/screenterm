@@ -77,6 +77,10 @@ public final class Cursor implements Comparable<Cursor> {
                        other.getCharOffset() == getCharOffset();
         }
 
+        public boolean isInsideLines(int first, int last) {
+                return visible && (first <= lineIndex && lineIndex <= last);
+        }
+
         public boolean charOffsetInRange(int begin, int end) {
                 return getCharOffset() >= begin && getCharOffset() < end;
         }
