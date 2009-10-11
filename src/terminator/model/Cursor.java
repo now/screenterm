@@ -81,10 +81,6 @@ public final class Cursor implements Comparable<Cursor> {
                 return visible && (first <= lineIndex && lineIndex <= last);
         }
 
-        public boolean charOffsetInRange(int begin, int end) {
-                return getCharOffset() >= begin && getCharOffset() < end;
-        }
-
         public int compareTo(Cursor other) {
                 if (other.getLineIndex() != getLineIndex())
                         return getLineIndex() - other.getLineIndex();
