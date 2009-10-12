@@ -19,7 +19,7 @@ public interface TerminalModelModifier {
 	public void setCursorPosition(int x, int y);
 	public void moveCursorHorizontally(int delta);
 	public void moveCursorVertically(int delta);
-	public void setScrollingRegion(int firstLine, int lastLine);
+	public void setScrollingRegion(int top, int bottom);
 	public void scrollDisplayUp();
 	public void deleteLine();
 }

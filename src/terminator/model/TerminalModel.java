@@ -32,8 +32,7 @@ public class TerminalModel {
         private TerminalListeners listeners = new TerminalListeners();
         private TextLines textLines = new TextLines(new Dimension(0, 0));
         private short currentStyle = StyledText.getDefaultStyle();
-        private int firstScrollLineIndex;
-        private int lastScrollLineIndex;
+        private Region scrollingRegion = new Region(0, 0);
         private Cursor cursor = Cursor.origo();
         private boolean insertMode = false;
 
@@ -86,8 +85,7 @@ public class TerminalModel {
 
                 public void setSize(Dimension size) {
                         textLines.setSize(size);
-                        firstScrollLineIndex = 0;
-                        lastScrollLineIndex = getLineCount() - 1;
+                        scrollingRegion.set(0, getLineCount() - 1);
                         cursor = cursor.constrain(size);
                 }
 
@@ -106,9 +104,9 @@ public class TerminalModel {
                 private void insertLines(int at, int count) {
                         int above = textLines.insertLines(at,
                                                           count,
-                                                          firstScrollLineIndex,
-                                                          lastScrollLineIndex);
-                        linesChangedFrom(above == count ? cursor.getRow() : firstScrollLineIndex);
+                                                          scrollingRegion.top(),
+                                                          scrollingRegion.bottom());
+                        linesChangedFrom(above == count ? cursor.getRow() : scrollingRegion.top());
                         if (above > 0)
                                 moveCursorVertically(above);
                 }
@@ -161,8 +159,9 @@ public class TerminalModel {
                 }
 
                 private void moveToRow(int index) {
-                        // NOTE: We only really allow index to be lastScrollLineIndex + 1
-                        if (index > lastScrollLineIndex)
+                        // NOTE: We only really allow index to be
+                        // scrollingRegion.bottom() + 1.
+                        if (index > scrollingRegion.bottom())
                                 insertLines(index, 1);
                         else
                                 cursor = cursor.moveToRow(index);
@@ -255,13 +254,13 @@ public class TerminalModel {
                         cursor = cursor.adjustRow(delta);
                 }
 
-                public void setScrollingRegion(int firstLine, int lastLine) {
-                        firstScrollLineIndex = ((firstLine == -1) ? 1 : firstLine) - 1;
-                        lastScrollLineIndex = ((lastLine == -1) ? getLineCount() : lastLine) - 1;
+                public void setScrollingRegion(int top, int bottom) {
+                        scrollingRegion.set((top == -1 ? 1 : top) - 1,
+                                            (bottom == -1 ? getLineCount() : bottom) - 1);
                 }
 
                 public void scrollDisplayUp() {
-                        modifyOneLine(firstScrollLineIndex, firstScrollLineIndex, lastScrollLineIndex + 1);
+                        modifyOneLine(scrollingRegion.top(), scrollingRegion.top(), scrollingRegion.bottom() + 1);
                 }
 
                 private void modifyOneLine(int index, int top, int bottom) {
@@ -270,7 +269,7 @@ public class TerminalModel {
                 }
 
                 public void deleteLine() {
-                        modifyOneLine(lastScrollLineIndex + 1, cursor.getRow(), lastScrollLineIndex);
+                        modifyOneLine(scrollingRegion.bottom() + 1, cursor.getRow(), scrollingRegion.bottom());
                 }
         };
 }
