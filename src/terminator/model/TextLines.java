@@ -1,6 +1,6 @@
 package terminator.model;
 
-import java.awt.*;
+import java.awt.Dimension;
 import java.util.*;
 import e.util.*;
 
@@ -37,15 +37,15 @@ public class TextLines {
         }
 
         private void remove(int at, int count) {
-                ListIterator<TextLine> it = textLines.listIterator(at);
-                for (int i = 0; i < count; i++) {
-                        it.next();
-                        it.remove();
-                }
+                region(at, at + count).clear();
         }
 
         public int count() {
                 return textLines.size();
+        }
+
+        public List<TextLine> region(int from, int to) {
+                return textLines.subList(from, to);
         }
 
         public TextLine get(int index) {

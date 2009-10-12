@@ -225,9 +225,8 @@ public class TerminalModel {
                         int start = fromTop ? 0 : cursor.getRow();
                         int startClearing = fromTop ? start : start + 1;
                         int endClearing = toBottom ? getLineCount() : cursor.getRow();
-                        for (int i = startClearing; i < endClearing; i++) {
-                                getTextLine(i).clear();
-                        }
+                        for (TextLine line : textLines.region(startClearing, endClearing))
+                                line.clear();
                         TextLine line = getCursorTextLine();
                         int oldLineLength = line.length();
                         if (fromTop) {
