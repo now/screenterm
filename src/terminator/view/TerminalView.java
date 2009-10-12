@@ -27,6 +27,8 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setOpaque(true);
+                setBackground(StyledText.BACKGROUND_COLOR);
+                setForeground(StyledText.FOREGROUND_COLOR);
                 setFont(font);
 
                 this.model = model;

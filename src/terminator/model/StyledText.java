@@ -11,6 +11,9 @@ its namespace the set of allowed styles, and provides static methods for accessi
 */
 
 public class StyledText {
+        public static final Color FOREGROUND_COLOR = Palettes.getColor(0, true);
+        public static final Color BACKGROUND_COLOR = Palettes.getColor(7, true);
+
 	private static final int BACKGROUND_SHIFT = 3;
 	private static final int FOREGROUND_MASK = 7;
 	private static final int BACKGROUND_MASK = 7 << BACKGROUND_SHIFT;
@@ -21,9 +24,6 @@ public class StyledText {
 	
 	private static final int HAS_FOREGROUND = 1 << 14;
 	private static final int HAS_BACKGROUND = 1 << 15;
-
-        private static final Color FOREGROUND_COLOR = new Color(0x181818);
-        private static final Color BACKGROUND_COLOR = new Color(0xf6f6f6);
 	
 	private String text;
 	private Style style;
