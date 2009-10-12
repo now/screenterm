@@ -31,10 +31,7 @@ public class TerminalModel {
 
         private TerminalListeners listeners = new TerminalListeners();
         private TextLines textLines = new TextLines(new Dimension(0, 0));
-        private short currentStyle = StyledText.getDefaultStyle();
-        private Region scrollingRegion = new Region(0, 0);
         private Cursor cursor = Cursor.origo();
-        private boolean insertMode = false;
 
 	public void addListener(TerminalListener l) {
 		listeners.add(l);
@@ -60,6 +57,9 @@ public class TerminalModel {
 	}
 
         private TerminalModelModifier modifier = new TerminalModelModifier() {
+                private short currentStyle = StyledText.getDefaultStyle();
+                private Region scrollingRegion = new Region(0, 0);
+                private boolean insertMode = false;
                 private int firstLineChanged;
                 private Cursor oldCursor;
 
