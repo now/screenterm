@@ -5,8 +5,8 @@ import e.util.*;
 
 public final class Cursor {
         private Dimension area;
-        private int lineIndex;
-        private int charOffset;
+        private int row;
+        private int column;
         private boolean visible;
 
         private static int clamp(int value, int min, int max) {
@@ -17,43 +17,43 @@ public final class Cursor {
                 return new Cursor(new Dimension(0, 0), 0, 0, true);
         }
 
-        private Cursor(Dimension area, int lineIndex, int charOffset, boolean visible) {
+        private Cursor(Dimension area, int row, int column, boolean visible) {
                 this.area = area;
-                this.lineIndex = clamp(lineIndex, 0, area.height - 1);
-                this.charOffset = clamp(charOffset, 0, area.width - 1);
+                this.row = clamp(row, 0, area.height - 1);
+                this.column = clamp(column, 0, area.width - 1);
                 this.visible = visible;
         }
 
         public Cursor constrain(Dimension area) {
-                return new Cursor(area, lineIndex, charOffset, visible);
+                return new Cursor(area, row, column, visible);
         }
 
-        public Cursor moveToLine(int lineIndex) {
-                return new Cursor(area, lineIndex, charOffset, visible);
+        public Cursor moveToRow(int row) {
+                return new Cursor(area, row, column, visible);
         }
 
-        public Cursor moveToChar(int charOffset) {
-                return new Cursor(area, lineIndex, charOffset, visible);
+        public Cursor moveToColumn(int column) {
+                return new Cursor(area, row, column, visible);
         }
 
-        public Cursor adjustLineIndex(int delta) {
-                return new Cursor(area, lineIndex + delta, charOffset, visible);
+        public Cursor adjustRow(int delta) {
+                return new Cursor(area, row + delta, column, visible);
         }
 
-        public Cursor adjustCharOffset(int delta) {
-                return new Cursor(area, lineIndex, charOffset + delta, visible);
+        public Cursor adjustColumn(int delta) {
+                return new Cursor(area, row, column + delta, visible);
         }
 
         public Cursor setVisible(boolean visible) {
-                return new Cursor(area, lineIndex, charOffset, visible);
+                return new Cursor(area, row, column, visible);
         }
 
-        public int getLineIndex() {
-                return lineIndex;
+        public int getRow() {
+                return row;
         }
 
-        public int getCharOffset() {
-                return charOffset;
+        public int getColumn() {
+                return column;
         }
 
         public boolean isVisible() {
@@ -61,16 +61,16 @@ public final class Cursor {
         }
 
         public boolean isInsideLines(int first, int last) {
-                return visible && (first <= lineIndex && lineIndex <= last);
+                return visible && (first <= row && row <= last);
         }
 
         public String toString() {
-                return "Cursor[line " + lineIndex + ", char " + charOffset + "]";
+                return "Cursor[row " + row + ", column " + column + "]";
         }
 
         // Ought to use a prime, but I can't be bothered to work one out.
         public int hashCode() {
-                return (getLineIndex() * 163477) ^ getCharOffset();
+                return (getRow() * 163477) ^ getColumn();
         }
 
         public boolean equals(Object o) {
@@ -78,7 +78,7 @@ public final class Cursor {
                         return false;
 
                 Cursor other = (Cursor)o;
-                return other.getLineIndex() == getLineIndex() &&
-                       other.getCharOffset() == getCharOffset();
+                return other.getRow() == getRow() &&
+                       other.getColumn() == getColumn();
         }
 }

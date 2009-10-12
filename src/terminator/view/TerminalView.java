@@ -105,8 +105,8 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 repaint();
 	}
 
-	public void contentsChanged(int lineIndex) {
-		Point redrawTop = modelToView(lineIndex, 0).getLocation();
+	public void contentsChanged(int row) {
+		Point redrawTop = modelToView(row, 0).getLocation();
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
@@ -121,7 +121,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
         private Rectangle modelToView(terminator.model.Cursor cursor) {
-                return modelToView(cursor.getLineIndex(), cursor.getCharOffset());
+                return modelToView(cursor.getRow(), cursor.getColumn());
         }
 
 	private Rectangle modelToView(int row, int column) {

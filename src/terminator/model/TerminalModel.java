@@ -81,7 +81,7 @@ public class TerminalModel {
                 }
 
                 private void linesChangedFromCursor() {
-                        linesChangedFrom(cursor.getLineIndex());
+                        linesChangedFrom(cursor.getRow());
                 }
 
                 public void setSize(Dimension size) {
@@ -99,16 +99,16 @@ public class TerminalModel {
                         return currentStyle;
                 }
 
-                public void moveToLine(int index) {
+                public void moveToRow(int index) {
                         // NOTE: We only really allow index to be lastScrollLineIndex + 1
                         if (index > lastScrollLineIndex)
                                 insertLines(index, 1);
                         else
-                                cursor = cursor.moveToLine(index);
+                                cursor = cursor.moveToRow(index);
                 }
 
                 public void insertLines(int count) {
-                        insertLines(cursor.getLineIndex(), count);
+                        insertLines(cursor.getRow(), count);
                 }
 
                 private void insertLines(int at, int count) {
@@ -116,7 +116,7 @@ public class TerminalModel {
                                                           count,
                                                           firstScrollLineIndex,
                                                           lastScrollLineIndex);
-                        linesChangedFrom(above == count ? cursor.getLineIndex() : firstScrollLineIndex);
+                        linesChangedFrom(above == count ? cursor.getRow() : firstScrollLineIndex);
                         if (above > 0)
                                 moveCursorVertically(above);
                 }
@@ -129,16 +129,16 @@ public class TerminalModel {
                         TextLine textLine = getCursorTextLine();
                         if (insertMode) {
                                 //Log.warn("Inserting text \"" + line + "\" at " + cursor + ".");
-                                textLine.insertTextAt(cursor.getCharOffset(), line, currentStyle);
+                                textLine.insertTextAt(cursor.getColumn(), line, currentStyle);
                         } else {
                                 //Log.warn("Writing text \"" + line + "\" at " + cursor + ".");
-                                textLine.writeTextAt(cursor.getCharOffset(), line, currentStyle);
+                                textLine.writeTextAt(cursor.getColumn(), line, currentStyle);
                         }
                         textAdded(line.length());
                 }
 
                 private TextLine getCursorTextLine() {
-                        return textLines.get(cursor.getLineIndex());
+                        return textLines.get(cursor.getRow());
                 }
 
                 private void textAdded(int length) {
@@ -149,10 +149,10 @@ public class TerminalModel {
                 public void processSpecialCharacter(char ch) {
                         switch (ch) {
                         case Ascii.CR:
-                                cursor = cursor.moveToChar(0);
+                                cursor = cursor.moveToColumn(0);
                                 return;
                         case Ascii.LF:
-                                moveToLine(cursor.getLineIndex() + 1);
+                                moveToRow(cursor.getRow() + 1);
                                 return;
                         case Ascii.VT:
                                 moveCursorVertically(1);
@@ -169,9 +169,9 @@ public class TerminalModel {
                 }
 
                 private void insertTab() {
-                        int nextTabLocation = getNextTabPosition(cursor.getCharOffset());
+                        int nextTabLocation = getNextTabPosition(cursor.getColumn());
                         TextLine textLine = getCursorTextLine();
-                        int startOffset = cursor.getCharOffset();
+                        int startOffset = cursor.getColumn();
                         int tabLength = nextTabLocation - startOffset;
                         // We want to insert our special tabbing characters
                         // (see getTabString) when inserting a tab or
@@ -191,8 +191,8 @@ public class TerminalModel {
                         textAdded(tabLength);
                 }
 
-                private int getNextTabPosition(int charOffset) {
-                        return (charOffset + 8) & ~7;
+                private int getNextTabPosition(int column) {
+                        return (column + 8) & ~7;
                 }
 
                 public void setCursorVisible(boolean visible) {
@@ -203,15 +203,15 @@ public class TerminalModel {
                 }
 
                 public void deleteCharacters(int count) {
-                        getCursorTextLine().killText(cursor.getCharOffset(),
-                                                     cursor.getCharOffset() + count);
+                        getCursorTextLine().killText(cursor.getColumn(),
+                                                     cursor.getColumn() + count);
                         linesChangedFromCursor();
                 }
 
                 public void killHorizontally(boolean fromStart, boolean toEnd) {
                         TextLine line = getCursorTextLine();
-                        line.killText(fromStart ? 0 : cursor.getCharOffset(),
-                                      toEnd ? line.length() : cursor.getCharOffset());
+                        line.killText(fromStart ? 0 : cursor.getColumn(),
+                                      toEnd ? line.length() : cursor.getColumn());
                         linesChangedFromCursor();
                 }
 
@@ -222,9 +222,9 @@ public class TerminalModel {
                         // echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[1J'
                         // Should clear the screen:
                         // echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[2J'
-                        int start = fromTop ? 0 : cursor.getLineIndex();
+                        int start = fromTop ? 0 : cursor.getRow();
                         int startClearing = fromTop ? start : start + 1;
-                        int endClearing = toBottom ? getLineCount() : cursor.getLineIndex();
+                        int endClearing = toBottom ? getLineCount() : cursor.getRow();
                         for (int i = startClearing; i < endClearing; i++) {
                                 getTextLine(i).clear();
                         }
@@ -233,27 +233,27 @@ public class TerminalModel {
                         if (fromTop) {
                                 // The current position is always erased, hence the + 1.
                                 // Is overwriting with spaces in the currentStyle correct?
-                                line.writeTextAt(0, StringUtilities.nCopies(cursor.getCharOffset() + 1, ' '), currentStyle);
+                                line.writeTextAt(0, StringUtilities.nCopies(cursor.getColumn() + 1, ' '), currentStyle);
                         }
                         if (toBottom) {
-                                line.killText(cursor.getCharOffset(), oldLineLength);
+                                line.killText(cursor.getColumn(), oldLineLength);
                         }
                         linesChangedFrom(start);
                 }
 
                public void setCursorPosition(int x, int y) {
                         if (x != -1)
-                                cursor = cursor.moveToChar(x - 1);
+                                cursor = cursor.moveToColumn(x - 1);
                         if (y != -1)
-                                cursor = cursor.moveToLine(y - 1);
+                                cursor = cursor.moveToRow(y - 1);
                 }
 
                 public void moveCursorHorizontally(int delta) {
-                        cursor = cursor.adjustCharOffset(delta);
+                        cursor = cursor.adjustColumn(delta);
                 }
 
                 public void moveCursorVertically(int delta) {
-                        cursor = cursor.adjustLineIndex(delta);
+                        cursor = cursor.adjustRow(delta);
                 }
 
                 public void setScrollingRegion(int firstLine, int lastLine) {
@@ -271,7 +271,7 @@ public class TerminalModel {
                 }
 
                 public void deleteLine() {
-                        modifyOneLine(lastScrollLineIndex + 1, cursor.getLineIndex(), lastScrollLineIndex);
+                        modifyOneLine(lastScrollLineIndex + 1, cursor.getRow(), lastScrollLineIndex);
                 }
         };
 }
