@@ -99,14 +99,6 @@ public class TerminalModel {
                         return currentStyle;
                 }
 
-                public void moveToRow(int index) {
-                        // NOTE: We only really allow index to be lastScrollLineIndex + 1
-                        if (index > lastScrollLineIndex)
-                                insertLines(index, 1);
-                        else
-                                cursor = cursor.moveToRow(index);
-                }
-
                 public void insertLines(int count) {
                         insertLines(cursor.getRow(), count);
                 }
@@ -166,6 +158,14 @@ public class TerminalModel {
                         default:
                                 Log.warn("Unsupported special character: " + ((int) ch));
                         }
+                }
+
+                private void moveToRow(int index) {
+                        // NOTE: We only really allow index to be lastScrollLineIndex + 1
+                        if (index > lastScrollLineIndex)
+                                insertLines(index, 1);
+                        else
+                                cursor = cursor.moveToRow(index);
                 }
 
                 private void insertTab() {

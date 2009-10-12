@@ -8,7 +8,6 @@ public interface TerminalModelModifier {
         public void setSize(Dimension size);
         public void setStyle(short style);
 	public short getStyle();
-	public void moveToRow(int index);
 	public void insertLines(int count);
 	public void setInsertMode(boolean insertMode);
 	public void processLine(String line);
