@@ -239,7 +239,7 @@ public class TerminalModel {
                         linesChangedFrom(start);
                 }
 
-               public void setCursorPosition(int x, int y) {
+                public void setCursorPosition(int x, int y) {
                         if (x != -1)
                                 cursor = cursor.moveToColumn(x - 1);
                         if (y != -1)
