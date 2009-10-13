@@ -25,6 +25,8 @@ public class StyledText {
 	private static final int HAS_FOREGROUND = 1 << 14;
 	private static final int HAS_BACKGROUND = 1 << 15;
 	
+        public static final StyledText EMPTY = new StyledText("", (short)0);
+
 	private String text;
 	private Style style;
 	private boolean continueToEnd = false;
@@ -66,6 +68,18 @@ public class StyledText {
 		return getColor(style, getBackground(style), false);
 	}
 	
+        public StyledText removeRange(int from, int to) {
+                if (from == 0 && to >= text.length())
+                        return EMPTY;
+                if (from == 0)
+                        return new StyledText(text.substring(to), style);
+                else if (to >= text.length())
+                        return new StyledText(text.substring(0, from), style);
+                else
+                        return new StyledText(text.substring(0, from) +
+                                              text.substring(to), style);
+        }
+
 	private static Color getColor(int style, int colorIndex, boolean isForeground) {
 		boolean hasSpecifiedColor = (isForeground ? hasForeground(style) : hasBackground(style));
 		Color result = null;
