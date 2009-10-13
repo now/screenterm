@@ -107,8 +107,6 @@ public class TerminalModel {
                                                           scrollingRegion.top(),
                                                           scrollingRegion.bottom());
                         linesChangedFrom(above == count ? cursor.getRow() : scrollingRegion.top());
-                        if (above > 0)
-                                moveCursorVertically(above);
                 }
 
                 public void setInsertMode(boolean newInsertMode) {
