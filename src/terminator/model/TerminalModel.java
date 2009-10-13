@@ -258,11 +258,11 @@ public class TerminalModel {
                 }
 
                 public void scrollDisplayUp() {
-                        modifyOneLine(scrollingRegion.top(), scrollingRegion.top(), scrollingRegion.bottom() + 1);
+                        modifyOneLine(scrollingRegion.top(), scrollingRegion.top(), scrollingRegion.bottom());
                 }
 
                 private void modifyOneLine(int index, int top, int bottom) {
-                        textLines.insertLines(index, 1, 0, bottom);
+                        textLines.insertLines(index, 1, top, bottom);
                         linesChangedFrom(top);
                 }
 
