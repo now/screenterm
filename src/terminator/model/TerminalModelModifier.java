@@ -21,5 +21,5 @@ public interface TerminalModelModifier {
 	public void moveCursorVertically(int delta);
 	public void setScrollingRegion(int top, int bottom);
 	public void scrollDisplayUp();
-	public void deleteLine();
+	public void deleteLines(int count);
 }

@@ -71,9 +71,7 @@ public class CSIEscapeAction implements TerminalAction {
 
         private void deleteLines(TerminalModelModifier model, String seq) {
 		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
-		for (int i = 0; i < count; i++) {
-			model.deleteLine();
-		}
+                model.deleteLines(count);
 	}
 	
         private void insertLines(TerminalModelModifier model, String seq) {

@@ -258,16 +258,16 @@ public class TerminalModel {
                 }
 
                 public void scrollDisplayUp() {
-                        modifyOneLine(scrollingRegion.top(), scrollingRegion.top());
+                        insertLines(scrollingRegion.top(), 1);
+                        linesChangedFrom(scrollingRegion.top());
                 }
 
-                private void modifyOneLine(int index, int top) {
-                        textLines.insertLines(index, 1, top, scrollingRegion.bottom());
-                        linesChangedFrom(top);
-                }
-
-                public void deleteLine() {
-                        modifyOneLine(scrollingRegion.bottom() + 1, cursor.getRow());
+                public void deleteLines(int count) {
+                        textLines.insertLines(scrollingRegion.bottom() + 1,
+                                              count,
+                                              cursor.getRow(),
+                                              scrollingRegion.bottom());
+                        linesChangedFrom(cursor.getRow());
                 }
         };
 }
