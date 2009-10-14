@@ -31,8 +31,8 @@ public class CSIEscapeAction implements TerminalAction {
                 case 'C': moveCursor(model, midSequence, 1, 0); break;
                 case 'D': moveCursor(model, midSequence, -1, 0); break;
                 case 'H': moveCursorTo(model, midSequence); break;
-                case 'K': killLineContents(model, midSequence); break;
-                case 'J': eraseInPage(model, midSequence); break;
+                case 'K': clearLine(model, midSequence); break;
+                case 'J': clearScreen(model, midSequence); break;
                 case 'L': insertLines(model, midSequence); break;
                 case 'M': deleteLines(model, midSequence); break;
                 case 'P': deleteCharacters(model, midSequence); break;
@@ -69,14 +69,24 @@ public class CSIEscapeAction implements TerminalAction {
 		return "CSIEscapeAction[" + getSequenceType(lastChar) + "]";
 	}
 
+        private int parseParameter(String string, int standard) {
+                return string.length() == 0 ? standard : Integer.parseInt(string);
+        }
+
+        private int parseCount(String string) {
+                return parseParameter(string, 1);
+        }
+
+        private int parseType(String string) {
+                return parseParameter(string, 0);
+        }
+
         private void deleteLines(TerminalModelModifier model, String seq) {
-		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
-                model.deleteLines(count);
+                model.deleteLines(parseCount(seq));
 	}
 	
         private void insertLines(TerminalModelModifier model, String seq) {
-		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
-		model.insertLines(count);
+		model.insertLines(parseCount(seq));
 	}
 	
         private void setDecPrivateMode(TerminalModelModifier model, String seq, boolean value) {
@@ -114,37 +124,39 @@ public class CSIEscapeAction implements TerminalAction {
 	}
 
         private void deleteCharacters(TerminalModelModifier model, String seq) {
-		int count = (seq.length() == 0) ? 1 : Integer.parseInt(seq);
-		model.deleteCharacters(count);
+		model.deleteCharacters(parseCount(seq));
+	}
+
+        private void clearLine(TerminalModelModifier model, String seq) {
+                int type = parseType(seq);
+                switch (type) {
+                case 0: model.clearToBeginningOfLine(); break;
+                case 1: model.clearToEndOfLine(); break;
+                default: Log.warn("Unknown line clearing request " + type); break;
+                }
 	}
 	
-        private void killLineContents(TerminalModelModifier model, String seq) {
-		int type = (seq.length() == 0) ? 0 : Integer.parseInt(seq);
-		boolean fromStart = (type >= 1);
-		boolean toEnd = (type != 1);
-		model.killHorizontally(fromStart, toEnd);
-	}
-	
-        private void eraseInPage(TerminalModelModifier model, String seq) {
-		int type = (seq.length() == 0) ? 0 : Integer.parseInt(seq);
-		boolean fromTop = (type >= 1);
-		boolean toBottom = (type != 1);
-		model.eraseInPage(fromTop, toBottom);
+        private void clearScreen(TerminalModelModifier model, String seq) {
+                int type = parseType(seq);
+                switch (parseType(seq)) {
+                case 0: model.clearToEndOfScreen(); break;
+                default: Log.warn("Unknown screen clearing request " + type); break;
+                }
 	}
 	
 	private void moveCursorTo(TerminalModelModifier model, String seq) {
-		int x = 1;
-		int y = 1;
+		int row = 1;
+		int column = 1;
 		int splitIndex = seq.indexOf(';');
 		if (splitIndex != -1) {
-			y = Integer.parseInt(seq.substring(0, splitIndex));
-			x = Integer.parseInt(seq.substring(splitIndex + 1));
+			row = Integer.parseInt(seq.substring(0, splitIndex));
+			column = Integer.parseInt(seq.substring(splitIndex + 1));
 		}
-		model.setCursorPosition(x, y);
+		model.setCursorPosition(row - 1, column - 1);
 	}
 	
-        private void moveCursor(TerminalModelModifier model, String countString, int xDirection, int yDirection) {
-		int count = (countString.length() == 0) ? 1 : Integer.parseInt(countString);
+        private void moveCursor(TerminalModelModifier model, String seq, int xDirection, int yDirection) {
+                int count = parseCount(seq);
 		if (xDirection != 0) {
 			model.moveCursorHorizontally(xDirection * count);
 		}
@@ -153,7 +165,7 @@ public class CSIEscapeAction implements TerminalAction {
 		}
 	}
 	
-        private void processFontEscape(TerminalModelModifier model, String sequence) {
+        private void processFontEscape(TerminalModelModifier model, String seq) {
 		int oldStyle = model.getStyle();
 		int foreground = StyledText.getForeground(oldStyle);
 		int background = StyledText.getBackground(oldStyle);
@@ -161,7 +173,7 @@ public class CSIEscapeAction implements TerminalAction {
 		boolean isUnderlined = StyledText.isUnderlined(oldStyle);
 		boolean hasForeground = StyledText.hasForeground(oldStyle);
 		boolean hasBackground = StyledText.hasBackground(oldStyle);
-		String[] chunks = sequence.split(";");
+		String[] chunks = seq.split(";");
 		for (String chunk : chunks) {
 			int value = (chunk.length() == 0) ? 0 : Integer.parseInt(chunk);
 			switch (value) {
@@ -217,7 +229,7 @@ public class CSIEscapeAction implements TerminalAction {
 				hasBackground = false;
 				break;
 			default:
-				Log.warn("Unknown attribute " + value + " in [" + StringUtilities.escapeForJava(sequence));
+				Log.warn("Unknown attribute " + value + " in [" + StringUtilities.escapeForJava(seq));
 				break;
 			}
 		}

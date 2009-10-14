@@ -205,43 +205,25 @@ public class TerminalModel {
                         linesChangedFromCursor();
                 }
 
-                public void killHorizontally(boolean fromStart, boolean toEnd) {
+                public void clearToEndOfLine() {
                         TextLine line = getCursorTextLine();
-                        line.killText(fromStart ? 0 : cursor.getColumn(),
-                                      toEnd ? line.length() : cursor.getColumn());
+                        line.killText(cursor.getColumn(), line.length());
                         linesChangedFromCursor();
                 }
 
-                public void eraseInPage(boolean fromTop, boolean toBottom) {
-                        // Should produce "hi\nwo":
-                        // echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[J'
-                        // Should produce "   ld":
-                        // echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[1J'
-                        // Should clear the screen:
-                        // echo $'\n\n\nworld\x1b[A\rhi\x1b[B\x1b[2J'
-                        int start = fromTop ? 0 : cursor.getRow();
-                        int startClearing = fromTop ? start : start + 1;
-                        int endClearing = toBottom ? getLineCount() : cursor.getRow();
-                        for (TextLine line : textLines.region(startClearing, endClearing))
-                                line.clear();
-                        TextLine line = getCursorTextLine();
-                        int oldLineLength = line.length();
-                        if (fromTop) {
-                                // The current position is always erased, hence the + 1.
-                                // Is overwriting with spaces in the currentStyle correct?
-                                line.writeTextAt(0, StringUtilities.nCopies(cursor.getColumn() + 1, ' '), currentStyle);
-                        }
-                        if (toBottom) {
-                                line.killText(cursor.getColumn(), oldLineLength);
-                        }
-                        linesChangedFrom(start);
+                public void clearToBeginningOfLine() {
+                        getCursorTextLine().killText(0, cursor.getColumn());
+                        linesChangedFromCursor();
                 }
 
-                public void setCursorPosition(int x, int y) {
-                        if (x != -1)
-                                cursor = cursor.moveToColumn(x - 1);
-                        if (y != -1)
-                                cursor = cursor.moveToRow(y - 1);
+                public void clearToEndOfScreen() {
+                        clearToEndOfLine();
+                        for (TextLine line : textLines.region(cursor.getRow() + 1, getLineCount()))
+                                line.clear();
+                }
+
+                public void setCursorPosition(int row, int column) {
+                        cursor = cursor.moveToRow(row).moveToColumn(column);
                 }
 
                 public void moveCursorHorizontally(int delta) {

@@ -28,7 +28,7 @@ terminator|Terminator no line wrap,
     dch1=\E[P,
     dch=\E[%p1%dP,
 # Erase
-    clear=\E[H\E[2J,
+    clear=\E[H\E[J,
     ed=\E[J,
     el=\E[K,
     el1=\E[1K,
