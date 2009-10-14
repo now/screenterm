@@ -152,7 +152,7 @@ public class TerminalControl {
 		}
 	}
 	
-	public void invokeCharacterSet(int index) {
+        private void invokeCharacterSet(int index) {
 		flushLineBuffer();
                 characterSet.invoke(index);
 	}
@@ -364,7 +364,7 @@ public class TerminalControl {
 		terminalActions.add(new PlainTextAction(characterSet.translate(line)));
 	}
 	
-	public synchronized void processSpecialCharacter(final char ch) {
+        private synchronized void processSpecialCharacter(final char ch) {
 		terminalActions.add(new TerminalAction() {
 			public void perform(TerminalModelModifier model) {
 				if (DEBUG) {
