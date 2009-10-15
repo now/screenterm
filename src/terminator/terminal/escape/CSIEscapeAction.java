@@ -116,11 +116,10 @@ public class CSIEscapeAction implements TerminalAction {
 	
         private void setScrollingRegion(TerminalModelModifier model, String seq) {
 		int index = seq.indexOf(';');
-		if (index == -1) {
-			model.setScrollingRegion(-1, -1);
-		} else {
-			model.setScrollingRegion(Integer.parseInt(seq.substring(0, index)), Integer.parseInt(seq.substring(index + 1)));
-		}
+		if (index == -1)
+                        return;
+                model.setScrollingRegion(Integer.parseInt(seq.substring(0, index)) - 1,
+                                         Integer.parseInt(seq.substring(index + 1)) - 1);
 	}
 
         private void deleteCharacters(TerminalModelModifier model, String seq) {

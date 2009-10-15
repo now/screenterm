@@ -237,8 +237,7 @@ public class TerminalModel {
                 }
 
                 public void setScrollingRegion(int top, int bottom) {
-                        scrollingRegion.set((top == -1 ? 1 : top) - 1,
-                                            (bottom == -1 ? getLineCount() : bottom) - 1);
+                        scrollingRegion.set(top, bottom);
                 }
 
                 public void scrollDisplayUp() {
