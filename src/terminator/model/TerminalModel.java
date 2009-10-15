@@ -134,38 +134,7 @@ public class TerminalModel {
                         linesChangedFromCursor();
                 }
 
-                public void processSpecialCharacter(char ch) {
-                        switch (ch) {
-                        case Ascii.CR:
-                                cursor = cursor.moveToColumn(0);
-                                return;
-                        case Ascii.LF:
-                                moveToRow(cursor.getRow() + 1);
-                                return;
-                        case Ascii.VT:
-                                moveCursorVertically(1);
-                                return;
-                        case Ascii.HT:
-                                insertTab();
-                                return;
-                        case Ascii.BS:
-                                moveCursorHorizontally(-1);
-                                return;
-                        default:
-                                Log.warn("Unsupported special character: " + ((int) ch));
-                        }
-                }
-
-                private void moveToRow(int index) {
-                        // NOTE: We only really allow index to be
-                        // scrollingRegion.bottom() + 1.
-                        if (index > scrollingRegion.bottom())
-                                insertLines(index, 1);
-                        else
-                                cursor = cursor.moveToRow(index);
-                }
-
-                private void insertTab() {
+                public void horizontalTabulation() {
                         int nextTabLocation = getNextTabPosition(cursor.getColumn());
                         TextLine textLine = getCursorTextLine();
                         int startOffset = cursor.getColumn();
@@ -190,6 +159,18 @@ public class TerminalModel {
 
                 private int getNextTabPosition(int column) {
                         return (column + 8) & ~7;
+                }
+
+                public void lineFeed() {
+                        int row = cursor.getRow() + 1;
+                        if (row > scrollingRegion.bottom())
+                                insertLines(row, 1);
+                        else
+                                cursor = cursor.moveToRow(row);
+                }
+
+                public void carriageReturn() {
+                        cursor = cursor.moveToColumn(0);
                 }
 
                 public void setCursorVisible(boolean visible) {

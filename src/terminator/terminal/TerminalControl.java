@@ -370,7 +370,13 @@ public class TerminalControl {
 				if (DEBUG) {
 					Log.warn("Processing special char \"" + getCharDesc(ch) + "\"");
 				}
-				model.processSpecialCharacter(ch);
+                                switch (ch) {
+                                case Ascii.BS: model.moveCursorHorizontally(-1); break;
+                                case Ascii.HT: model.horizontalTabulation(); break;
+                                case Ascii.LF: model.lineFeed(); break;
+                                case Ascii.VT: model.moveCursorVertically(1); break;
+                                case Ascii.CR: model.carriageReturn(); break;
+                                }
 			}
 			
 			public String toString() {

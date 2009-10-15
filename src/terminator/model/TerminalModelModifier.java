@@ -11,7 +11,6 @@ public interface TerminalModelModifier {
 	public void insertLines(int count);
 	public void setInsertMode(boolean insertMode);
 	public void processLine(String line);
-	public void processSpecialCharacter(char c);
 	public void setCursorVisible(boolean cursorVisible);
 	public void deleteCharacters(int count);
         public void clearToBeginningOfLine();
@@ -20,6 +19,9 @@ public interface TerminalModelModifier {
 	public void setCursorPosition(int row, int column);
 	public void moveCursorHorizontally(int delta);
 	public void moveCursorVertically(int delta);
+        public void horizontalTabulation();
+        public void lineFeed();
+        public void carriageReturn();
 	public void setScrollingRegion(int top, int bottom);
 	public void scrollDisplayUp();
 	public void deleteLines(int count);
