@@ -1,7 +1,5 @@
 package terminator.terminal.actions;
 
-import e.util.*;
-
 import terminator.model.*;
 import terminator.terminal.*;
 
