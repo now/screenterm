@@ -35,9 +35,7 @@ terminator|Terminator no line wrap,
 # Initialize
 # TODO: Do we need to keep this around, empty?
     is1=,
-# TODO: \E[H can probably be removed, as cursor will be placed there
-# anyway by the \E[2J, right?
-    is2=\E[r\E[m\E[2J\E[H\E[4l,
+    is2=\E[r\E[m\E[H\E[J\E[4l,
 # Attributes
     smul=\E[4m,
     rev=\E[7m,
