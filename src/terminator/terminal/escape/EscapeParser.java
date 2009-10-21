@@ -76,9 +76,89 @@ public class EscapeParser {
 			char endChar = sequence.charAt(sequence.length() - 1);
 			return (endChar < ' ' || endChar >= '@');
 		}
-		
+
+                private int parseParameter(String string, int standard) {
+                        return string.length() == 0 ? standard : Integer.parseInt(string);
+                }
+
+                private int parseCount(String string) {
+                        return parseParameter(string, 1);
+                }
+
+                private int parseType(String string) {
+                        return parseParameter(string, 0);
+                }
+
 		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
-			return new CSIEscapeAction(terminalControl, sequence);
+                        char lastChar = sequence.charAt(sequence.length() - 1);
+                        String midSequence = sequence.substring(1, sequence.length() - 1);
+                        switch (lastChar) {
+                        case 'A': return new MoveCursorUp(parseCount(midSequence));
+                        case 'B': return new MoveCursorDown(parseCount(midSequence));
+                        case 'C': return new MoveCursorRight(parseCount(midSequence));
+                        case 'D': return new MoveCursorLeft(parseCount(midSequence));
+                        case 'H': {
+                                  String seq = midSequence;
+                                  int row = 1;
+                                  int column = 1;
+                                  int splitIndex = seq.indexOf(';');
+                                  if (splitIndex != -1) {
+                                          row = Integer.parseInt(seq.substring(0, splitIndex));
+                                          column = Integer.parseInt(seq.substring(splitIndex + 1));
+                                  }
+                                  return new PositionCursor(row - 1, column - 1);
+                        }
+                        case 'K':
+                                switch (parseType(midSequence)) {
+                                case 0: return new ClearToEndOfLine();
+                                case 1: return new ClearToBeginningOfLine();
+                                default: Log.warn("Unknown line clearing request " + midSequence); return null;
+                                }
+                        case 'J':
+                                switch (parseType(midSequence)) {
+                                case 0: return new ClearToEndOfScreen();
+                                default: Log.warn("Unknown screen clearing request " + midSequence); return null;
+                                }
+                        case 'L': return new InsertLines(parseCount(midSequence));
+                        case 'M': return new DeleteLines(parseCount(midSequence));
+                        case 'P': return new DeleteCharacters(parseCount(midSequence));
+                        case 'h': return setDecPrivateMode(midSequence, true);
+                        case 'l': return setDecPrivateMode(midSequence, false);
+                        case 'm': return new SetStyle(midSequence);
+                        case 'r': {
+                                 String seq = midSequence;
+                                 int index = seq.indexOf(';');
+                                 if (index == -1)
+                                         return null;
+                                 return new SetScrollingRegion(Integer.parseInt(seq.substring(0, index)) - 1,
+                                                               Integer.parseInt(seq.substring(index + 1)) - 1);
+                        }
+                        default: Log.warn("unknown CSI sequence " + StringUtilities.escapeForJava(sequence)); return null;
+                        }
 		}
+
+                private TerminalAction setDecPrivateMode(String seq, boolean value) {
+                        boolean isPrivateMode = seq.startsWith("?");
+                        String[] modes = (isPrivateMode ? seq.substring(1) : seq).split(";");
+                        for (String modeString : modes) {
+                                int mode = Integer.parseInt(modeString);
+                                if (isPrivateMode) {
+                                        switch (mode) {
+                                        case 25:
+                                                return new SetCursorVisible(value);
+                                        default:
+                                                Log.warn("Unknown private mode " + mode + " in [" + StringUtilities.escapeForJava(seq) + (value ? 'h' : 'l'));
+                                        }
+                                } else {
+                                        switch (mode) {
+                                        case 4:
+                                                return new SetInsertMode(value);
+                                        default:
+                                                Log.warn("Unknown mode " + mode + " in [" + StringUtilities.escapeForJava(seq) + (value ? 'h' : 'l'));
+                                        }
+                                }
+                        }
+                        return null;
+                }
 	}
 }
