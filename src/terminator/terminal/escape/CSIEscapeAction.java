@@ -129,8 +129,8 @@ public class CSIEscapeAction implements TerminalAction {
         private void clearLine(TerminalModelModifier model, String seq) {
                 int type = parseType(seq);
                 switch (type) {
-                case 0: model.clearToBeginningOfLine(); break;
-                case 1: model.clearToEndOfLine(); break;
+                case 0: model.clearToEndOfLine(); break;
+                case 1: model.clearToBeginningOfLine(); break;
                 default: Log.warn("Unknown line clearing request " + type); break;
                 }
 	}

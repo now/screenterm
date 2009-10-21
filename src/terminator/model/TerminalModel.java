@@ -193,9 +193,7 @@ public class TerminalModel {
                 }
 
                 public void clearToBeginningOfLine() {
-                        getCursorTextLine().writeTextAt(0,
-                                StringUtilities.nCopies(cursor.getColumn() + 1, ' '),
-                                StyledText.getDefaultStyle());
+                        getCursorTextLine().killText(0, cursor.getColumn());
                         linesChangedFromCursor();
                 }
 
