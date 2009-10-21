@@ -60,7 +60,7 @@ terminator|Terminator no line wrap,
     smacs=^N,
     rmacs=^O,
     acsc=++\,\,--..00``aaffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
-    enacs=\E(B\E)0,
+    enacs=,
 # Keys
     kf1=\EOP,
     kf2=\EOQ,
@@ -87,15 +87,3 @@ terminator|Terminator no line wrap,
     kcub1=\E[D,
 # Sets meta (is this true?)
     km,
-# NOTE: Not used by screen
-    ht=^I,
-    rs1=\E[4l\E[m\E[r\E[2J\E[H,
-    rs2=\E[r\E[m\E[2J\E[H\E[4l,
-    s0ds=\E(B,
-    s1ds=\E(0,
-    mir,
-    it#8,
-# NOTE: Not read by screen and possibly incorrect
-    eo,
-# NOTE: Not read by screen and probably incorrect
-    xon,
