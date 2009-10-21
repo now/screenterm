@@ -396,10 +396,6 @@ public class TerminalControl {
 		});
 	}
 	
-	public void designateCharacterSet(int index, char set) {
-                characterSet.designate(index, set);
-	}
-
 	public synchronized void processEscape() {
 		if (DEBUG) {
 			Log.warn("Processing escape sequence \"" + StringUtilities.escapeForJava(escapeParser.toString()) + "\"");

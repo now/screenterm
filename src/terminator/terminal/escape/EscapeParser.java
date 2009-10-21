@@ -13,7 +13,6 @@ public class EscapeParser {
 	private static final HashMap<Character, SequenceRecognizer> SEQ_RECOGNIZERS = new HashMap<Character, SequenceRecognizer>();
 	static {
 		addSequenceRecognizers("M", new SingleCharSequenceRecognizer());
-		addSequenceRecognizers("()", new TwoCharSequenceRecognizer());
 		addSequenceRecognizers("[", new CSISequenceRecognizer());
 	}
 	private static void addSequenceRecognizers(String chars, SequenceRecognizer recognizer) {
@@ -57,16 +56,6 @@ public class EscapeParser {
 		
 		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
 			return new SingleCharEscapeAction(terminalControl, sequence.charAt(0));
-		}
-	}
-	
-	private static class TwoCharSequenceRecognizer implements SequenceRecognizer {
-		public boolean isAtEnd(String sequence) {
-			return (sequence.length() == 2);
-		}
-		
-		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
-			return new TwoCharEscapeAction(terminalControl, sequence);
 		}
 	}
 	

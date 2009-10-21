@@ -8,10 +8,6 @@ class TerminalCharacterSet {
                 this.characterSet = index;
         }
 
-	public void designate(int index, char set) {
-		g[index] = set;
-	}
-
 	public String translate(String characters) {
 		if (g[characterSet] == 'B')
 			return characters;
