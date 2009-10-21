@@ -2,7 +2,9 @@ package terminator.terminal.escape;
 
 import java.util.*;
 import e.util.*;
+
 import terminator.terminal.*;
+import terminator.terminal.actions.*;
 
 public class EscapeParser {
 	private boolean isComplete = false;
@@ -55,7 +57,14 @@ public class EscapeParser {
 		}
 		
 		public TerminalAction getTerminalAction(TerminalControl terminalControl, String sequence) {
-			return new SingleCharEscapeAction(terminalControl, sequence.charAt(0));
+                        char escChar = sequence.charAt(0);
+                        switch (escChar) {
+                        case 'M':
+                                return new ScrollDisplayUp();
+                        default:
+                                Log.warn("Unrecognized single-character escape \"" + escChar + "\".");
+                                return null;
+                        }
 		}
 	}
 	
