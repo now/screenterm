@@ -5,7 +5,7 @@ class TerminalCharacterSet {
         private char[] g = { 'B', '0' };
 
         public void invoke(int index) {
-                this.characterSet = index;
+                characterSet = index;
         }
 
 	public String translate(String characters) {
