@@ -12,6 +12,7 @@ import terminator.model.*;
 import terminator.view.*;
 import terminator.terminal.escape.*;
 import terminator.terminal.actions.*;
+import terminator.terminal.charactersets.*;
 
 /**
  * Ties together the subprocess reader thread, the subprocess writer thread, and the thread that processes the subprocess' output.
@@ -45,7 +46,7 @@ public class TerminalControl {
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
 	
-        private TerminalCharacterSet characterSet = new TerminalCharacterSet();
+        private CharacterSet characterSet = new NormalCharacterSet();
 
 	private StringBuilder lineBuffer = new StringBuilder();
 	
@@ -151,9 +152,9 @@ public class TerminalControl {
 		}
 	}
 	
-        private void invokeCharacterSet(int index) {
+        private void invokeCharacterSet(CharacterSet characterSet) {
 		flushLineBuffer();
-                characterSet.invoke(index);
+                this.characterSet = characterSet;
 	}
 	
 	private static final void doStep() {
@@ -286,9 +287,9 @@ public class TerminalControl {
                         if (action != null)
                                 actionQueue.add(action);
 		} else if (ch == Ascii.SO) {
-			invokeCharacterSet(1);
+			invokeCharacterSet(new GraphicalCharacterSet());
 		} else if (ch == Ascii.SI) {
-			invokeCharacterSet(0);
+			invokeCharacterSet(new NormalCharacterSet());
 		} else if (ch == Ascii.NUL) {
 			// Most telnetd(1) implementations seem to have a bug whereby
 			// they send the NUL byte at the end of the C strings they want to
@@ -311,7 +312,7 @@ public class TerminalControl {
 		
 		doStep();
 		
-                actionQueue.add(new AddText(characterSet.translate(line)));
+                actionQueue.add(new AddText(characterSet.encode(line)));
 	}
 	
         private synchronized TerminalAction processSpecialCharacter(final char ch) {
