@@ -50,14 +50,12 @@ public class TerminalControl {
 	private StringBuilder lineBuffer = new StringBuilder();
 	
 	private EscapeParser escapeParser;
-	
-	// Buffer of TerminalActions to perform.
-	private ArrayList<TerminalAction> terminalActions = new ArrayList<TerminalAction>();
-	// Semaphore to prevent us from overrunning the EDT.
-	private Semaphore flowControl = new Semaphore(30);
+
+        private ActionQueue actionQueue;
 	
 	public TerminalControl(TerminalModel model) {
 		this.model = model;
+                actionQueue = new ActionQueue(model);
 	}
 	
 	public void initProcess(List<String> command, String workingDirectory) throws Throwable {
@@ -245,38 +243,7 @@ public class TerminalControl {
 		for (int i = 0; i < size; ++i)
 			processChar(buffer[i]);
 		flushLineBuffer();
-		flushTerminalActions();
-	}
-	
-	private synchronized void flushTerminalActions() {
-		if (terminalActions.size() == 0) {
-			return;
-		}
-		
-		final TerminalAction[] actions = terminalActions.toArray(new TerminalAction[terminalActions.size()]);
-		terminalActions.clear();
-		
-		boolean didAcquire = false;
-		try {
-			flowControl.acquire();
-			didAcquire = true;
-			EventQueue.invokeLater(new Runnable() {
-				public void run() {
-					try {
-						model.processActions(actions);
-					} catch (Throwable th) {
-						Log.warn("Couldn't process terminal actions for " + ptyProcess, th);
-					} finally {
-						flowControl.release();
-					}
-				}
-			});
-		} catch (Throwable th) {
-			Log.warn("Couldn't flush terminal actions for " + ptyProcess, th);
-			if (didAcquire) {
-				flowControl.release();
-			}
-		}
+                actionQueue.flush();
 	}
 	
 	/**
@@ -317,7 +284,7 @@ public class TerminalControl {
 			doStep();
 			TerminalAction action = processSpecialCharacter(ch);
                         if (action != null)
-                                terminalActions.add(action);
+                                actionQueue.add(action);
 		} else if (ch == Ascii.SO) {
 			invokeCharacterSet(1);
 		} else if (ch == Ascii.SI) {
@@ -344,8 +311,7 @@ public class TerminalControl {
 		
 		doStep();
 		
-		// Conform to the stated claim that the model's always mutated in the AWT dispatch thread.
-		terminalActions.add(new AddText(characterSet.translate(line)));
+                actionQueue.add(new AddText(characterSet.translate(line)));
 	}
 	
         private synchronized TerminalAction processSpecialCharacter(final char ch) {
@@ -369,7 +335,7 @@ public class TerminalControl {
 		doStep();
 		TerminalAction action = escapeParser.getAction(this);
 		if (action != null) {
-			terminalActions.add(action);
+                        actionQueue.add(action);
 		}
 	}
 	
