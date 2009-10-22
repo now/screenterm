@@ -11,6 +11,7 @@ import terminator.*;
 import terminator.model.*;
 import terminator.view.*;
 import terminator.terminal.escape.*;
+import terminator.terminal.actions.*;
 
 /**
  * Ties together the subprocess reader thread, the subprocess writer thread, and the thread that processes the subprocess' output.
@@ -314,7 +315,9 @@ public class TerminalControl {
 		} else if (ch == Ascii.LF || ch == Ascii.CR || ch == Ascii.BS || ch == Ascii.HT || ch == Ascii.VT) {
 			flushLineBuffer();
 			doStep();
-			processSpecialCharacter(ch);
+			TerminalAction action = processSpecialCharacter(ch);
+                        if (action != null)
+                                terminalActions.add(action);
 		} else if (ch == Ascii.SO) {
 			invokeCharacterSet(1);
 		} else if (ch == Ascii.SI) {
@@ -364,36 +367,15 @@ public class TerminalControl {
 		terminalActions.add(new PlainTextAction(characterSet.translate(line)));
 	}
 	
-        private synchronized void processSpecialCharacter(final char ch) {
-		terminalActions.add(new TerminalAction() {
-			public void perform(TerminalModelModifier model) {
-				if (DEBUG) {
-					Log.warn("Processing special char \"" + getCharDesc(ch) + "\"");
-				}
-                                switch (ch) {
-                                case Ascii.BS: model.moveCursorHorizontally(-1); break;
-                                case Ascii.HT: model.horizontalTabulation(); break;
-                                case Ascii.LF: model.lineFeed(); break;
-                                case Ascii.VT: model.moveCursorVertically(1); break;
-                                case Ascii.CR: model.carriageReturn(); break;
-                                }
-			}
-			
-			public String toString() {
-				return "TerminalAction[Special char " + getCharDesc(ch) + "]";
-			}
-			
-			private String getCharDesc(char ch) {
-				switch (ch) {
-					case Ascii.LF: return "LF";
-					case Ascii.CR: return "CR";
-					case Ascii.HT: return "HT";
-					case Ascii.VT: return "VT";
-					case Ascii.BS: return "BS";
-					default: return "UK";
-				}
-			}
-		});
+        private synchronized TerminalAction processSpecialCharacter(final char ch) {
+                switch (ch) {
+                case Ascii.BS: return new MoveCursorLeft(1);
+                case Ascii.HT: return new HorizontalTabulation();
+                case Ascii.LF: return new LineFeed();
+                case Ascii.VT: return new MoveCursorDown(1);
+                case Ascii.CR: return new CarriageReturn();
+                default: return null;
+                }
 	}
 	
 	public synchronized void processEscape() {
