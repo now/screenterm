@@ -10,7 +10,7 @@ public interface TerminalModelModifier {
 	public short getStyle();
 	public void insertLines(int count);
 	public void setInsertMode(boolean insertMode);
-	public void processLine(String line);
+	public void addText(String text);
 	public void setCursorVisible(boolean cursorVisible);
 	public void deleteCharacters(int count);
         public void clearToBeginningOfLine();

@@ -113,16 +113,16 @@ public class TerminalModel {
                         insertMode = newInsertMode;
                 }
 
-                public void processLine(String line) {
+                public void addText(String text) {
                         TextLine textLine = getCursorTextLine();
                         if (insertMode) {
                                 //Log.warn("Inserting text \"" + line + "\" at " + cursor + ".");
-                                textLine.insertTextAt(cursor.getColumn(), line, currentStyle);
+                                textLine.insertTextAt(cursor.getColumn(), text, currentStyle);
                         } else {
                                 //Log.warn("Writing text \"" + line + "\" at " + cursor + ".");
-                                textLine.writeTextAt(cursor.getColumn(), line, currentStyle);
+                                textLine.writeTextAt(cursor.getColumn(), text, currentStyle);
                         }
-                        textAdded(line.length());
+                        textAdded(text.length());
                 }
 
                 private TextLine getCursorTextLine() {

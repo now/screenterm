@@ -333,25 +333,6 @@ public class TerminalControl {
 		}
 	}
 	
-	private static class PlainTextAction implements TerminalAction {
-		private String line;
-		
-		private PlainTextAction(String line) {
-			this.line = line;
-		}
-		
-		public void perform(TerminalModelModifier model) {
-			if (DEBUG) {
-				Log.warn("Processing line \"" + line + "\"");
-			}
-			model.processLine((line));
-		}
-		
-		public String toString() {
-			return "TerminalAction[Process line: " + line + "]";
-		}
-	}
-	
 	private synchronized void flushLineBuffer() {
 		if (lineBuffer.length() == 0) {
 			// Nothing to flush!
@@ -364,7 +345,7 @@ public class TerminalControl {
 		doStep();
 		
 		// Conform to the stated claim that the model's always mutated in the AWT dispatch thread.
-		terminalActions.add(new PlainTextAction(characterSet.translate(line)));
+		terminalActions.add(new AddText(characterSet.translate(line)));
 	}
 	
         private synchronized TerminalAction processSpecialCharacter(final char ch) {
