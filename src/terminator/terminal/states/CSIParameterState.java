@@ -1,6 +1,7 @@
 package terminator.terminal.states;
 
 import e.util.*;
+import java.awt.*;
 
 import terminator.*;
 import terminator.terminal.*;
@@ -104,11 +105,15 @@ public class CSIParameterState extends State {
 
         private void csiModifyStyles(ActionQueue actions) {
                 ModifyStyle style = new ModifyStyle();
-                for (int i = 0; i < parameters.count(); i++)
-                        csiModifyStyle(style, parameters.get(i));
+                Log.warn(parameters.toString());
+                int i = 0;
+                while (i < parameters.count())
+                        i = csiModifyStyle(style, i);
                 actions.add(style);
         }
-        private void csiModifyStyle(ModifyStyle style, int parameter) {
+
+        private int csiModifyStyle(ModifyStyle style, int i) {
+                int parameter = parameters.get(i++);
                 switch (parameter) {
                 case 0:
                         style.clearForeground();
@@ -131,11 +136,17 @@ public class CSIParameterState extends State {
                 case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37:
                         style.foreground(Palettes.getColor(parameter - 30));
                         break;
+                case 38:
+                        i = csiModifyExtendedColor(style, i, true);
+                        break;
                 case 39:
                         style.clearForeground();
                         break;
                 case 40: case 41: case 42: case 43: case 44: case 45: case 46: case 47:
                         style.background(Palettes.getColor(parameter - 40));
+                        break;
+                case 48:
+                        i = csiModifyExtendedColor(style, i, false);
                         break;
                 case 49:
                         style.clearBackground();
@@ -144,5 +155,19 @@ public class CSIParameterState extends State {
                         Log.warn("Unknown style attribute " + parameter);
                         break;
                 }
+                return i;
+        }
+
+        private int csiModifyExtendedColor(ModifyStyle style, int i, boolean foreground) {
+                if (parameters.get(i++) != 5)
+                        return i + 7;
+                if (i >= parameters.count())
+                        return i;
+                Color color = Palettes.getColor(parameters.get(i++));
+                if (foreground)
+                        style.foreground(color);
+                else
+                        style.background(color);
+                return i;
         }
 }

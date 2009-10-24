@@ -47,4 +47,15 @@ class CSIParameters {
         public int getType() {
                 return get(0, 0);
         }
+
+        public String toString() {
+                StringBuilder string = new StringBuilder("(");
+                for (int i = 0; i < count(); i++) {
+                        string.append(get(i));
+                        if (i + 1 < count())
+                                string.append(", ");
+                }
+                string.append(")");
+                return string.toString();
+        }
 }
