@@ -120,6 +120,9 @@ public class CSIParameterState extends State {
                         style.reverseVideo(false);
                         style.underline(false);
                         break;
+                case 1:
+                        // TODO: Should brighten CSI colors
+                        break;
                 case 4:
                         style.underline(true);
                         break;
@@ -149,6 +152,12 @@ public class CSIParameterState extends State {
                         break;
                 case 49:
                         style.clearBackground();
+                        break;
+                case 90: case 91: case 92: case 93: case 94: case 95: case 96: case 97:
+                        style.foreground(Palettes.getColor(parameter - 82));
+                        break;
+                case 100: case 101: case 102: case 103: case 104: case 105: case 106: case 107:
+                        style.background(Palettes.getColor(parameter - 92));
                         break;
                 default:
                         Log.warn("Unknown style attribute " + parameter);
