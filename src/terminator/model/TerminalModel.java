@@ -216,6 +216,15 @@ public class TerminalModel {
                 }
 
                 public void setScrollingRegion(int top, int bottom) {
+                        if (bottom > getLineCount() - 1) {
+                                Log.warn("Tried to set scrolling region bottom beyond last line" +
+                                         " (" + bottom + " > " + (getLineCount() - 1) + ")");
+                                return;
+                        }
+                        if (top < 0)
+                                top = 0;
+                        if (bottom < 0)
+                                bottom = getLineCount() - 1;
                         scrollingRegion.set(top, bottom);
                 }
 

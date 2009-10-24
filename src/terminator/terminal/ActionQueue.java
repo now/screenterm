@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 
 import terminator.model.*;
 
-class ActionQueue {
+public class ActionQueue {
         private ArrayList<TerminalAction> actions = new ArrayList<TerminalAction>();
         private Semaphore eqFlowControl = new Semaphore(30);
         private TerminalModel model;

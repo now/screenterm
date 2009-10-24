@@ -1,0 +1,29 @@
+package terminator.terminal.states;
+
+import e.util.*;
+
+import terminator.terminal.*;
+import terminator.terminal.actions.*;
+
+public class EscapeState extends State {
+        private static EscapeState instance = new EscapeState();
+
+        public static State enter() {
+                return instance;
+        }
+
+        public State process(ActionQueue actions, char c) {
+                switch (c) {
+                case 'M':
+                        actions.add(new ScrollDisplayUp());
+                        return GroundState.enter();
+                case '[':
+                        return CSIEntryState.enter();
+                }
+                if (0x20 <= c && c <= 0x2f)
+                        return EscapeIntermediateState.enter();
+                if (0x30 <= c && c <= 0x7e)
+                        return GroundState.enter();
+                return super.process(actions, c);
+        }
+}

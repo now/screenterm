@@ -10,9 +10,9 @@ import javax.swing.event.*;
 import terminator.*;
 import terminator.model.*;
 import terminator.view.*;
-import terminator.terminal.escape.*;
 import terminator.terminal.actions.*;
 import terminator.terminal.charactersets.*;
+import terminator.terminal.states.*;
 
 /**
  * Ties together the subprocess reader thread, the subprocess writer thread, and the thread that processes the subprocess' output.
@@ -31,12 +31,6 @@ public class TerminalControl {
 	// We use "new String" here because we're going to use reference equality later to recognize Terminator-supplied defaults.
 	private static final String TERMINATOR_DEFAULT_SHELL = new String(System.getenv("SHELL"));
 	
-	private static final boolean DEBUG = false;
-	private static final boolean DEBUG_STEP_MODE = false;
-	private static final boolean SHOW_ASCII_RENDITION = false;
-	
-	private static BufferedReader stepModeReader;
-	
 	private TerminalModel model;
 	private PtyProcess ptyProcess;
 	private boolean processIsRunning;
@@ -46,17 +40,13 @@ public class TerminalControl {
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
 	
-        private CharacterSet characterSet = new NormalCharacterSet();
-
-	private StringBuilder lineBuffer = new StringBuilder();
-	
-	private EscapeParser escapeParser;
-
-        private ActionQueue actionQueue;
+        private State state;
+        private ActionQueue actions;
 	
 	public TerminalControl(TerminalModel model) {
 		this.model = model;
-                actionQueue = new ActionQueue(model);
+                state = GroundState.enter();
+                actions = new ActionQueue(model);
 	}
 	
 	public void initProcess(List<String> command, String workingDirectory) throws Throwable {
@@ -152,24 +142,6 @@ public class TerminalControl {
 		}
 	}
 	
-        private void invokeCharacterSet(CharacterSet characterSet) {
-		flushLineBuffer();
-                this.characterSet = characterSet;
-	}
-	
-	private static final void doStep() {
-		if (DEBUG_STEP_MODE) {
-			try {
-				if (stepModeReader == null) {
-					stepModeReader = new BufferedReader(new InputStreamReader(System.in));
-				}
-				stepModeReader.readLine();
-			} catch (IOException ex) {
-				Log.warn("Problem waiting for stepping input", ex);
-			}
-		}
-	}
-	
 	private void handleProcessTermination() {
 		processIsRunning = false;
 
@@ -242,102 +214,9 @@ public class TerminalControl {
 	
 	private synchronized void processBuffer(char[] buffer, int size) throws IOException {
 		for (int i = 0; i < size; ++i)
-			processChar(buffer[i]);
-		flushLineBuffer();
-                actionQueue.flush();
-	}
-	
-	/**
-	 * According to vttest, these cursor movement characters are still
-	 * treated as such, even when they occur within an escape sequence.
-	 */
-	private final boolean countsTowardsEscapeSequence(char ch) {
-		return (ch != Ascii.BS && ch != Ascii.CR && ch != Ascii.VT);
-	}
-	
-	private synchronized void processChar(final char ch) {
-		// Enable this if you're having trouble working out what we're being asked to interpret.
-		if (SHOW_ASCII_RENDITION) {
-			if (ch >= ' ' || ch == '\n') {
-				System.out.print(ch);
-			} else {
-				System.out.print(".");
-			}
-		}
-		
-		if (ch == Ascii.ESC) {
-			flushLineBuffer();
-			// If the old escape sequence is interrupted; we start a new one.
-			if (escapeParser != null) {
-				Log.warn("Escape parser discarded with string \"" + escapeParser + "\"");
-			}
-			escapeParser = new EscapeParser();
-			return;
-		}
-		if (escapeParser != null && countsTowardsEscapeSequence(ch)) {
-			escapeParser.addChar(ch);
-			if (escapeParser.isComplete()) {
-				processEscape();
-				escapeParser = null;
-			}
-		} else if (ch == Ascii.LF || ch == Ascii.CR || ch == Ascii.BS || ch == Ascii.HT || ch == Ascii.VT) {
-			flushLineBuffer();
-			doStep();
-			TerminalAction action = processSpecialCharacter(ch);
-                        if (action != null)
-                                actionQueue.add(action);
-		} else if (ch == Ascii.SO) {
-			invokeCharacterSet(new GraphicalCharacterSet());
-		} else if (ch == Ascii.SI) {
-			invokeCharacterSet(new NormalCharacterSet());
-		} else if (ch == Ascii.NUL) {
-			// Most telnetd(1) implementations seem to have a bug whereby
-			// they send the NUL byte at the end of the C strings they want to
-			// output when you first connect. Since all Unixes are pretty much
-			// copy and pasted from one another these days, this silly mistake
-			// only needed to be made once.
-		} else {
-			lineBuffer.append(ch);
-		}
-	}
-	
-	private synchronized void flushLineBuffer() {
-		if (lineBuffer.length() == 0) {
-			// Nothing to flush!
-			return;
-		}
-		
-		final String line = lineBuffer.toString();
-		lineBuffer = new StringBuilder();
-		
-		doStep();
-		
-                actionQueue.add(new AddText(characterSet.encode(line)));
-	}
-	
-        private synchronized TerminalAction processSpecialCharacter(final char ch) {
-                switch (ch) {
-                case Ascii.BS: return new MoveCursorLeft(1);
-                case Ascii.HT: return new HorizontalTabulation();
-                case Ascii.LF: return new LineFeed();
-                case Ascii.VT: return new MoveCursorDown(1);
-                case Ascii.CR: return new CarriageReturn();
-                default: return null;
-                }
-	}
-	
-	public synchronized void processEscape() {
-		if (DEBUG) {
-			Log.warn("Processing escape sequence \"" + StringUtilities.escapeForJava(escapeParser.toString()) + "\"");
-		}
-		
-		// Invoke all escape sequence handling in the AWT dispatch thread - otherwise we'd have
-		// to create billions upon billions of tiny little invokeLater(Runnable) things all over the place.
-		doStep();
-		TerminalAction action = escapeParser.getAction(this);
-		if (action != null) {
-                        actionQueue.add(action);
-		}
+                        state = state.process(actions, buffer[i]);
+                GroundState.flush(actions);
+                actions.flush();
 	}
 	
 	public void sendUtf8String(final String s) {
