@@ -90,7 +90,7 @@ public class TerminalModel {
                 }
 
                 public void setStyle(Style style) {
-                        style = style;
+                        this.style = style;
                 }
 
                 public Style getStyle() {
