@@ -5,35 +5,26 @@ import java.awt.*;
 public class StyledText {
         public static final StyledText EMPTY = new StyledText("", Style.DEFAULT);
 
-	private String text;
-	private Style style;
-	private boolean continueToEnd = false;
-	
-	public StyledText(String text, Style style) {
-		this.text = text;
-		this.style = style;
-	}
-	
-	public void setContinueToEnd(boolean continueToEnd) {
-		this.continueToEnd = continueToEnd;
-	}
-	
-	public boolean continueToEnd() {
-		return continueToEnd;
-	}
-	
-	public String getText() {
-		return text;
-	}
-	
-	public int length() {
-		return text.length();
-	}
-	
-	public Style getStyle() {
-		return style;
-	}
-	
+        private String text;
+        private Style style;
+
+        public StyledText(String text, Style style) {
+                this.text = text;
+                this.style = style;
+        }
+        
+        public String getText() {
+                return text;
+        }
+        
+        public int length() {
+                return text.length();
+        }
+        
+        public Style getStyle() {
+                return style;
+        }
+        
         public StyledText removeRange(int from, int to) {
                 if (from == 0 && to >= text.length())
                         return EMPTY;

@@ -256,10 +256,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			int textWidth = metrics.stringWidth(text.getText());
 			if (background.equals(getBackground()) == false) {
 				g.setColor(background);
-				// Special continueToEnd flag used for drawing the backgrounds of Highlights which extend over the end of lines.
-				// Used for multi-line selection.
-				int backgroundWidth = text.continueToEnd() ? (getSize().width - x) : textWidth;
-				g.fillRect(x, y - metrics.getMaxAscent() - metrics.getLeading(), backgroundWidth, metrics.getHeight());
+				g.fillRect(x, y - metrics.getMaxAscent() - metrics.getLeading(), textWidth, metrics.getHeight());
 			}
 			if (style.underline()) {
 				g.setColor(new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 128));
