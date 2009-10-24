@@ -57,7 +57,7 @@ public class TerminalModel {
 	}
 
         private TerminalModelModifier modifier = new TerminalModelModifier() {
-                private Style currentStyle = Style.DEFAULT;
+                private Style style = Style.DEFAULT;
                 private Region scrollingRegion = new Region(0, 0);
                 private boolean insertMode = false;
                 private int firstLineChanged;
@@ -90,11 +90,11 @@ public class TerminalModel {
                 }
 
                 public void setStyle(Style style) {
-                        currentStyle = style;
+                        style = style;
                 }
 
                 public Style getStyle() {
-                        return currentStyle;
+                        return style;
                 }
 
                 public void insertLines(int count) {
@@ -117,10 +117,10 @@ public class TerminalModel {
                         TextLine textLine = getCursorTextLine();
                         if (insertMode) {
                                 //Log.warn("Inserting text \"" + line + "\" at " + cursor + ".");
-                                textLine.insertTextAt(cursor.getColumn(), text, currentStyle);
+                                textLine.insertTextAt(cursor.getColumn(), text, style);
                         } else {
                                 //Log.warn("Writing text \"" + line + "\" at " + cursor + ".");
-                                textLine.writeTextAt(cursor.getColumn(), text, currentStyle);
+                                textLine.writeTextAt(cursor.getColumn(), text, style);
                         }
                         textAdded(text.length());
                 }
@@ -146,7 +146,7 @@ public class TerminalModel {
                         // pasted with tabs preserved.
                         boolean endOfLine = (startOffset == textLine.length());
                         if (insertMode || endOfLine) {
-                                textLine.insertTabAt(startOffset, tabLength, currentStyle);
+                                textLine.insertTabAt(startOffset, tabLength, style);
                         } else {
                                 // Emacs, source of all bloat, uses \t\b\t
                                 // sequences around tab stops (in lines with no
