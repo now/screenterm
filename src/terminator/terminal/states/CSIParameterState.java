@@ -105,7 +105,6 @@ public class CSIParameterState extends State {
 
         private void csiModifyStyles(ActionQueue actions) {
                 ModifyStyle style = new ModifyStyle();
-                Log.warn(parameters.toString());
                 int i = 0;
                 while (i < parameters.count())
                         i = csiModifyStyle(style, i);

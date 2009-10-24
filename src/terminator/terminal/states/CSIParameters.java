@@ -41,7 +41,7 @@ class CSIParameters {
         }
 
         public int getInt(int index) {
-                return get(0, 1) - 1;
+                return get(index, 1) - 1;
         }
 
         public int getType() {
