@@ -22,15 +22,10 @@ public class Style {
         }
         
         public Style modify(Color foreground, Color background, Boolean underline, Boolean reverseVideo) {
-                if (foreground == null)
-                        foreground = this.foreground();
-                if (background == null)
-                        background = this.background();
-                if (underline == null)
-                        underline = this.underline();
-                if (reverseVideo == null)
-                        reverseVideo = this.reverseVideo();
-                return new Style(foreground, background, underline, reverseVideo);
+                return new Style(foreground == null ? this.foreground : foreground,
+                                 background == null ? this.background : background,
+                                 underline == null ? this.underline : underline,
+                                 reverseVideo == null ? this.reverseVideo : reverseVideo);
         }
 
         public Color foreground() {
