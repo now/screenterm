@@ -27,8 +27,8 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		ComponentUtilities.disableFocusTraversal(this);
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
 		setOpaque(true);
-                setBackground(StyledText.BACKGROUND_COLOR);
-                setForeground(StyledText.FOREGROUND_COLOR);
+                setForeground(Style.DEFAULT_FOREGROUND);
+                setBackground(Style.DEFAULT_BACKGROUND);
                 setFont(font);
 
                 this.model = model;
@@ -244,10 +244,10 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		Stopwatch.Timer timer = paintStyledTextStopwatch.start();
 		try {
 			Style style = text.getStyle();
-			Color foreground = style.getForeground();
-			Color background = style.getBackground();
+			Color foreground = style.foreground();
+			Color background = style.background();
 			
-			if (style.isReverseVideo()) {
+			if (style.reverseVideo()) {
 				Color oldForeground = foreground;
 				foreground = background;
 				background = oldForeground;
@@ -261,7 +261,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 				int backgroundWidth = text.continueToEnd() ? (getSize().width - x) : textWidth;
 				g.fillRect(x, y - metrics.getMaxAscent() - metrics.getLeading(), backgroundWidth, metrics.getHeight());
 			}
-			if (style.isUnderlined()) {
+			if (style.underline()) {
 				g.setColor(new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 128));
 				g.drawLine(x, y + 1, x + textWidth, y + 1);
 			}

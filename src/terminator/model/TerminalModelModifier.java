@@ -6,8 +6,8 @@ public interface TerminalModelModifier {
         void reset();
         void notifyListeners();
         public void setSize(Dimension size);
-        public void setStyle(short style);
-	public short getStyle();
+        public void setStyle(Style style);
+	public Style getStyle();
 	public void insertLines(int count);
 	public void setInsertMode(boolean insertMode);
 	public void addText(String text);

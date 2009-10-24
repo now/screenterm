@@ -57,7 +57,7 @@ public class TerminalModel {
 	}
 
         private TerminalModelModifier modifier = new TerminalModelModifier() {
-                private short currentStyle = StyledText.getDefaultStyle();
+                private Style currentStyle = Style.DEFAULT;
                 private Region scrollingRegion = new Region(0, 0);
                 private boolean insertMode = false;
                 private int firstLineChanged;
@@ -89,11 +89,11 @@ public class TerminalModel {
                         cursor = cursor.constrain(size);
                 }
 
-                public void setStyle(short style) {
+                public void setStyle(Style style) {
                         currentStyle = style;
                 }
 
-                public short getStyle() {
+                public Style getStyle() {
                         return currentStyle;
                 }
 

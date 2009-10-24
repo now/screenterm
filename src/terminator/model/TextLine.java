@@ -86,36 +86,36 @@ public class TextLine {
                 i.add(remainder);
         }
 
-        public void insertTextAt(int offset, String text, short style) {
+        public void insertTextAt(int offset, String text, Style style) {
                 ListIterator<StyledText> i = segments.listIterator(0);
                 int seen = moveTo(offset, i);
                 insertTextAt(i, offset - seen, text, style);
         }
 
-        private void insertTextAt(ListIterator<StyledText> i, int offset, String text, short style) {
+        private void insertTextAt(ListIterator<StyledText> i, int offset, String text, Style style) {
                 if (!(insertBefore(i, offset, text, style) ||
                       insertAfter(i, offset, text, style)))
                         insertInside(i, offset, text, style);
         }
 
-        private boolean insertBefore(ListIterator<StyledText> i, int offset, String text, short style) {
+        private boolean insertBefore(ListIterator<StyledText> i, int offset, String text, Style style) {
                 if (offset != 0)
                         return false;
                 i.add(new StyledText(text, style));
                 return true;
         }
 
-        private boolean insertAfter(ListIterator<StyledText> i, int offset, String text, short style) {
+        private boolean insertAfter(ListIterator<StyledText> i, int offset, String text, Style style) {
                 if (i.hasNext())
                         return false;
                 char[] padding = new char[offset];
                 Arrays.fill(padding, ' ');
-                i.add(new StyledText(new String(padding), (short)0));
+                i.add(new StyledText(new String(padding), Style.DEFAULT));
                 i.add(new StyledText(text, style));
                 return true;
         }
 
-        private void insertInside(ListIterator<StyledText> i, int offset, String text, short style) {
+        private void insertInside(ListIterator<StyledText> i, int offset, String text, Style style) {
                 StyledText segment = i.next();
                 i.remove();
                 i.add(segment.removeRange(offset, segment.length()));
@@ -123,7 +123,7 @@ public class TextLine {
                 i.add(segment.removeRange(0, offset));
         }
 
-        public void writeTextAt(int offset, String text, short style) {
+        public void writeTextAt(int offset, String text, Style style) {
                 killText(offset, offset + text.length());
                 insertTextAt(offset, text, style);
         }
@@ -141,7 +141,7 @@ public class TextLine {
                 return seen;
         }
 
-	public void insertTabAt(int offset, int tabLength, short style) {
+	public void insertTabAt(int offset, int tabLength, Style style) {
 		insertTextAt(offset, getTabString(tabLength), style);
 	}
 

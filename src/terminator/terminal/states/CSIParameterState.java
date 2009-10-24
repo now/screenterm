@@ -2,6 +2,7 @@ package terminator.terminal.states;
 
 import e.util.*;
 
+import terminator.*;
 import terminator.terminal.*;
 import terminator.terminal.actions.*;
 
@@ -107,7 +108,6 @@ public class CSIParameterState extends State {
                         csiModifyStyle(style, parameters.get(i));
                 actions.add(style);
         }
-
         private void csiModifyStyle(ModifyStyle style, int parameter) {
                 switch (parameter) {
                 case 0:
@@ -129,13 +129,13 @@ public class CSIParameterState extends State {
                         style.reverseVideo(false);
                         break;
                 case 30: case 31: case 32: case 33: case 34: case 35: case 36: case 37:
-                        style.foreground(parameter - 30);
+                        style.foreground(Palettes.getColor(parameter - 30));
                         break;
                 case 39:
                         style.clearForeground();
                         break;
                 case 40: case 41: case 42: case 43: case 44: case 45: case 46: case 47:
-                        style.background(parameter - 40);
+                        style.background(Palettes.getColor(parameter - 40));
                         break;
                 case 49:
                         style.clearBackground();
