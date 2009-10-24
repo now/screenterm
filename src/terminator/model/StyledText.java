@@ -11,8 +11,8 @@ its namespace the set of allowed styles, and provides static methods for accessi
 */
 
 public class StyledText {
-        public static final Color FOREGROUND_COLOR = Palettes.getColor(0, true);
-        public static final Color BACKGROUND_COLOR = Palettes.getColor(7, true);
+        public static final Color FOREGROUND_COLOR = Palettes.getColor(8);
+        public static final Color BACKGROUND_COLOR = Palettes.getColor(15);
 
 	private static final int BACKGROUND_SHIFT = 3;
 	private static final int FOREGROUND_MASK = 7;
@@ -86,7 +86,7 @@ public class StyledText {
 		if (hasSpecifiedColor == false)
 			result = isForeground ? FOREGROUND_COLOR : BACKGROUND_COLOR;
 		if (result == null)
-			result = Palettes.getColor(colorIndex, false);
+			result = Palettes.getColor(colorIndex);
 		return result;
 	}
 	

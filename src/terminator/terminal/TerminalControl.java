@@ -119,7 +119,7 @@ public class TerminalControl {
 		public void run() {
 			try {
 				while (true) {
-					char[] chars = new char[INPUT_BUFFER_SIZE];
+                                        char[] chars = new char[INPUT_BUFFER_SIZE];
 					int readCount = in.read(chars, 0, chars.length);
 					if (readCount == -1) {
 						Log.warn("read returned -1 from " + ptyProcess);
@@ -230,13 +230,11 @@ public class TerminalControl {
                                         out.write(s.getBytes(CHARSET_NAME));
                                         out.flush();
 				} catch (IOException ex) {
-					reportFailedSend("string", s, ex);
+                                        Log.warn("Couldn't send string \"" +
+                                                 StringUtilities.escapeForJava(s) +
+                                                 "\" to " + ptyProcess, ex);
 				}
 			}
 		});
-	}
-	
-	private void reportFailedSend(String kind, String value, Exception ex) {
-		Log.warn("Couldn't send " + kind + " \"" + StringUtilities.escapeForJava(value) + "\" to " + ptyProcess, ex);
 	}
 }
