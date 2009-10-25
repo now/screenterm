@@ -54,7 +54,7 @@ public class ModifyStyle implements TerminalAction {
                         return;
                 if (string.length() > 0)
                         string.append(", ");
-                string.append(String.format("Set {0} color to {1}", name, color));
+                string.append(String.format("Set %s color to %s", name, color));
         }
 
         private void appendBooleanString(StringBuilder string, Boolean value, String name) {
@@ -62,6 +62,6 @@ public class ModifyStyle implements TerminalAction {
                         return;
                 if (string.length() > 0)
                         string.append(", ");
-                string.append(String.format("{0} {1}", value.booleanValue() ? "Enable" : "Disable", name));
+                string.append(String.format("%s %s", value.booleanValue() ? "Enable" : "Disable", name));
         }
 }
