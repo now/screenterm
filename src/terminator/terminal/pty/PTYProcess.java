@@ -20,7 +20,7 @@ public class PTYProcess {
     private int exitValue;
     
     private InputStreamReader input;
-    private OutputStream output;
+    private OutputStreamWriter output;
     
     private final ExecutorService executorService = ThreadUtilities.newSingleThreadExecutor("Child Forker/Reaper");
     
@@ -43,7 +43,7 @@ public class PTYProcess {
                 if (pid == -1)
                         throw new IOException("Couldn’t start process \"" + executable + "\"");
                 input = new InputStreamReader(new PTYInputStream(fd), CHARSET_NAME);
-                output = new PTYOutputStream(fd);
+                output = new OutputStreamWriter(new PTYOutputStream(fd), CHARSET_NAME);
         }
     
         public int read(char[] chars) throws IOException {
@@ -51,7 +51,8 @@ public class PTYProcess {
         }
 
         public void write(String string) throws IOException {
-                output.write(string.getBytes(CHARSET_NAME));
+                output.write(string);
+                output.flush();
         }
     
     private void startProcess(final String executable, final String[] argv, final String workingDirectory) throws Exception {
