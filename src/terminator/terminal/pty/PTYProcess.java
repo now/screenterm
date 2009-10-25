@@ -8,67 +8,8 @@ import java.util.regex.*;
 import org.jessies.os.*;
 
 public class PTYProcess {
-    private class PtyInputStream extends InputStream {
-        /**
-         * Although we don't want to invoke this inefficient method, it's abstract in InputStream, so we have to "implement" it.
-         */
-        @Override
-        public int read() throws IOException {
-            throw new UnsupportedOperationException();
-        }
-        
-        /**
-         * If we don't implement this variant, the default implementation
-         * won't return to TerminalControl until INPUT_BUFFER_SIZE bytes
-         * have been read.  We need to return as soon as a single read(2)
-         * returns.
-         */
-        @Override
-        public int read(byte[] bytes, int arrayOffset, int byteCount) throws IOException {
-            int n = 0;
-            while ((n = Posix.read(fd, bytes, arrayOffset, byteCount)) < 0) {
-                if (n != -Errno.EINTR) {
-                    throw new IOException("read(" + fd + ", buffer, " + arrayOffset + ", " + byteCount + ") failed: " + Errno.toString(-n));
-                }
-            }
-            return n;
-        }
-    }
-    
-    private class PtyOutputStream extends OutputStream {
-        /**
-         * Although we don't want to invoke this inefficient method, it's abstract in OutputStream, so we have to "implement" it.
-         */
-        @Override
-        public void write(int b) throws IOException {
-            throw new UnsupportedOperationException();
-        }
-        
-        @Override
-        public void write(byte[] bytes, int arrayOffset, int byteCount) throws IOException {
-            // POSIX (http://www.opengroup.org/onlinepubs/000095399/functions/write.html) says:
-            // 1. we can be interrupted before any bytes are written (n == -1, errno == EINTR).
-            // 2. we can be interrupted after some bytes are written (n < requested n).
-            int offset = arrayOffset;
-            int remainingByteCount = byteCount;
-            int n = 0;
-            while (remainingByteCount > 0) {
-                n = Posix.write(fd, bytes, offset, byteCount);
-                if (n < 0 && n != -Errno.EINTR) {
-                    // This write failed, and not because we were interrupted before writing anything. Give up.
-                    break;
-                }
-                if (n > 0) {
-                    offset += n;
-                    remainingByteCount -= n;
-                }
-            }
-            if (remainingByteCount != 0) {
-                throw new IOException("write(" + fd + ", buffer, " + arrayOffset + ", " + byteCount + ") failed: " + Errno.toString(-n));
-            }
-        }
-    }
-    
+        private static final String CHARSET_NAME = "UTF-8";
+
     private int fd = -1;
     private int pid;
     private String slavePtyName;
@@ -78,8 +19,8 @@ public class PTYProcess {
     private boolean wasSignaled = false;
     private int exitValue;
     
-    private InputStream inStream;
-    private OutputStream outStream;
+    private InputStreamReader input;
+    private OutputStream output;
     
     private final ExecutorService executorService = ThreadUtilities.newSingleThreadExecutor("Child Forker/Reaper");
     
@@ -96,24 +37,22 @@ public class PTYProcess {
                 return "Process " + pid + " (" + slavePtyName + ")";
         }
     
-    public PTYProcess(String executable, String[] argv, String workingDirectory) throws Exception {
-        ensureLibraryLoaded();
-        startProcess(executable, argv, workingDirectory);
-        if (pid == -1) {
-            throw new IOException("Could not start process \"" + executable + "\".");
+        public PTYProcess(String executable, String[] argv, String workingDirectory) throws Exception {
+                ensureLibraryLoaded();
+                startProcess(executable, argv, workingDirectory);
+                if (pid == -1)
+                        throw new IOException("Couldn’t start process \"" + executable + "\"");
+                input = new InputStreamReader(new PTYInputStream(fd), CHARSET_NAME);
+                output = new PTYOutputStream(fd);
         }
-        inStream = new PtyInputStream();
-        outStream = new PtyOutputStream();
-    }
     
-    public InputStream getInputStream() {
-        return inStream;
-    }
-    
-    public void write(byte[] bytes) throws IOException {
-            outStream.write(bytes);
-            outStream.flush();
-    }
+        public int read(char[] chars) throws IOException {
+                return input.read(chars, 0, chars.length);
+        }
+
+        public void write(String string) throws IOException {
+                output.write(string.getBytes(CHARSET_NAME));
+        }
     
     private void startProcess(final String executable, final String[] argv, final String workingDirectory) throws Exception {
         invoke(new Callable<Exception>() {
@@ -189,7 +128,7 @@ public class PTYProcess {
 
         public String toString() {
                 StringBuilder string = new StringBuilder();
-                string.append(String.format("PtyProcess[pid={0},fd={1},pty={2}",
+                string.append(String.format("PtyProcess[pid=%d,fd=%d,pty=%s]",
                                             pid, fd, slavePtyName));
                 if (didExitNormally)
                         string.append(",didExitNormally,exitValue=").

@@ -20,9 +20,6 @@ import terminator.terminal.states.*;
  * Some basic processing is done here.
  */
 public class TerminalControl {
-	// Andrew Giddings wanted "windows-1252" for his Psion.
-	private static final String CHARSET_NAME = "UTF-8";
-	
 	// This should be around your system's pipe size.
 	// Too much larger and you'll waste time copying unused char[].
 	// Too much smaller and you'll waste time making excessive system calls reading just part of what's available.
@@ -35,8 +32,6 @@ public class TerminalControl {
 	private TerminalModel model;
 	private PTYProcess ptyProcess;
 	private boolean processIsRunning;
-	
-	private InputStreamReader in;
 	
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
@@ -72,7 +67,6 @@ public class TerminalControl {
 		this.ptyProcess = new PTYProcess(executable, argv, workingDirectory);
 		this.processIsRunning = true;
 		Log.warn("Created " + ptyProcess);
-		this.in = new InputStreamReader(ptyProcess.getInputStream(), CHARSET_NAME);
 		writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
 	}
 	
@@ -119,20 +113,16 @@ public class TerminalControl {
 	private class ReaderRunnable implements Runnable {
 		public void run() {
 			try {
-				while (true) {
-                                        char[] chars = new char[INPUT_BUFFER_SIZE];
-					int readCount = in.read(chars, 0, chars.length);
-					if (readCount == -1) {
-						Log.warn("read returned -1 from " + ptyProcess);
-						return; // This isn't going to fix itself!
-					}
-					
+                                char[] chars = new char[INPUT_BUFFER_SIZE];
+                                int n;
+				while ((n = ptyProcess.read(chars)) != -1) {
 					try {
-						processBuffer(chars, readCount);
+						processBuffer(chars, n);
 					} catch (Throwable th) {
 						Log.warn("Problem processing output from " + ptyProcess, th);
 					}
 				}
+                                Log.warn("read returned -1 from " + ptyProcess);
 			} catch (Throwable th) {
 				Log.warn("Problem reading output from " + ptyProcess, th);
 			} finally {
@@ -196,7 +186,7 @@ public class TerminalControl {
                 }
 	}
 	
-	private synchronized void processBuffer(char[] buffer, int size) throws IOException {
+	private synchronized void processBuffer(char[] buffer, int size) {
 		for (int i = 0; i < size; ++i)
                         state = state.process(actions, buffer[i]);
                 GroundState.flush(actions);
@@ -210,7 +200,7 @@ public class TerminalControl {
                                         return;
 
 				try {
-                                        ptyProcess.write(s.getBytes(CHARSET_NAME));
+                                        ptyProcess.write(s);
 				} catch (IOException ex) {
                                         Log.warn("Couldn't send string \"" +
                                                  StringUtilities.escapeForJava(s) +
