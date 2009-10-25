@@ -1,4 +1,4 @@
-package terminator.terminal;
+package terminator.terminal.pty;
 
 import e.util.*;
 import java.awt.Dimension;
@@ -7,7 +7,7 @@ import java.util.concurrent.*;
 import java.util.regex.*;
 import org.jessies.os.*;
 
-public class PtyProcess {
+public class PTYProcess {
     private class PtyInputStream extends InputStream {
         /**
          * Although we don't want to invoke this inefficient method, it's abstract in InputStream, so we have to "implement" it.
@@ -96,7 +96,7 @@ public class PtyProcess {
                 return "Process " + pid + " (" + slavePtyName + ")";
         }
     
-    public PtyProcess(String executable, String[] argv, String workingDirectory) throws Exception {
+    public PTYProcess(String executable, String[] argv, String workingDirectory) throws Exception {
         ensureLibraryLoaded();
         startProcess(executable, argv, workingDirectory);
         if (pid == -1) {

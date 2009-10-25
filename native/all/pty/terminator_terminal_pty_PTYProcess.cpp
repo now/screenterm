@@ -2,7 +2,7 @@
 #include <windows.h>
 #endif
 
-#include "terminator_terminal_PtyProcess.h"
+#include "terminator_terminal_pty_PTYProcess.h"
 
 #include "DirectoryIterator.h"
 #include "JniString.h"
@@ -65,7 +65,7 @@ static void waitUntilFdWritable(int fd) {
     }
 }
 
-void terminator_terminal_PtyProcess::nativeStartProcess(jstring javaExecutable, jobjectArray javaArgv, jstring javaWorkingDirectory) {
+void terminator_terminal_pty_PTYProcess::nativeStartProcess(jstring javaExecutable, jobjectArray javaArgv, jstring javaWorkingDirectory) {
     PtyGenerator ptyGenerator;
     fd = ptyGenerator.openMaster();
     
@@ -92,7 +92,7 @@ void terminator_terminal_PtyProcess::nativeStartProcess(jstring javaExecutable, 
 }
 
 void
-terminator_terminal_PtyProcess::sendResizeNotification(jobject jSize)
+terminator_terminal_pty_PTYProcess::sendResizeNotification(jobject jSize)
 {
         if (fd.get() == -1)
                 return;

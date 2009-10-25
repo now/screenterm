@@ -12,6 +12,7 @@ import terminator.model.*;
 import terminator.view.*;
 import terminator.terminal.actions.*;
 import terminator.terminal.charactersets.*;
+import terminator.terminal.pty.*;
 import terminator.terminal.states.*;
 
 /**
@@ -32,7 +33,7 @@ public class TerminalControl {
 	private static final String TERMINATOR_DEFAULT_SHELL = new String(System.getenv("SHELL"));
 	
 	private TerminalModel model;
-	private PtyProcess ptyProcess;
+	private PTYProcess ptyProcess;
 	private boolean processIsRunning;
 	
 	private InputStreamReader in;
@@ -68,7 +69,7 @@ public class TerminalControl {
 		}
 		
 		// We log an announceConnectionLost message if we fail to create the PtyProcess, so we need the TerminalLogWriter first.
-		this.ptyProcess = new PtyProcess(executable, argv, workingDirectory);
+		this.ptyProcess = new PTYProcess(executable, argv, workingDirectory);
 		this.processIsRunning = true;
 		Log.warn("Created " + ptyProcess);
 		this.in = new InputStreamReader(ptyProcess.getInputStream(), CHARSET_NAME);
