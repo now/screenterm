@@ -137,10 +137,6 @@ public class PtyProcess {
         return inStream;
     }
     
-    public int getFd() {
-        return fd;
-    }
-    
     public void write(byte[] bytes) throws IOException {
             outStream.write(bytes);
             outStream.flush();
