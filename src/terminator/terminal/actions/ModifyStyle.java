@@ -17,7 +17,7 @@ public class ModifyStyle implements TerminalAction {
         }
 
         public void clearForeground() {
-                foreground = Style.DEFAULT_FOREGROUND;
+                foreground = Style.DEFAULT.foreground();
         }
 
         public void background(Color background) {
@@ -25,7 +25,7 @@ public class ModifyStyle implements TerminalAction {
         }
 
         public void clearBackground() {
-                background = Style.DEFAULT_BACKGROUND;
+                background = Style.DEFAULT.background();
         }
 
         public void underline(boolean underline) {

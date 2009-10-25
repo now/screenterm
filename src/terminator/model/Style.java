@@ -5,8 +5,8 @@ import java.awt.*;
 import terminator.*;
 
 public class Style {
-        public static final Color DEFAULT_FOREGROUND = Palettes.getColor(8);
-        public static final Color DEFAULT_BACKGROUND = Palettes.getColor(15);
+        private static final Color DEFAULT_FOREGROUND = Palettes.getColor(8);
+        private static final Color DEFAULT_BACKGROUND = Palettes.getColor(15);
         public static final Style DEFAULT = new Style(DEFAULT_FOREGROUND, DEFAULT_BACKGROUND, false, false);
 
         private final Color foreground;
