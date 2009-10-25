@@ -169,15 +169,7 @@ public class TerminalControl {
 		try {
 			char[] buffer = message.toCharArray();
 			processBuffer(buffer, buffer.length);
-                        model.processActions(new TerminalAction[] { new TerminalAction() {
-                                public void perform(TerminalModelModifier model) {
-                                        model.setCursorVisible(false);
-                                }
-                                
-                                public String toString() {
-                                        return "TerminalAction[Hide cursor]";
-                                }
-                        } });
+                        model.processActions(new TerminalAction[]{ new SetCursorVisible(false) });
 		} catch (Exception ex) {
 			Log.warn("Couldn't say \"" + message + "\"", ex);
 		}
