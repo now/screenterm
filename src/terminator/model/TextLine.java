@@ -21,7 +21,7 @@ public class TextLine {
 		clear();
 	}
 
-        public List<StyledText> getStyledTextSegments(int widthHintInChars) {
+        public List<StyledText> styledTexts() {
                 return segments;
         }
 

@@ -161,7 +161,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			g.fill(rect);
 			
 			final int maxX = rect.x + rect.width;
-			final int widthHintInChars = maxX / charUnitSize.width * 2;
 			
 			Insets insets = getInsets();
 			int firstTextLine = (rect.y - insets.top) / charUnitSize.height;
@@ -170,7 +169,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			for (int i = firstTextLine; i <= lastTextLine; i++) {
 				int x = insets.left;
 				int baseline = insets.top + charUnitSize.height * (i + 1) - metrics.getMaxDescent();
-                                for (StyledText text : getLineStyledText(i, widthHintInChars)) {
+                                for (StyledText text : model.getTextLine(i).styledTexts()) {
                                         if (x >= maxX) // XXX: Off by one here?
                                                 break;
                                         x += paintStyledText(g, metrics, text, x, baseline);
@@ -180,10 +179,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		} finally {
 			timer.stop();
 		}
-	}
-	
-	private List<StyledText> getLineStyledText(int line, int widthHintInChars) {
-		return model.getTextLine(line).getStyledTextSegments(widthHintInChars);
 	}
 	
         private abstract class CursorPainter {
