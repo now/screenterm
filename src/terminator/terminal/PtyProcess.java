@@ -92,36 +92,9 @@ public class PtyProcess {
         }
     }
     
-    public boolean wasSignaled() {
-        return wasSignaled;
-    }
-    
-    public boolean didExitNormally() {
-        return didExitNormally;
-    }
-    
-    public int getExitStatus() {
-        if (didExitNormally() == false) {
-            throw new IllegalStateException("Process did not exit normally.");
-        }
-        return exitValue;
-    }
-    
         public String name() {
                 return "Process " + pid + " (" + slavePtyName + ")";
         }
-    
-    public String getSignalDescription() {
-        if (wasSignaled() == false) {
-            throw new IllegalStateException("Process was not signaled.");
-        }
-        
-        String signalDescription = Signal.toString(exitValue);
-        if (didDumpCore) {
-            signalDescription += " --- core dumped";
-        }
-        return signalDescription;
-    }
     
     public PtyProcess(String executable, String[] argv, String workingDirectory) throws Exception {
         ensureLibraryLoaded();
@@ -227,6 +200,16 @@ public class PtyProcess {
                         string.append(",didDumpCore");
                 string.append("]");
                 return string.toString();
+        }
+
+        public String toExitString() {
+		if (didExitNormally)
+                        return "Process exited with status " + exitValue;
+		else if (wasSignaled)
+                        return "Process killed by " + Signal.toString(exitValue) +
+                               (didDumpCore ? " — core dumped" : "");
+		else
+                        return "Lost contact with process";
         }
 
     public void destroy() throws IOException {

@@ -162,16 +162,7 @@ public class TerminalControl {
 			return;
 		}
 		Log.warn("waitFor returned on " + ptyProcess);
-		if (ptyProcess.didExitNormally())
-                        announceConnectionLost("\n\r[Process exited with status " +
-                                               ptyProcess.getExitStatus() +
-                                               ".]");
-		else if (ptyProcess.wasSignaled())
-			announceConnectionLost("\n\r[Process killed by " +
-                                               ptyProcess.getSignalDescription() +
-                                               ".]");
-		else
-			announceConnectionLost("\n\r[Lost contact with process.]");
+                announceConnectionLost("\n\r[" + ptyProcess.toExitString() + ".]");
 	}
 	
 	public void announceConnectionLost(String message) {
