@@ -221,23 +221,22 @@ public class PtyProcess {
             throw exception;
         }
     }
-    
-    @Override
-    public String toString() {
-        String result = "PtyProcess[pid=" + pid + ",fd=" + fd + ",pty=\"" + slavePtyName + "\"";
-        if (didExitNormally) {
-            result += ",didExitNormally,exitValue=" + exitValue;
+
+        public String toString() {
+                StringBuilder string = new StringBuilder();
+                string.append(String.format("PtyProcess[pid={0},fd={1},pty={2}",
+                                            pid, fd, slavePtyName));
+                if (didExitNormally)
+                        string.append(",didExitNormally,exitValue=").
+                               append(exitValue);
+                if (wasSignaled)
+                        string.append(",wasSignaled,signal=").append(exitValue);
+                if (didDumpCore)
+                        string.append(",didDumpCore");
+                string.append("]");
+                return string.toString();
         }
-        if (wasSignaled) {
-            result += ",wasSignaled,signal=" + exitValue;
-        }
-        if (didDumpCore) {
-            result += ",didDumpCore";
-        }
-        result += "]";
-        return result;
-    }
-    
+
     public void destroy() throws IOException {
         int rc = Posix.killpg(pid, Signal.SIGHUP);
         if (rc < 0) {
