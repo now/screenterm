@@ -107,9 +107,9 @@ public class PtyProcess {
         return exitValue;
     }
     
-    public String getPtyName() {
-        return slavePtyName;
-    }
+        public String name() {
+                return "Process " + pid + " (" + slavePtyName + ")";
+        }
     
     public String getSignalDescription() {
         if (wasSignaled() == false) {
@@ -141,10 +141,6 @@ public class PtyProcess {
         return fd;
     }
     
-    public int getPid() {
-        return pid;
-    }
-
     public void write(byte[] bytes) throws IOException {
             outStream.write(bytes);
             outStream.flush();

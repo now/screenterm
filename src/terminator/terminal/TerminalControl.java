@@ -112,7 +112,7 @@ public class TerminalControl {
 	}
 	
 	private String makeThreadName(String role) {
-		return "Process " + ptyProcess.getPid() + " (" + ptyProcess.getPtyName() + ") " + role;
+                return ptyProcess.name() + " " + role;
 	}
 	
 	private class ReaderRunnable implements Runnable {
