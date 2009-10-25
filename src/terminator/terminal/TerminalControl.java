@@ -31,7 +31,6 @@ public class TerminalControl {
 	
 	private TerminalModel model;
 	private PTYProcess ptyProcess;
-	private boolean processIsRunning;
 	
 	private ExecutorService writerExecutor;
 	private Thread readerThread;
@@ -65,7 +64,6 @@ public class TerminalControl {
 		
 		// We log an announceConnectionLost message if we fail to create the PtyProcess, so we need the TerminalLogWriter first.
 		this.ptyProcess = new PTYProcess(executable, argv, workingDirectory);
-		this.processIsRunning = true;
 		Log.warn("Created " + ptyProcess);
 		writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
 	}
@@ -77,9 +75,6 @@ public class TerminalControl {
 	}
 	
 	public void destroyProcess() {
-		if (!processIsRunning)
-                        return;
-
                 try { ptyProcess.destroy(); } catch (IOException ex) {
                         Log.warn("Failed to destroy process " + ptyProcess, ex);
                 }
@@ -134,13 +129,8 @@ public class TerminalControl {
 	}
 	
 	private void handleProcessTermination() {
-		processIsRunning = false;
-
 		if (writerExecutor != null)
 			writerExecutor.shutdownNow();
-
-		if (ptyProcess == null)
-			return;
 
 		Log.warn("calling waitFor on " + ptyProcess);
 		try {
@@ -196,9 +186,6 @@ public class TerminalControl {
 	public void sendUtf8String(final String s) {
 		writerExecutor.execute(new Runnable() {
 			public void run() {
-                                if (!processIsRunning)
-                                        return;
-
 				try {
                                         ptyProcess.write(s);
 				} catch (IOException ex) {
