@@ -154,7 +154,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			FontMetrics metrics = getFontMetrics(getFont());
-			Dimension charUnitSize = getCharUnitSize();
+                        int charHeight = Math.max(metrics.getHeight(), 1);
 			
 			Rectangle rect = g.getClipBounds();
 			g.setColor(getBackground());
@@ -163,12 +163,12 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			final int maxX = rect.x + rect.width;
 			
 			Insets insets = getInsets();
-			int firstTextLine = (rect.y - insets.top) / charUnitSize.height;
-			int lastTextLine = (rect.y - insets.top + rect.height + charUnitSize.height - 1) / charUnitSize.height;
+			int firstTextLine = (rect.y - insets.top) / charHeight;
+			int lastTextLine = (rect.y - insets.top + rect.height + charHeight - 1) / charHeight;
 			lastTextLine = Math.min(lastTextLine, model.getLineCount() - 1);
 			for (int i = firstTextLine; i <= lastTextLine; i++) {
 				int x = insets.left;
-				int baseline = insets.top + charUnitSize.height * (i + 1) - metrics.getMaxDescent();
+				int baseline = insets.top + charHeight * (i + 1) - metrics.getMaxDescent();
                                 for (StyledText text : model.getTextLine(i).styledTexts()) {
                                         if (x >= maxX) // XXX: Off by one here?
                                                 break;
