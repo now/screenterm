@@ -226,9 +226,7 @@ public class TerminalControl {
                                         return;
 
 				try {
-                                        OutputStream out = ptyProcess.getOutputStream();
-                                        out.write(s.getBytes(CHARSET_NAME));
-                                        out.flush();
+                                        ptyProcess.write(s.getBytes(CHARSET_NAME));
 				} catch (IOException ex) {
                                         Log.warn("Couldn't send string \"" +
                                                  StringUtilities.escapeForJava(s) +

@@ -137,16 +137,17 @@ public class PtyProcess {
         return inStream;
     }
     
-    public OutputStream getOutputStream() {
-        return outStream;
-    }
-    
     public int getFd() {
         return fd;
     }
     
     public int getPid() {
         return pid;
+    }
+
+    public void write(byte[] bytes) throws IOException {
+            outStream.write(bytes);
+            outStream.flush();
     }
     
     private void startProcess(final String executable, final String[] argv, final String workingDirectory) throws Exception {

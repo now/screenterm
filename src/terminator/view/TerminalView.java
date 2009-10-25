@@ -225,7 +225,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			}
 			
 			int textWidth = metrics.stringWidth(text.getText());
-			if (background.equals(getBackground()) == false) {
+			if (!background.equals(getBackground())) {
 				g.setColor(background);
 				g.fillRect(x, y - metrics.getMaxAscent() - metrics.getLeading(), textWidth, metrics.getHeight());
 			}
