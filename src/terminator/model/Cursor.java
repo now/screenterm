@@ -1,9 +1,10 @@
 package terminator.model;
 
 import java.awt.Dimension;
-import e.util.*;
 
 public final class Cursor {
+        public static final Cursor ORIGO = new Cursor(new Dimension(0, 0), 0, 0, true);
+
         private Dimension area;
         private int row;
         private int column;
@@ -11,10 +12,6 @@ public final class Cursor {
 
         private static int clamp(int value, int min, int max) {
                 return Math.max(Math.min(Math.max(min, value), max), 0);
-        }
-
-        public static Cursor origo() {
-                return new Cursor(new Dimension(0, 0), 0, 0, true);
         }
 
         private Cursor(Dimension area, int row, int column, boolean visible) {

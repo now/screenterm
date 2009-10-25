@@ -31,7 +31,7 @@ public class TerminalModel {
 
         private TerminalListeners listeners = new TerminalListeners();
         private TextLines textLines = new TextLines(new Dimension(0, 0));
-        private Cursor cursor = Cursor.origo();
+        private Cursor cursor = Cursor.ORIGO;
 
 	public void addListener(TerminalListener l) {
 		listeners.add(l);
