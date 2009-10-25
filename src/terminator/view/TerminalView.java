@@ -55,16 +55,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
-	/**
-	 * Returns the dimensions of an average character. Note that even though
-	 * we use a fixed-width font, some glyphs for non-ASCII characters can
-	 * be wider than this. See Markus Kuhn's UTF-8-demo.txt for examples,
-	 * particularly among the Greek (where some glyphs are normal-width
-	 * and others are wider) and Japanese (where most glyphs are wide).
-	 * 
-	 * This isn't exactly deprecated, but you should really think hard
-	 * before using it.
-	 */
 	private Dimension getCharUnitSize() {
 		FontMetrics metrics = getFontMetrics(getFont());
 		int width = metrics.charWidth('W');
@@ -81,11 +71,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		return new Dimension(width, height);
 	}
 	
-	/**
-	 * Returns our size in character units, where 'width' is the number of
-	 * columns and 'height' the number of rows. (In case you were concerned
-	 * about the fact that terminals tend to refer to y,x coordinates.)
-	 */
 	public Dimension getSizeInChars(Dimension paneSize) {
 		Dimension result = paneSize;
 		Insets insets = getInsets();
@@ -96,8 +81,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		result.height /= character.height;
 		return result;
 	}
-	
-	// Methods used by TerminalModel in order to update the display.
 	
 	private void setFixedSize(Dimension size) {
 		setMaximumSize(size);
@@ -155,8 +138,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		return new Dimension(width, height);
 	}
 	
-	// Redraw code.
-	
 	private void redrawCursorPosition() {
                 redrawPosition(model.getCursor());
 	}
@@ -179,8 +160,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			g.setColor(getBackground());
 			g.fill(rect);
 			
-			// We manually "clip" for performance, but we're quite loose about it.
-			// This avoids accidental pathological cases (hopefully) and doesn't seem to have any significant cost.
 			final int maxX = rect.x + rect.width;
 			final int widthHintInChars = maxX / charUnitSize.width * 2;
 			
@@ -237,9 +216,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 }
         }
 
-	/**
-	 * Paints the text. Returns how many pixels wide the text was.
-	 */
 	private int paintStyledText(Graphics2D g, FontMetrics metrics, StyledText text, int x, int y) {
 		Stopwatch.Timer timer = paintStyledTextStopwatch.start();
 		try {
