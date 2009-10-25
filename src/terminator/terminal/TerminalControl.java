@@ -121,28 +121,21 @@ public class TerminalControl {
 			} catch (Throwable th) {
 				Log.warn("Problem reading output from " + ptyProcess, th);
 			} finally {
-				// Our reader might throw an exception before the child has terminated.
-				// So "handleProcessTermination" is perhaps not the ideal name.
 				handleProcessTermination();
 			}
 		}
 	}
 	
 	private void handleProcessTermination() {
-		if (writerExecutor != null)
-			writerExecutor.shutdownNow();
-
-		Log.warn("calling waitFor on " + ptyProcess);
 		try {
 			ptyProcess.waitFor();
 		} catch (Exception ex) {
-			Log.warn("Problem waiting for " + ptyProcess, ex);
                         announceConnectionLost(StringUtilities.
-                                stackTraceFromThrowable(ex).replaceAll("\n", "\n\r") +
-                                "[Problem waiting for process.]");
+                                               stackTraceFromThrowable(ex).
+                                               replaceAll("\n", "\n\r") +
+                                               "[Problem waiting for process.]");
 			return;
 		}
-		Log.warn("waitFor returned on " + ptyProcess);
                 announceConnectionLost("\n\r[" + ptyProcess.toExitString() + ".]");
 	}
 	
