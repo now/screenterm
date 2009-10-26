@@ -26,16 +26,16 @@ public class TextLine {
                 return result;
         }
 
-        public void clear(int from, int to) {
-                if (from >= to)
+        public void clear(int from, int count) {
+                if (count == 0)
                         return;
                 ListIterator<StyledText> i = segments.listIterator(0);
                 int seen = moveTo(from, i);
-                clear(i, from - seen, to - seen);
+                clear(i, from - seen, count);
         }
 
-        private void clear(ListIterator<StyledText> i, int from, int to) {
-                clearSegment(i, 0, clearMiddle(i, clearSegment(i, from, to)));
+        private void clear(ListIterator<StyledText> i, int from, int count) {
+                clearSegment(i, 0, clearMiddle(i, clearSegment(i, from, count)));
         }
 
         private int clearMiddle(ListIterator<StyledText> i, int remaining) {
@@ -51,19 +51,19 @@ public class TextLine {
                 return remaining;
         }
 
-        private int clearSegment(ListIterator<StyledText> i, int from, int to) {
+        private int clearSegment(ListIterator<StyledText> i, int from, int count) {
                 if (!i.hasNext())
                         return 0;
                 StyledText segment = i.next();
                 i.remove();
-                StyledText remainder = segment.removeRange(from, to);
+                StyledText remainder = segment.removeRange(from, from + count);
                 if (remainder != StyledText.EMPTY)
                         i.add(remainder);
-                return (to - from) - (segment.length() - remainder.length());
+                return count - (segment.length() - remainder.length());
         }
 
         public void clearFrom(int index) {
-                clear(index, length());
+                clear(index, Integer.MAX_VALUE);
         }
 
         public void insertTextAt(int offset, String text, Style style) {
@@ -104,7 +104,7 @@ public class TextLine {
         }
 
         public void writeTextAt(int offset, String text, Style style) {
-                clear(offset, offset + text.length());
+                clear(offset, text.length());
                 insertTextAt(offset, text, style);
         }
 

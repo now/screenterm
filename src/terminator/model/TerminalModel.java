@@ -166,7 +166,7 @@ public class TerminalModel {
                 }
 
                 public void deleteCharacters(int count) {
-                        getCursorTextLine().clear(cursor.column(), cursor.column() + count);
+                        getCursorTextLine().clear(cursor.column(), count);
                         linesChangedFromCursor();
                 }
 
