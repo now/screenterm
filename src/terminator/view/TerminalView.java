@@ -35,7 +35,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 cursorPainter = new UnfocusedCursorPainter();
                 model.addListener(this);
 
-                setFixedSize(getOptimalViewSize());
+                setFixedSize(optimalViewSize());
 
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {
@@ -49,7 +49,18 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                         }
                 });
 	}
-	
+
+        private Dimension optimalViewSize() {
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                Dimension adjustedSize = new Dimension((int)(0.85 * screenSize.width), screenSize.height);
+                Dimension size = getSizeInChars(adjustedSize);
+                size.width = Math.min(size.width, 132);
+                Dimension character = characterSize();
+                Insets insets = getInsets();
+                return new Dimension(insets.left + size.width * character.width + insets.right,
+                                     insets.top + size.height * character.height + insets.bottom);
+        }
+
 	public void userIsTyping() {
                 redrawCursorPosition();
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
@@ -114,18 +125,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 int height = metrics.getHeight();
                 int y = insets.top + row * height;
                 return new Rectangle(x, y, width, height);
-	}
-	
-	private Dimension getOptimalViewSize() {
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
-                Dimension size = getSizeInChars(adjustedSize);
-                size.width = Math.min(size.width, 132);
-		Dimension character = characterSize();
-		Insets insets = getInsets();
-		final int width = insets.left + size.width * character.width + insets.right;
-		final int height = insets.top + size.height * character.height + insets.bottom;
-		return new Dimension(width, height);
 	}
 	
 	private void redrawCursorPosition() {
