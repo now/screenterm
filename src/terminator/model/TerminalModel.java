@@ -135,29 +135,14 @@ public class TerminalModel {
                 }
 
                 public void horizontalTabulation() {
-                        int nextTabLocation = getNextTabPosition(cursor.getColumn());
                         TextLine textLine = getCursorTextLine();
-                        int startOffset = cursor.getColumn();
-                        int tabLength = nextTabLocation - startOffset;
-                        // We want to insert our special tabbing characters
-                        // (see getTabString) when inserting a tab or
-                        // outputting one at the end of a line, so that text
-                        // copied from the output of (say) cat(1) will be
-                        // pasted with tabs preserved.
-                        boolean endOfLine = (startOffset == textLine.length());
-                        if (insertMode || endOfLine) {
-                                textLine.insertTabAt(startOffset, tabLength, style);
-                        } else {
-                                // Emacs, source of all bloat, uses \t\b\t
-                                // sequences around tab stops (in lines with no
-                                // \t characters) if you hold down right arrow.
-                                // The call to textAdded below moves the
-                                // cursor, which is all we're supposed to do.
-                        }
-                        textAdded(tabLength);
+                        int length = nextTabColumn(cursor.getColumn()) - cursor.getColumn();
+                        if (insertMode || cursor.getColumn() == textLine.length())
+                                textLine.insertTabAt(cursor.getColumn(), length, style);
+                        textAdded(length);
                 }
 
-                private int getNextTabPosition(int column) {
+                private int nextTabColumn(int column) {
                         return (column + 8) & ~7;
                 }
 
