@@ -6,6 +6,7 @@ import javax.swing.*;
 import e.util.*;
 
 import terminator.model.*;
+import terminator.model.Cursor;
 
 public class TerminalView extends JComponent implements FocusListener, TerminalListener {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
@@ -83,17 +84,17 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		Dimension size = getSize();
 		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
 	}
-	
-	public void cursorPositionChanged(terminator.model.Cursor oldCursorPosition, terminator.model.Cursor newCursorPosition) {
-                redrawPosition(oldCursorPosition);
+
+        public void cursorPositionChanged(Cursor oldCursor, Cursor newCursor) {
+                redrawPosition(oldCursor);
 		redrawCursorPosition();
-	}
+        }
 
         public void cursorVisibilityChanged(boolean isVisible) {
                 redrawCursorPosition();
         }
 
-        private Rectangle modelToView(terminator.model.Cursor cursor) {
+        private Rectangle modelToView(Cursor cursor) {
                 return modelToView(cursor.row(), cursor.column());
         }
 
@@ -118,8 +119,8 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 redrawPosition(model.getCursor());
 	}
 
-        private void redrawPosition(terminator.model.Cursor p) {
-                repaint(modelToView(p));
+        private void redrawPosition(Cursor cursor) {
+                repaint(modelToView(cursor));
         }
 	
 	public void paintComponent(Graphics oldGraphics) {
@@ -202,7 +203,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 
         private abstract class CursorPainter {
                 public void paint(Graphics2D g, int first, int last) {
-                        terminator.model.Cursor cursor = model.getCursor();
+                        Cursor cursor = model.getCursor();
 
                         if (!cursor.isInsideLines(first, last))
                                 return;
