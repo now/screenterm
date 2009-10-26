@@ -172,8 +172,7 @@ public class TerminalModel {
                 }
 
                 public void clearToEndOfLine() {
-                        TextLine line = getCursorTextLine();
-                        line.killText(cursor.column(), line.length());
+                        getCursorTextLine().clearFrom(cursor.column());
                         linesChangedFromCursor();
                 }
 

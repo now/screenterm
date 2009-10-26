@@ -62,6 +62,10 @@ public class TextLine {
                 return (to - from) - (segment.length() - remainder.length());
         }
 
+        public void clearFrom(int index) {
+                killText(index, length());
+        }
+
         public void insertTextAt(int offset, String text, Style style) {
                 ListIterator<StyledText> i = segments.listIterator(0);
                 int seen = moveTo(offset, i);
