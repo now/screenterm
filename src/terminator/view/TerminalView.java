@@ -56,20 +56,22 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 Dimension size = sizeInCharacters(adjustedSize);
                 size.width = Math.min(size.width, 132);
                 Dimension character = characterSize();
-                Insets insets = getInsets();
-                return new Dimension(insets.left + size.width * character.width + insets.right,
-                                     insets.top + size.height * character.height + insets.bottom);
+                return applyInsets(new Dimension(size.width * character.width,
+                                                 size.height * character.height),
+                                   1);
+        }
+
+        private Dimension applyInsets(Dimension d, int factor) {
+                Insets i = getInsets();
+                return new Dimension(d.width + factor * (i.left + i.right),
+                                     d.height + factor * (i.top + i.bottom));
         }
 
         public Dimension sizeInCharacters(Dimension size) {
-                Dimension result = new Dimension(size);
-                Insets insets = getInsets();
-                result.width -= (insets.left + insets.right);
-                result.height -= (insets.top + insets.bottom);
                 Dimension character = characterSize();
-                result.width /= character.width;
-                result.height /= character.height;
-                return result;
+                size = applyInsets(size, -1);
+                return new Dimension(size.width / character.width,
+                                     size.height / character.height);
         }
 
         private Dimension characterSize() {
