@@ -58,7 +58,7 @@ public class TerminalModel {
 
         private TerminalModelModifier modifier = new TerminalModelModifier() {
                 private Style style = Style.DEFAULT;
-                private Region scrollingRegion = new Region(0, 0);
+                private Region scrollingRegion = Region.INITIAL;
                 private boolean insertMode = false;
                 private int firstLineChanged;
                 private Cursor oldCursor;
@@ -85,7 +85,7 @@ public class TerminalModel {
 
                 public void setSize(Dimension size) {
                         textLines.setSize(size);
-                        scrollingRegion.set(0, textLines.count() - 1);
+                        scrollingRegion = scrollingRegion.constrain(size);
                         cursor = cursor.constrain(size);
                 }
 
@@ -195,11 +195,7 @@ public class TerminalModel {
                 }
 
                 public void setScrollingRegion(int top, int bottom) {
-                        if (top < 0)
-                                top = 0;
-                        if (bottom < 0 || bottom > textLines.count() - 1)
-                                bottom = textLines.count() - 1;
-                        scrollingRegion.set(top, bottom);
+                        scrollingRegion = scrollingRegion.set(top, bottom);
                 }
 
                 public void scrollDisplayUp() {
