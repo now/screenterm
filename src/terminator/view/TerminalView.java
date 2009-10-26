@@ -17,8 +17,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	
 	public TerminalView(TerminalModel model) {
 		ComponentUtilities.disableFocusTraversal(this);
-                setForeground(Style.DEFAULT.foreground());
-                setBackground(Style.DEFAULT.background());
                 setFont(font);
 
                 this.model = model;
@@ -134,7 +132,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                                            RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			Rectangle rect = g.getClipBounds();
-			g.setColor(getBackground());
+			g.setColor(Style.DEFAULT.background());
 			g.fill(rect);
 			
                         FontMetrics metrics = getFontMetrics(getFont());
