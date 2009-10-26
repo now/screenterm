@@ -201,13 +201,13 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
         private abstract class CursorPainter {
-                public void paint(Graphics2D g, int firstLine, int lastLine) {
-                        terminator.model.Cursor p = model.getCursor();
+                public void paint(Graphics2D g, int first, int last) {
+                        terminator.model.Cursor cursor = model.getCursor();
 
-                        if (!p.isInsideLines(firstLine, lastLine))
+                        if (!cursor.isInsideLines(first, last))
                                 return;
                         g.setColor(Color.black);
-                        paintCursor(g, modelToView(p));
+                        paintCursor(g, modelToView(cursor));
                 }
 
                 protected abstract void paintCursor(Graphics2D g, Rectangle r);
