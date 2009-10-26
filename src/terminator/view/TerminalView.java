@@ -106,7 +106,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
         private Rectangle modelToView(terminator.model.Cursor cursor) {
-                return modelToView(cursor.getRow(), cursor.getColumn());
+                return modelToView(cursor.row(), cursor.column());
         }
 
 	private Rectangle modelToView(int row, int column) {

@@ -45,11 +45,11 @@ public final class Cursor {
                 return new Cursor(area, row, column, visible);
         }
 
-        public int getRow() {
+        public int row() {
                 return row;
         }
 
-        public int getColumn() {
+        public int column() {
                 return column;
         }
 
@@ -65,9 +65,9 @@ public final class Cursor {
                 return "Cursor[row " + row + ", column " + column + "]";
         }
 
-        // Ought to use a prime, but I can't be bothered to work one out.
+        // Ought to use a prime, but I can’t be bothered to work one out.
         public int hashCode() {
-                return (getRow() * 163477) ^ getColumn();
+                return (row * 163477) ^ column;
         }
 
         public boolean equals(Object o) {
@@ -75,7 +75,6 @@ public final class Cursor {
                         return false;
 
                 Cursor other = (Cursor)o;
-                return other.getRow() == getRow() &&
-                       other.getColumn() == getColumn();
+                return other.row == row && other.column == column;
         }
 }

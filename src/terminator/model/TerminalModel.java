@@ -80,7 +80,7 @@ public class TerminalModel {
                 }
 
                 private void linesChangedFromCursor() {
-                        linesChangedFrom(cursor.getRow());
+                        linesChangedFrom(cursor.row());
                 }
 
                 public void setSize(Dimension size) {
@@ -98,7 +98,7 @@ public class TerminalModel {
                 }
 
                 public void insertLines(int count) {
-                        insertLines(cursor.getRow(), count);
+                        insertLines(cursor.row(), count);
                 }
 
                 private void insertLines(int at, int count) {
@@ -106,7 +106,7 @@ public class TerminalModel {
                                                           count,
                                                           scrollingRegion.top(),
                                                           scrollingRegion.bottom());
-                        linesChangedFrom(above == count ? cursor.getRow() : scrollingRegion.top());
+                        linesChangedFrom(above == count ? cursor.row() : scrollingRegion.top());
                 }
 
                 public void setInsertMode(boolean newInsertMode) {
@@ -117,16 +117,16 @@ public class TerminalModel {
                         TextLine textLine = getCursorTextLine();
                         if (insertMode) {
                                 //Log.warn("Inserting text \"" + line + "\" at " + cursor + ".");
-                                textLine.insertTextAt(cursor.getColumn(), text, style);
+                                textLine.insertTextAt(cursor.column(), text, style);
                         } else {
                                 //Log.warn("Writing text \"" + line + "\" at " + cursor + ".");
-                                textLine.writeTextAt(cursor.getColumn(), text, style);
+                                textLine.writeTextAt(cursor.column(), text, style);
                         }
                         textAdded(text.length());
                 }
 
                 private TextLine getCursorTextLine() {
-                        return textLines.get(cursor.getRow());
+                        return textLines.get(cursor.row());
                 }
 
                 private void textAdded(int length) {
@@ -136,9 +136,9 @@ public class TerminalModel {
 
                 public void horizontalTabulation() {
                         TextLine textLine = getCursorTextLine();
-                        int length = nextTabColumn(cursor.getColumn()) - cursor.getColumn();
-                        if (insertMode || cursor.getColumn() == textLine.length())
-                                textLine.insertTabAt(cursor.getColumn(), length, style);
+                        int length = nextTabColumn(cursor.column()) - cursor.column();
+                        if (insertMode || cursor.column() == textLine.length())
+                                textLine.insertTabAt(cursor.column(), length, style);
                         textAdded(length);
                 }
 
@@ -147,7 +147,7 @@ public class TerminalModel {
                 }
 
                 public void lineFeed() {
-                        int row = cursor.getRow() + 1;
+                        int row = cursor.row() + 1;
                         if (row > scrollingRegion.bottom())
                                 insertLines(row, 1);
                         else
@@ -166,25 +166,25 @@ public class TerminalModel {
                 }
 
                 public void deleteCharacters(int count) {
-                        getCursorTextLine().killText(cursor.getColumn(),
-                                                     cursor.getColumn() + count);
+                        getCursorTextLine().killText(cursor.column(),
+                                                     cursor.column() + count);
                         linesChangedFromCursor();
                 }
 
                 public void clearToEndOfLine() {
                         TextLine line = getCursorTextLine();
-                        line.killText(cursor.getColumn(), line.length());
+                        line.killText(cursor.column(), line.length());
                         linesChangedFromCursor();
                 }
 
                 public void clearToBeginningOfLine() {
-                        getCursorTextLine().killText(0, cursor.getColumn());
+                        getCursorTextLine().killText(0, cursor.column());
                         linesChangedFromCursor();
                 }
 
                 public void clearToEndOfScreen() {
                         clearToEndOfLine();
-                        textLines.clearFrom(cursor.getRow() + 1);
+                        textLines.clearFrom(cursor.row() + 1);
                 }
 
                 public void setCursorPosition(int row, int column) {
@@ -220,9 +220,9 @@ public class TerminalModel {
                 public void deleteLines(int count) {
                         textLines.insertLines(scrollingRegion.bottom() + 1,
                                               count,
-                                              cursor.getRow(),
+                                              cursor.row(),
                                               scrollingRegion.bottom());
-                        linesChangedFrom(cursor.getRow());
+                        linesChangedFrom(cursor.row());
                 }
         };
 }
