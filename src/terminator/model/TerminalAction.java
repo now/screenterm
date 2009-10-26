@@ -1,4 +1,4 @@
-package terminator.terminal;
+package terminator.model;
 
 import terminator.model.*;
 

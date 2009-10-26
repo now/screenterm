@@ -3,7 +3,6 @@ package terminator.model;
 import java.awt.Dimension;
 import java.util.*;
 import e.util.*;
-import terminator.terminal.*;
 
 public class TerminalModel {
         private TerminalListeners listeners = new TerminalListeners();
