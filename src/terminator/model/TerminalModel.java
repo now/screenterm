@@ -49,6 +49,10 @@ public class TerminalModel {
 		return cursor;
 	}
 
+        public List<TextLine> region(int from, int to) {
+                return textLines.region(from, Math.min(to, textLines.count()));
+        }
+
 	public void processActions(TerminalAction[] actions) {
                 modifier.reset();
 		for (TerminalAction action : actions)

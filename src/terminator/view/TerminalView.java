@@ -149,38 +149,81 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	public void paintComponent(Graphics oldGraphics) {
 		Stopwatch.Timer timer = paintComponentStopwatch.start();
 		try {
-			Graphics2D g = (Graphics2D) oldGraphics;
+                        Graphics2D g = (Graphics2D)oldGraphics;
 			
-			g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			
-			FontMetrics metrics = getFontMetrics(getFont());
-                        int charHeight = Math.max(metrics.getHeight(), 1);
+                        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 			
 			Rectangle rect = g.getClipBounds();
 			g.setColor(getBackground());
 			g.fill(rect);
 			
-			final int maxX = rect.x + rect.width;
-			
-			Insets insets = getInsets();
-			int firstTextLine = (rect.y - insets.top) / charHeight;
-			int lastTextLine = (rect.y - insets.top + rect.height + charHeight - 1) / charHeight;
-			lastTextLine = Math.min(lastTextLine, model.getLineCount() - 1);
-			for (int i = firstTextLine; i <= lastTextLine; i++) {
-				int x = insets.left;
-				int baseline = insets.top + charHeight * (i + 1) - metrics.getMaxDescent();
-                                for (StyledText text : model.getTextLine(i).styledTexts()) {
-                                        if (x >= maxX) // XXX: Off by one here?
-                                                break;
-                                        x += paintStyledText(g, metrics, text, x, baseline);
-                                }
-			}
-                        cursorPainter.paint(g, firstTextLine, lastTextLine);
+                        FontMetrics metrics = getFontMetrics(getFont());
+                        int charHeight = Math.max(metrics.getHeight(), 1);
+                        Insets insets = getInsets();
+                        int first = (rect.y - insets.top) / charHeight;
+                        int last = (rect.y - insets.top + rect.height + charHeight - 1) / charHeight;
+                        int baseline = insets.top + charHeight * first - metrics.getMaxDescent();
+                        int maxX = rect.x + rect.width;
+                        for (TextLine line : model.region(first, last)) {
+                                baseline += charHeight;
+                                paintLine(g, metrics, line, insets.left, baseline, maxX);
+                        }
+                        cursorPainter.paint(g, first, last);
 		} finally {
 			timer.stop();
 		}
 	}
-	
+
+        private void paintLine(Graphics2D g, FontMetrics metrics,
+                               TextLine line, int x, int y, int maxX) {
+                for (StyledText text : line.styledTexts()) {
+                        if (x >= maxX)
+                                break;
+                        x += paintStyledText(g, metrics, text, x, y);
+                }
+        }
+
+        private int paintStyledText(Graphics2D g, FontMetrics metrics,
+                                    StyledText text, int x, int y) {
+                Stopwatch.Timer timer = paintStyledTextStopwatch.start();
+                try {
+                        Style style = text.getStyle();
+                        Color foreground = style.foreground();
+                        Color background = style.background();
+                        
+                        if (style.reverseVideo()) {
+                                Color oldForeground = foreground;
+                                foreground = background;
+                                background = oldForeground;
+                        }
+                        
+                        int width = metrics.stringWidth(text.getText());
+                        if (!background.equals(getBackground()))
+                                paintBackground(g, metrics, x, y, width, background);
+                        if (style.underline())
+                                paintUnderline(g, metrics, x, y, width, foreground);
+                        g.setColor(foreground);
+                        g.drawString(text.getText(), x, y);
+                        return width;
+                } finally {
+                        timer.stop();
+                }
+        }
+
+        private void paintBackground(Graphics2D g, FontMetrics m, int x, int y,
+                                     int width, Color c) {
+                g.setColor(c);
+                g.fillRect(x, y - m.getMaxAscent() - m.getLeading(),
+                           width, m.getHeight());
+        }
+
+        private void paintUnderline(Graphics2D g, FontMetrics m, int x, int y,
+                                    int width, Color c) {
+                g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
+                g.drawLine(x, y + 1, x + width, y + 1);
+        }
+
         private abstract class CursorPainter {
                 public void paint(Graphics2D g, int firstLine, int lastLine) {
                         terminator.model.Cursor p = model.getCursor();
@@ -211,36 +254,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 }
         }
 
-	private int paintStyledText(Graphics2D g, FontMetrics metrics, StyledText text, int x, int y) {
-		Stopwatch.Timer timer = paintStyledTextStopwatch.start();
-		try {
-			Style style = text.getStyle();
-			Color foreground = style.foreground();
-			Color background = style.background();
-			
-			if (style.reverseVideo()) {
-				Color oldForeground = foreground;
-				foreground = background;
-				background = oldForeground;
-			}
-			
-			int textWidth = metrics.stringWidth(text.getText());
-			if (!background.equals(getBackground())) {
-				g.setColor(background);
-				g.fillRect(x, y - metrics.getMaxAscent() - metrics.getLeading(), textWidth, metrics.getHeight());
-			}
-			if (style.underline()) {
-				g.setColor(new Color(foreground.getRed(), foreground.getGreen(), foreground.getBlue(), 128));
-				g.drawLine(x, y + 1, x + textWidth, y + 1);
-			}
-			g.setColor(foreground);
-			g.drawString(text.getText(), x, y);
-			return textWidth;
-		} finally {
-			timer.stop();
-		}
-	}
-	
 	public void focusGained(FocusEvent event) {
                 setCursorPainter(new FocusedCursorPainter());
 	}
