@@ -115,13 +115,10 @@ public class TerminalModel {
 
                 public void addText(String text) {
                         TextLine textLine = getCursorTextLine();
-                        if (insertMode) {
-                                //Log.warn("Inserting text \"" + line + "\" at " + cursor + ".");
+                        if (insertMode)
                                 textLine.insertTextAt(cursor.column(), text, style);
-                        } else {
-                                //Log.warn("Writing text \"" + line + "\" at " + cursor + ".");
+                        else
                                 textLine.writeTextAt(cursor.column(), text, style);
-                        }
                         textAdded(text.length());
                 }
 
