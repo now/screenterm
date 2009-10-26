@@ -222,7 +222,7 @@ public class TerminalModel {
                                               count,
                                               cursor.row(),
                                               scrollingRegion.bottom());
-                        linesChangedFrom(cursor.row());
+                        linesChangedFromCursor();
                 }
         };
 }
