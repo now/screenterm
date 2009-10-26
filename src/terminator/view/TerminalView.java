@@ -53,12 +53,23 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         private Dimension optimalViewSize() {
                 Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
                 Dimension adjustedSize = new Dimension((int)(0.85 * screenSize.width), screenSize.height);
-                Dimension size = getSizeInChars(adjustedSize);
+                Dimension size = sizeInCharacters(adjustedSize);
                 size.width = Math.min(size.width, 132);
                 Dimension character = characterSize();
                 Insets insets = getInsets();
                 return new Dimension(insets.left + size.width * character.width + insets.right,
                                      insets.top + size.height * character.height + insets.bottom);
+        }
+
+        public Dimension sizeInCharacters(Dimension size) {
+                Dimension result = new Dimension(size);
+                Insets insets = getInsets();
+                result.width -= (insets.left + insets.right);
+                result.height -= (insets.top + insets.bottom);
+                Dimension character = characterSize();
+                result.width /= character.width;
+                result.height /= character.height;
+                return result;
         }
 
 	public void userIsTyping() {
@@ -70,17 +81,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		FontMetrics metrics = getFontMetrics(getFont());
 		return new Dimension(Math.max(metrics.charWidth('W'), 1),
                                      Math.max(metrics.getHeight(), 1));
-	}
-	
-	public Dimension getSizeInChars(Dimension paneSize) {
-		Dimension result = paneSize;
-		Insets insets = getInsets();
-		result.width -= (insets.left + insets.right);
-		result.height -= (insets.top + insets.bottom);
-		Dimension character = characterSize();
-		result.width /= character.width;
-		result.height /= character.height;
-		return result;
 	}
 	
 	private void setFixedSize(Dimension size) {

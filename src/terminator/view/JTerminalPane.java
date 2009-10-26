@@ -77,7 +77,7 @@ public class JTerminalPane extends JPanel {
 
 			@Override
 			public void componentResized(ComponentEvent event) {
-                                Dimension size = view.getSizeInChars(getSize());
+                                Dimension size = view.sizeInCharacters(getSize());
                                 if (size.equals(currentSize))
                                         return;
                                 control.sizeChanged(size);
