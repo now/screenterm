@@ -2,6 +2,7 @@ package terminator.terminal.states;
 
 import e.util.*;
 
+import terminator.model.*;
 import terminator.terminal.*;
 import terminator.terminal.actions.*;
 import terminator.terminal.charactersets.*;
@@ -9,34 +10,27 @@ import terminator.terminal.charactersets.*;
 public abstract class State {
         public State process(ActionQueue actions, char c) {
                 switch (c) {
-                case Ascii.BS:
-                        actions.add(new MoveCursorLeft(1));
-                        return this;
-                case Ascii.HT:
-                        actions.add(new HorizontalTabulation());
-                        return this;
-                case Ascii.LF:
-                        actions.add(new LineFeed());
-                        return this;
-                case Ascii.VT:
-                        actions.add(new MoveCursorDown(1));
-                        return this;
-                case Ascii.CR:
-                        actions.add(new CarriageReturn());
-                        return this;
-                case Ascii.SO:
-                        GroundState.setCharacterSet(new GraphicalCharacterSet());
-                        return this;
-                case Ascii.SI:
-                        GroundState.setCharacterSet(new NormalCharacterSet());
-                        return this;
+                case Ascii.BS: return add(actions, new MoveCursorLeft(1));
+                case Ascii.HT: return add(actions, new HorizontalTabulation());
+                case Ascii.LF: return add(actions, new LineFeed());
+                case Ascii.VT: return add(actions, new MoveCursorDown(1));
+                case Ascii.CR: return add(actions, new CarriageReturn());
+                case Ascii.SO: return setCharacterSet(new GraphicalCharacterSet());
+                case Ascii.SI: return setCharacterSet(new NormalCharacterSet());
                 case Ascii.CAN:
-                case Ascii.SUB:
-                        return GroundState.enter();
-                case Ascii.ESC:
-                        return EscapeState.enter();
-                default:
-                        return this;
+                case Ascii.SUB: return GroundState.enter();
+                case Ascii.ESC: return EscapeState.enter();
+                default: return this;
                 }
+        }
+
+        private State add(ActionQueue actions, TerminalAction action) {
+                actions.add(action);
+                return this;
+        }
+
+        private State setCharacterSet(CharacterSet characterSet) {
+                GroundState.setCharacterSet(characterSet);
+                return this;
         }
 }
