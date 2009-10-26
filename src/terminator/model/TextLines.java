@@ -12,9 +12,9 @@ public class TextLines {
         }
 
         public void setSize(Dimension size) {
-                while (textLines.size() > size.height)
+                while (size() > size.height)
                         textLines.removeFirst();
-                while (textLines.size() < size.height)
+                while (size() < size.height)
                         textLines.addLast(new TextLine());
         }
 
@@ -39,19 +39,19 @@ public class TextLines {
         }
 
         private void remove(int at, int count) {
-                region(at, at + count).clear();
+                textLines.subList(at, at + count).clear();
         }
 
         public void clearFrom(int index) {
-                insertLines(index, count() - index, index, count() - 1);
+                insertLines(index, size() - index, index, size() - 1);
         }
 
-        public int count() {
+        private int size() {
                 return textLines.size();
         }
 
         public List<TextLine> region(int from, int to) {
-                return textLines.subList(from, to);
+                return textLines.subList(from, Math.min(to, size()));
         }
 
         public TextLine get(int index) {

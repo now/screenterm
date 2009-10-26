@@ -46,7 +46,7 @@ public class TerminalModel {
 	}
 
         public List<TextLine> region(int from, int to) {
-                return textLines.region(from, Math.min(to, textLines.count()));
+                return textLines.region(from, to);
         }
 
 	public void processActions(TerminalAction[] actions) {
