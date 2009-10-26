@@ -37,10 +37,6 @@ public class TerminalModel {
 		listeners.add(l);
 	}
 
-	public int getLineCount() {
-                return textLines.count();
-	}
-
 	public TextLine getTextLine(int index) {
                 return textLines.get(index);
 	}
@@ -89,7 +85,7 @@ public class TerminalModel {
 
                 public void setSize(Dimension size) {
                         textLines.setSize(size);
-                        scrollingRegion.set(0, getLineCount() - 1);
+                        scrollingRegion.set(0, textLines.count() - 1);
                         cursor = cursor.constrain(size);
                 }
 
@@ -199,15 +195,10 @@ public class TerminalModel {
                 }
 
                 public void setScrollingRegion(int top, int bottom) {
-                        if (bottom > getLineCount() - 1) {
-                                Log.warn("Tried to set scrolling region bottom beyond last line" +
-                                         " (" + bottom + " > " + (getLineCount() - 1) + ")");
-                                return;
-                        }
                         if (top < 0)
                                 top = 0;
-                        if (bottom < 0)
-                                bottom = getLineCount() - 1;
+                        if (bottom < 0 || bottom > textLines.count() - 1)
+                                bottom = textLines.count() - 1;
                         scrollingRegion.set(top, bottom);
                 }
 

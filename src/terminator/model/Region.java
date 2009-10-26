@@ -12,7 +12,7 @@ class Region {
 
         public void set(int top, int bottom) {
                 if (top >= bottom) {
-                        Log.warn("Tried to set scrolling region to illegal region " + top + ", " + bottom);
+                        Log.warn("Tried to set illegal region " + top + ", " + bottom);
                         return;
                 }
                 this.top = top;
