@@ -84,8 +84,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 setMaximumSize(size);
                 setPreferredSize(size);
                 setSize(size);
-                revalidate();
-                repaint();
         }
 
 	public void userIsTyping() {

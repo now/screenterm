@@ -6,7 +6,7 @@ import e.util.*;
 
 public class TerminalModel {
         private TerminalListeners listeners = new TerminalListeners();
-        private TextLines textLines = new TextLines(new Dimension(0, 0));
+        private TextLines textLines = new TextLines(new Dimension(0, 1));
         private Cursor cursor = Cursor.ORIGO;
 
 	public void addListener(TerminalListener l) {
