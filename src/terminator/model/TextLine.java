@@ -62,13 +62,6 @@ public class TextLine {
                 return (to - from) - (segment.length() - remainder.length());
         }
 
-        private void addRemainder(ListIterator<StyledText> i, StyledText text, int from, int to) {
-                StyledText remainder = text.removeRange(from, to);
-                if (remainder == null)
-                        return;
-                i.add(remainder);
-        }
-
         public void insertTextAt(int offset, String text, Style style) {
                 ListIterator<StyledText> i = segments.listIterator(0);
                 int seen = moveTo(offset, i);
