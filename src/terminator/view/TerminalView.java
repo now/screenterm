@@ -110,7 +110,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
 	private Rectangle modelToView(int row, int column) {
-                String line = model.getTextLine(row).getString();
+                String line = model.getLine(row);
                 String c = column < line.length() ? line.substring(column, column + 1) : " ";
                 String prefix = column < line.length() ? line.substring(0, column) : line;
                 FontMetrics metrics = getFontMetrics(getFont());

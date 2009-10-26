@@ -37,8 +37,8 @@ public class TerminalModel {
 		listeners.add(l);
 	}
 
-	public TextLine getTextLine(int index) {
-                return textLines.get(index);
+	public String getLine(int index) {
+                return textLines.get(index).getString();
 	}
 
 	public Cursor getCursor() {
