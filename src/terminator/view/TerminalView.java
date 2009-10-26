@@ -80,9 +80,9 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	}
 
 	public void contentsChanged(int row) {
-		Point redrawTop = modelToView(row, 0).getLocation();
+		Point top = modelToView(row, 0).getLocation();
 		Dimension size = getSize();
-		repaint(redrawTop.x, redrawTop.y, size.width, size.height - redrawTop.y);
+		repaint(top.x, top.y, size.width, size.height - top.y);
 	}
 
         public void cursorPositionChanged(Cursor oldCursor, Cursor newCursor) {
