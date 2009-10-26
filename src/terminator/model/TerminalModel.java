@@ -166,8 +166,7 @@ public class TerminalModel {
                 }
 
                 public void deleteCharacters(int count) {
-                        getCursorTextLine().killText(cursor.column(),
-                                                     cursor.column() + count);
+                        getCursorTextLine().clear(cursor.column(), cursor.column() + count);
                         linesChangedFromCursor();
                 }
 
@@ -177,7 +176,7 @@ public class TerminalModel {
                 }
 
                 public void clearToBeginningOfLine() {
-                        getCursorTextLine().killText(0, cursor.column());
+                        getCursorTextLine().clear(0, cursor.column());
                         linesChangedFromCursor();
                 }
 

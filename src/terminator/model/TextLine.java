@@ -26,19 +26,19 @@ public class TextLine {
                 return result;
         }
 
-        public void killText(int from, int to) {
+        public void clear(int from, int to) {
                 if (from >= to)
                         return;
                 ListIterator<StyledText> i = segments.listIterator(0);
                 int seen = moveTo(from, i);
-                killText(i, from - seen, to - seen);
+                clear(i, from - seen, to - seen);
         }
 
-        private void killText(ListIterator<StyledText> i, int from, int to) {
-                killSegment(i, 0, killMiddle(i, killSegment(i, from, to)));
+        private void clear(ListIterator<StyledText> i, int from, int to) {
+                clearSegment(i, 0, clearMiddle(i, clearSegment(i, from, to)));
         }
 
-        private int killMiddle(ListIterator<StyledText> i, int remaining) {
+        private int clearMiddle(ListIterator<StyledText> i, int remaining) {
                 while (i.hasNext()) {
                         StyledText text = i.next();
                         if (remaining <= text.length()) {
@@ -51,7 +51,7 @@ public class TextLine {
                 return remaining;
         }
 
-        private int killSegment(ListIterator<StyledText> i, int from, int to) {
+        private int clearSegment(ListIterator<StyledText> i, int from, int to) {
                 if (!i.hasNext())
                         return 0;
                 StyledText segment = i.next();
@@ -63,7 +63,7 @@ public class TextLine {
         }
 
         public void clearFrom(int index) {
-                killText(index, length());
+                clear(index, length());
         }
 
         public void insertTextAt(int offset, String text, Style style) {
@@ -104,7 +104,7 @@ public class TextLine {
         }
 
         public void writeTextAt(int offset, String text, Style style) {
-                killText(offset, offset + text.length());
+                clear(offset, offset + text.length());
                 insertTextAt(offset, text, style);
         }
 
