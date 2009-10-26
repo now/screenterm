@@ -21,8 +21,8 @@ public interface TerminalModelModifier {
 	public void moveCursorVertically(int delta);
         public void horizontalTabulation();
         public void lineFeed();
+	public void reverseLineFeed();
         public void carriageReturn();
 	public void setScrollingRegion(int top, int bottom);
-	public void scrollDisplayUp();
 	public void deleteLines(int count);
 }

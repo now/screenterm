@@ -127,6 +127,13 @@ public class TerminalModel {
                                 cursor = cursor.moveToRow(row);
                 }
 
+                public void reverseLineFeed() {
+                        if (cursor.row() == scrollingRegion.top())
+                                insertLines(1);
+                        else if (cursor.row() > 0)
+                                moveCursorVertically(-1);
+                }
+
                 public void carriageReturn() {
                         cursor = cursor.moveToColumn(0);
                 }
@@ -172,11 +179,6 @@ public class TerminalModel {
 
                 public void setScrollingRegion(int top, int bottom) {
                         scrollingRegion = scrollingRegion.set(top, bottom);
-                }
-
-                public void scrollDisplayUp() {
-                        insertLines(scrollingRegion.top(), 1);
-                        linesChangedFrom(scrollingRegion.top());
                 }
 
                 public void deleteLines(int count) {

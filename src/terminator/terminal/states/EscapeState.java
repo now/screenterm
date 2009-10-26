@@ -15,7 +15,7 @@ public class EscapeState extends State {
         public State process(ActionQueue actions, char c) {
                 switch (c) {
                 case 'M':
-                        actions.add(new ScrollDisplayUp());
+                        actions.add(new ReverseLineFeed());
                         return GroundState.enter();
                 case '[':
                         return CSIEntryState.enter();
