@@ -184,8 +184,7 @@ public class TerminalModel {
 
                 public void clearToEndOfScreen() {
                         clearToEndOfLine();
-                        for (TextLine line : textLines.region(cursor.getRow() + 1, getLineCount()))
-                                line.clear();
+                        textLines.clearFrom(cursor.getRow() + 1);
                 }
 
                 public void setCursorPosition(int row, int column) {

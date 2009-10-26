@@ -26,10 +26,6 @@ public class TextLine {
                 return result;
         }
 
-        public void clear() {
-                segments.clear();
-        }
-
         public void killText(int from, int to) {
                 if (from >= to)
                         return;

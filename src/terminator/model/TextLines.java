@@ -42,6 +42,10 @@ public class TextLines {
                 region(at, at + count).clear();
         }
 
+        public void clearFrom(int index) {
+                insertLines(index, count() - index, index, count() - 1);
+        }
+
         public int count() {
                 return textLines.size();
         }
