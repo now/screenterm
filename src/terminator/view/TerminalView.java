@@ -55,20 +55,10 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
 	}
 	
-	private Dimension getCharUnitSize() {
+	private Dimension characterSize() {
 		FontMetrics metrics = getFontMetrics(getFont());
-		int width = metrics.charWidth('W');
-		int height = metrics.getHeight();
-		// Avoid divide by zero errors, so the user gets a chance to change their font.
-		if (width == 0) {
-			Log.warn("Insane font width for " + getFont());
-			width = 1;
-		}
-		if (height == 0) {
-			Log.warn("Insane font height for " + getFont());
-			height = 1;
-		}
-		return new Dimension(width, height);
+		return new Dimension(Math.max(metrics.charWidth('W'), 1),
+                                     Math.max(metrics.getHeight(), 1));
 	}
 	
 	public Dimension getSizeInChars(Dimension paneSize) {
@@ -76,7 +66,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		Insets insets = getInsets();
 		result.width -= (insets.left + insets.right);
 		result.height -= (insets.top + insets.bottom);
-		Dimension character = getCharUnitSize();
+		Dimension character = characterSize();
 		result.width /= character.width;
 		result.height /= character.height;
 		return result;
@@ -131,7 +121,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 Dimension adjustedSize = new Dimension((int)(screenSize.width * 0.85), screenSize.height);
                 Dimension size = getSizeInChars(adjustedSize);
                 size.width = Math.min(size.width, 132);
-		Dimension character = getCharUnitSize();
+		Dimension character = characterSize();
 		Insets insets = getInsets();
 		final int width = insets.left + size.width * character.width + insets.right;
 		final int height = insets.top + size.height * character.height + insets.bottom;
