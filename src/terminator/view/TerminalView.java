@@ -16,7 +16,6 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         private CursorPainter cursorPainter;
 	
 	public TerminalView(TerminalModel model) {
-		ComponentUtilities.disableFocusTraversal(this);
                 setFont(font);
 
                 this.model = model;
