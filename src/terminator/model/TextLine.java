@@ -2,24 +2,11 @@ package terminator.model;
 
 import java.util.*;
 
-/**
- * Ties together the String containing the characters on a particular line, and the styles to be applied to each character.
- * TextLines are mutable, though it's not possible to change style information without rewriting the corresponding characters (because that's not how terminals work).
- */
 public class TextLine {
-	// The text we store internally contains information about tabs.
-	// When text is passed back out to the outside world, we either convert the tab information to spaces (for the display), or to tab characters (for the clipboard).
-	// Internally, a tab is marked as beginning with TAB_START.
-	// Each following display position (assuming *all* characters are the same width) covered by the tab is denoted by TAB_CONTINUE.
-	// We have to internally store all this tab position and length information because tab positions can change in the outside world at any time, but each TextLine must retain its integrity once the tabs have been inserted into it.
 	private static final char TAB_START = '\t';
 	private static final char TAB_CONTINUE = '\r';
 
         private LinkedList<StyledText> segments = new LinkedList<StyledText>();
-
-	public TextLine() {
-		clear();
-	}
 
         public List<StyledText> styledTexts() {
                 return segments;
