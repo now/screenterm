@@ -1,14 +1,11 @@
 package terminator.view;
 
 import java.awt.*;
-import java.awt.datatransfer.*;
 import java.awt.event.*;
-import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import e.gui.*;
 import e.util.*;
-import org.jessies.os.*;
+
 import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
