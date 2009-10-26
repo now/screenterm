@@ -81,6 +81,10 @@ public class TextLine {
         private boolean insertBefore(ListIterator<StyledText> i, int offset, String text, Style style) {
                 if (offset != 0)
                         return false;
+                return insertAt(i, text, style);
+        }
+
+        private boolean insertAt(ListIterator<StyledText> i, String text, Style style) {
                 i.add(new StyledText(text, style));
                 return true;
         }
@@ -88,18 +92,27 @@ public class TextLine {
         private boolean insertAfter(ListIterator<StyledText> i, int offset, String text, Style style) {
                 if (i.hasNext())
                         return false;
-                char[] padding = new char[offset];
-                Arrays.fill(padding, ' ');
-                i.add(new StyledText(new String(padding), Style.DEFAULT));
-                i.add(new StyledText(text, style));
-                return true;
+                insertPadding(i, offset);
+                return insertAt(i, text, style);
+        }
+
+        private void insertPadding(ListIterator<StyledText> i, int length) {
+                if (length <= 0)
+                        return;
+                i.add(new StyledText(fillString(' ', length), Style.DEFAULT));
+        }
+
+        private String fillString(char c, int length) {
+                char[] filling = new char[length];
+                Arrays.fill(filling, c);
+                return new String(filling);
         }
 
         private void insertInside(ListIterator<StyledText> i, int offset, String text, Style style) {
                 StyledText segment = i.next();
                 i.remove();
                 i.add(segment.removeRange(offset, segment.length()));
-                i.add(new StyledText(text, style));
+                insertAt(i, text, style);
                 i.add(segment.removeRange(0, offset));
         }
 
@@ -121,14 +134,14 @@ public class TextLine {
                 return seen;
         }
 
-	public void insertTabAt(int offset, int tabLength, Style style) {
-		insertTextAt(offset, getTabString(tabLength), style);
+	public void insertTabAt(int offset, int length, Style style) {
+		insertTextAt(offset, tabString(length), style);
 	}
 
-	private static String getTabString(int tabLength) {
-		char[] tab = new char[tabLength];
-		tab[0] = TAB_START;
-		Arrays.fill(tab, 1, tab.length, TAB_CONTINUE);
-		return new String(tab);
+	private String tabString(int length) {
+                StringBuilder tab = new StringBuilder(length);
+                tab.append(TAB_START);
+                tab.append(fillString(TAB_CONTINUE, length - 1));
+                return tab.toString();
 	}
 }
