@@ -26,6 +26,8 @@ public class TextLines {
         }
 
         private void replace(int addAt, int removeAt, int count) {
+                if (count == 0)
+                        return;
                 add(addAt, count);
                 remove(removeAt, count);
         }
