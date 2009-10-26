@@ -18,7 +18,7 @@ class Region {
         }
 
         public Region constrain(Dimension area) {
-                return new Region(area, top, bottom);
+                return new Region(area, 0, area.height - 1);
         }
 
         public Region set(int top, int bottom) {
