@@ -78,17 +78,17 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                                      Math.max(metrics.getHeight(), 1));
         }
 
+        private void setFixedSize(Dimension size) {
+                setMaximumSize(size);
+                setPreferredSize(size);
+                setSize(size);
+                revalidate();
+                repaint();
+        }
+
 	public void userIsTyping() {
                 redrawCursorPosition();
                 setCursor(GuiUtilities.INVISIBLE_CURSOR);
-	}
-	
-	private void setFixedSize(Dimension size) {
-		setMaximumSize(size);
-		setPreferredSize(size);
-		setSize(size);
-		revalidate();
-                repaint();
 	}
 
 	public void contentsChanged(int row) {
