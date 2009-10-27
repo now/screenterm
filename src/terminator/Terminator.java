@@ -93,9 +93,7 @@ public class Terminator {
 	}
 	
 	public TerminatorFrame openFrame(JTerminalPane terminalPane) {
-		TerminatorFrame frame = new TerminatorFrame(terminalPane);
-                frames.addFrame(frame);
-                return frame;
+                return frames.add(new TerminatorFrame(terminalPane));
 	}
 	
 	private void optionsDidChange() {

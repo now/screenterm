@@ -11,7 +11,7 @@ public class Frames {
         private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
         private JFrame hiddenMacOSXFrame;
 
-        public void addFrame(final TerminatorFrame frame) {
+        public TerminatorFrame add(final TerminatorFrame frame) {
                 list.add(frame);
 
                 frame.addWindowListener(new WindowAdapter() {
@@ -22,7 +22,7 @@ public class Frames {
 
                         @Override
                         public void windowClosed(WindowEvent event) {
-                                removeFrame(frame);
+                                remove(frame);
                         }
 
                         @Override
@@ -40,9 +40,11 @@ public class Frames {
                         WindowMenu.getSharedInstance().addWindow(frame);
 
                 frameStateChanged();
+
+                return frame;
         }
     
-        public void removeFrame(TerminatorFrame frame) {
+        public void remove(TerminatorFrame frame) {
                 list.remove(frame);
                 frameStateChanged();
         }
