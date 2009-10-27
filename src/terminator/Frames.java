@@ -76,7 +76,7 @@ public class Frames {
         public boolean closeAll() {
                 // We need to copy frames as we will be mutating it.
                 for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
-                        frame.handleWindowCloseRequestFromUser();
+                        frame.close();
                 return true;
         }
 }

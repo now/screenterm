@@ -103,6 +103,10 @@ public class TerminatorFrame extends JFrame {
                 return isShowing() && (getExtendedState() & ICONIFIED) == 0;
         }
 	
+        public void close() {
+                setVisible(false);
+        }
+
 	/**
 	 * Tidies up after the frame has been hidden.
 	 * We can't use a ComponentListener because that's invoked on the EDT, as is handleQuit, which relies on us tidying up while it goes.

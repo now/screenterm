@@ -125,7 +125,7 @@ public class TerminatorMenuBar extends EMenuBar {
 		
 		@Override
 		protected void performFrameAction(TerminatorFrame frame) {
-                        frame.handleWindowCloseRequestFromUser();
+                        frame.close();
 		}
 	}
 }
