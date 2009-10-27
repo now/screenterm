@@ -34,7 +34,7 @@ public class TerminatorFrame extends JFrame {
 		}
 		
 		initTerminal();
-		optionsDidChange();
+                updateMenuBar();
 		
 		pack();
                 setLocationRelativeTo(null);
@@ -114,10 +114,5 @@ public class TerminatorFrame extends JFrame {
                         return;
                 terminal.destroyProcess();
                 dispose();
-	}
-	
-	public void optionsDidChange() {
-		updateMenuBar();
-		repaint();
 	}
 }
