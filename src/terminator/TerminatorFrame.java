@@ -7,40 +7,38 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
+
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame {
 	private JTerminalPane terminal;
 
-	public TerminatorFrame(JTerminalPane initialTerminalPane) {
+        public TerminatorFrame(JTerminalPane terminal) {
 		super("Terminator");
-		terminal = initialTerminalPane;
-		initFrame();
-		terminal.requestFocus();
-                terminal.start();
-	}
-	
-	private void initFrame() {
-		JFrameUtilities.setFrameIcon(this);
-	
-		// Work around Sun bug 6526971 (quick alt-tabbing on Windows can give focus to menu bar).
-		if (GuiUtilities.isWindows()) {
-			addWindowFocusListener(new WindowAdapter() {
-				@Override
-				public void windowLostFocus(WindowEvent e) {
-					MenuSelectionManager.defaultManager().clearSelectedPath();
-				}
-			});
-		}
-
+                this.terminal = terminal;
+                JFrameUtilities.setFrameIcon(this);
                 setContentPane(terminal);
                 setJMenuBar(new TerminatorMenuBar());
                 pack();
-
+                workAroundJavaBug6526971();
                 setLocationRelativeTo(null);
                 setVisible(true);
+		terminal.requestFocus();
+                terminal.start();
 	}
-	
+
+        private void workAroundJavaBug6526971() {
+                if (!GuiUtilities.isWindows())
+                        return;
+                addWindowFocusListener(new WindowAdapter() {
+                        @Override
+                        public void windowLostFocus(WindowEvent e) {
+                                MenuSelectionManager.defaultManager().
+                                                     clearSelectedPath();
+                        }
+                });
+        }
+
         public boolean isShowingOnScreen() {
                 return isShowing() && (getExtendedState() & ICONIFIED) == 0;
         }
