@@ -107,10 +107,6 @@ public class TerminatorFrame extends JFrame {
                 setVisible(false);
         }
 
-	/**
-	 * Tidies up after the frame has been hidden.
-	 * We can't use a ComponentListener because that's invoked on the EDT, as is handleQuit, which relies on us tidying up while it goes.
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
