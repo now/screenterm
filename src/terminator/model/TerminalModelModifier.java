@@ -16,7 +16,7 @@ public interface TerminalModelModifier {
         public void clearToBeginningOfLine();
         public void clearToEndOfLine();
         public void clearToEndOfScreen();
-	public void setCursorPosition(int row, int column);
+	public void positionCursor(int row, int column);
 	public void moveCursorHorizontally(int delta);
 	public void moveCursorVertically(int delta);
         public void horizontalTabulation();

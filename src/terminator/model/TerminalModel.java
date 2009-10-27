@@ -165,7 +165,7 @@ public class TerminalModel {
                         textLines.clearFrom(cursor.row() + 1);
                 }
 
-                public void setCursorPosition(int row, int column) {
+                public void positionCursor(int row, int column) {
                         cursor = cursor.moveToRow(row).moveToColumn(column);
                 }
 

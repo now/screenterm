@@ -13,7 +13,7 @@ public class PositionCursor implements TerminalAction {
         }
 
         public void perform(TerminalModelModifier model) {
-                model.setCursorPosition(row, column);
+                model.positionCursor(row, column);
         }
         
         public String toString() {
