@@ -7,16 +7,11 @@ import java.awt.event.*;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import javax.swing.Timer;
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame {
 	private JTerminalPane terminal;
-	
-	private Timer terminalSizeTimer;
-	
-	private final Color originalBackground = getBackground();
-	
+
 	public TerminatorFrame(JTerminalPane initialTerminalPane) {
 		super("Terminator");
 		terminal = initialTerminalPane;
@@ -26,17 +21,8 @@ public class TerminatorFrame extends JFrame {
 	}
 	
 	private void initFrame() {
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Misnomer: we add our own WindowListener.
-		
 		JFrameUtilities.setFrameIcon(this);
-		
-                addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent event) {
-				handleWindowCloseRequestFromUser();
-			}
-                });
-			
+	
 		// Work around Sun bug 6526971 (quick alt-tabbing on Windows can give focus to menu bar).
 		if (GuiUtilities.isWindows()) {
 			addWindowFocusListener(new WindowAdapter() {
@@ -116,10 +102,6 @@ public class TerminatorFrame extends JFrame {
         public boolean isShowingOnScreen() {
                 return isShowing() && (getExtendedState() & ICONIFIED) == 0;
         }
-	
-	public void handleWindowCloseRequestFromUser() {
-                setVisible(false);
-	}
 	
 	/**
 	 * Tidies up after the frame has been hidden.
