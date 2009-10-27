@@ -62,7 +62,7 @@ public class TerminalModel {
                 public void setSize(Dimension size) {
                         textLines.setSize(size);
                         scrollingRegion = scrollingRegion.constrain(size);
-                        cursor = cursor.constrain(size);
+                        cursor = cursor.constrain(size, scrollingRegion);
                 }
 
                 public void setStyle(Style style) {
@@ -179,6 +179,7 @@ public class TerminalModel {
 
                 public void setScrollingRegion(int top, int bottom) {
                         scrollingRegion = scrollingRegion.set(top, bottom);
+                        cursor = cursor.constrain(scrollingRegion);
                 }
 
                 public void deleteLines(int count) {
