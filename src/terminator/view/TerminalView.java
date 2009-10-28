@@ -25,6 +25,8 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 
                 setFixedSize(optimalViewSize());
 
+                ComponentUtilities.disableFocusTraversal(this);
+
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent event) {
