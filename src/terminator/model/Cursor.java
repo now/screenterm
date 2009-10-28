@@ -79,9 +79,8 @@ public final class Cursor {
                 return "Cursor[row " + row + ", column " + column + "]";
         }
 
-        // Ought to use a prime, but I can’t be bothered to work one out.
         public int hashCode() {
-                return (row * 163477) ^ column;
+                return 31 * (31 * (17 + row) + column);
         }
 
         public boolean equals(Object o) {
