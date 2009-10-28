@@ -217,18 +217,15 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
         private class FocusedCursorPainter extends CursorPainter {
-                @Override
-                protected void paintCursor(Graphics2D g, Rectangle r) {
+                @Override protected void paintCursor(Graphics2D g, Rectangle r) {
                         g.setXORMode(Color.white);
                         g.fill(r);
                         g.setPaintMode();
                 }
         }
 
-
         private class UnfocusedCursorPainter extends CursorPainter {
-                @Override
-                protected void paintCursor(Graphics2D g, Rectangle r) {
+                @Override protected void paintCursor(Graphics2D g, Rectangle r) {
                         g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
                 }
         }
