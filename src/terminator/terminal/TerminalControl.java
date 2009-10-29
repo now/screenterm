@@ -135,23 +135,20 @@ public class TerminalControl {
 		}
 	}
 	
-	/** Must be called in the AWT dispatcher thread. */
-	public void sizeChanged(final Dimension size) {
-		TerminalAction sizeChangeAction = new TerminalAction() {
-			public void perform(TerminalModelModifier model) {
-				model.setSize(size);
-			}
-			
-			public String toString() {
-				return "TerminalAction[Size change to " + size + "]";
-			}
-		};
-		model.processActions(new TerminalAction[] { sizeChangeAction });
+        public void sizeChanged(final Dimension size) {
+                model.processActions(new TerminalAction[]{ new TerminalAction() {
+                        public void perform(TerminalModelModifier model) {
+                                model.setSize(size);
+                        }
+                        
+                        public String toString() {
+                                return "Change terminal size to " + size;
+                        }
+                });
 
-                try {
-                        ptyProcess.sendResizeNotification(size);
-                } catch (Exception e) {
-                        Log.warn("Failed to notify " + ptyProcess + " of size change", e);
+                try { ptyProcess.sendResizeNotification(size); } catch (Exception e) {
+                        Log.warn("Notifying " + ptyProcess +
+                                 " of size change failed", e);
                 }
 	}
 	
