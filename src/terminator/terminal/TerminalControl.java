@@ -65,11 +65,7 @@ public class TerminalControl {
                         Log.warn("Failed to destroy process " + ptyProcess, ex);
                 }
 	}
-	
-	/**
-	 * Starts listening to output from the child process. This method is
-	 * invoked when all the user interface stuff is set up.
-	 */
+
 	public void start() {
 		if (readerThread != null)
                         return;
