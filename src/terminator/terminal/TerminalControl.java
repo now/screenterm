@@ -1,17 +1,13 @@
 package terminator.terminal;
 
 import e.util.*;
-import java.awt.*;
+import java.awt.Dimension;
 import java.io.*;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
-import javax.swing.event.*;
-import terminator.*;
+
 import terminator.model.*;
-import terminator.view.*;
 import terminator.terminal.actions.*;
-import terminator.terminal.charactersets.*;
 import terminator.terminal.pty.*;
 import terminator.terminal.states.*;
 
@@ -126,20 +122,21 @@ public class TerminalControl {
 		}
 	}
 	
-	private void handleProcessTermination() {
-		try {
-			ptyProcess.waitFor();
-		} catch (Exception ex) {
-                        announceConnectionLost(StringUtilities.
-                                               stackTraceFromThrowable(ex).
-                                               replaceAll("\n", "\n\r") +
-                                               "[Problem waiting for process.]");
-			return;
-		}
+        private void handleProcessTermination() {
+                try { ptyProcess.waitFor(); } catch (Exception e) {
+                        reportFailure("Problem waiting for process", e);
+                        return;
+                }
                 announceConnectionLost("\n\r[" + ptyProcess.toExitString() + ".]");
-	}
+        }
+
+        public void reportFailure(String description, Throwable t) {
+                announceConnectionLost(StringUtilities.stackTraceFromThrowable(t).
+                                                       replaceAll("\n", "\n\r") +
+                                       "[" + description + ".]");
+        }
 	
-	public void announceConnectionLost(String message) {
+	private void announceConnectionLost(String message) {
 		try {
 			char[] buffer = message.toCharArray();
 			processBuffer(buffer, buffer.length);
