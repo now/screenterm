@@ -73,41 +73,44 @@ public class TerminalControl {
 		if (ptyProcess == null)
                         return;
 
-		readerThread = startThread("Reader", new ReaderRunnable());
+                readerThread = new Thread(new ReaderRunnable(), makeThreadName("Reader"));
+                readerThread.setDaemon(true);
+                readerThread.start();
 	}
-	
-	private Thread startThread(String name, Runnable runnable) {
-		Thread thread = new Thread(runnable, makeThreadName(name));
-		thread.setDaemon(true);
-		thread.start();
-		return thread;
-	}
-	
+
 	private String makeThreadName(String role) {
                 return ptyProcess.name() + " " + role;
 	}
-	
-	private class ReaderRunnable implements Runnable {
-		public void run() {
-			try {
-                                char[] chars = new char[INPUT_BUFFER_SIZE];
-                                int n;
-				while ((n = ptyProcess.read(chars)) != -1) {
-					try {
-						processBuffer(chars, n);
-					} catch (Throwable th) {
-						Log.warn("Problem processing output from " + ptyProcess, th);
-					}
-				}
-                                Log.warn("read returned -1 from " + ptyProcess);
-			} catch (Throwable th) {
-				Log.warn("Problem reading output from " + ptyProcess, th);
-			} finally {
-				handleProcessTermination();
-			}
-		}
-	}
-	
+
+        private class ReaderRunnable implements Runnable {
+                private char[] chars = new char[INPUT_BUFFER_SIZE];
+
+                @Override public void run() {
+                        try {
+                                read();
+                        } catch (Throwable t) {
+                                Log.warn("Problem reading output from " +
+                                         ptyProcess, t);
+                        } finally {
+                                handleProcessTermination();
+                        }
+                }
+
+                private void read() throws IOException {
+                        int n;
+                        while ((n = ptyProcess.read(chars)) != -1)
+                                process(n);
+                        Log.warn("read returned -1 from " + ptyProcess);
+                }
+
+                private void process(int n) {
+                        try { processBuffer(chars, n); } catch (Throwable t) {
+                                Log.warn("Problem processing output from " +
+                                         ptyProcess, t);
+                        }
+                }
+        }
+
         private void handleProcessTermination() {
                 try { ptyProcess.waitFor(); } catch (Exception e) {
                         reportFailure("Problem waiting for process", e);
