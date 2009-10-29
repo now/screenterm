@@ -33,7 +33,13 @@ public class TerminalControl {
 	
         private State state;
         private ActionQueue actions;
-	
+
+        public static ArrayList<String> getDefaultShell() {
+                ArrayList<String> command = new ArrayList<String>();
+                command.add(TERMINATOR_DEFAULT_SHELL);
+                return command;
+        }
+
 	public TerminalControl(TerminalModel model) {
 		this.model = model;
                 state = GroundState.enter();
@@ -53,13 +59,7 @@ public class TerminalControl {
                 if (argv[0] == TERMINATOR_DEFAULT_SHELL)
                         argv[0] = "-" + argv[0];
         }
-	
-	public static ArrayList<String> getDefaultShell() {
-		ArrayList<String> command = new ArrayList<String>();
-		command.add(TERMINATOR_DEFAULT_SHELL);
-		return command;
-	}
-	
+
 	public void destroyProcess() {
                 try { ptyProcess.destroy(); } catch (IOException ex) {
                         Log.warn("Failed to destroy process " + ptyProcess, ex);
