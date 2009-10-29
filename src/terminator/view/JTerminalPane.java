@@ -72,7 +72,7 @@ public class JTerminalPane extends JPanel implements InputHandler {
 
 			@Override
 			public void componentResized(ComponentEvent event) {
-                                Dimension size = view.sizeInCharacters(getSize());
+                                Dimension size = view.sizeInCharacters();
                                 if (size.equals(currentSize))
                                         return;
                                 control.sizeChanged(size);

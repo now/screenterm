@@ -57,7 +57,11 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                                      d.height + factor * (i.top + i.bottom));
         }
 
-        public Dimension sizeInCharacters(Dimension size) {
+        public Dimension sizeInCharacters() {
+                return sizeInCharacters(getSize());
+        }
+
+        private Dimension sizeInCharacters(Dimension size) {
                 Dimension character = characterSize();
                 size = applyInsets(size, -1);
                 return new Dimension(size.width / character.width,
@@ -101,20 +105,18 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
         }
 
 	private Rectangle modelToView(int row, int column) {
+                FontMetrics m = getFontMetrics(getFont());
+                Insets i = getInsets();
                 String line = model.getLine(row);
-                String c = column < line.length() ? line.substring(column, column + 1) : " ";
-                String prefix = column < line.length() ? line.substring(0, column) : line;
-                FontMetrics metrics = getFontMetrics(getFont());
-                Insets insets = getInsets();
-                int x = insets.left +
-                        metrics.stringWidth(prefix) +
-                        (column < line.length() ?
-                                0 :
-                                metrics.stringWidth(" ") * (column - line.length()));
-                int width = metrics.stringWidth(c);
-                int height = metrics.getHeight();
-                int y = insets.top + row * height;
-                return new Rectangle(x, y, width, height);
+                String prefix = line.substring(0, Math.min(column, line.length()));
+                int x = i.left + m.stringWidth(prefix);
+                String c = " ";
+                if (column < line.length())
+                        c = line.substring(column, column + 1);
+                else
+                        x += m.stringWidth(" ") * (column - line.length());
+                int y = i.top + row * m.getHeight();
+                return new Rectangle(x, y, m.stringWidth(c), m.getHeight());
 	}
 	
 	private void redrawCursorPosition() {
