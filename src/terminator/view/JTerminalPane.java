@@ -50,7 +50,7 @@ public class JTerminalPane extends JPanel implements InputHandler {
         }
 
         public void handleInput(String input) {
-                control.sendUtf8String(input);
+                control.send(input);
                 view.userIsTyping();
         }
 

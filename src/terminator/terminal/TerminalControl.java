@@ -144,7 +144,7 @@ public class TerminalControl {
                         public String toString() {
                                 return "Change terminal size to " + size;
                         }
-                });
+                }});
 
                 try { ptyProcess.sendResizeNotification(size); } catch (Exception e) {
                         Log.warn("Notifying " + ptyProcess +
@@ -159,17 +159,13 @@ public class TerminalControl {
                 actions.flush();
 	}
 	
-	public void sendUtf8String(final String s) {
-		writerExecutor.execute(new Runnable() {
-			public void run() {
-				try {
-                                        ptyProcess.write(s);
-				} catch (IOException ex) {
-                                        Log.warn("Couldn't send string \"" +
-                                                 StringUtilities.escapeForJava(s) +
-                                                 "\" to " + ptyProcess, ex);
-				}
-			}
-		});
+	public void send(final String s) {
+                writerExecutor.execute(new Runnable() { public void run() {
+                        try { ptyProcess.write(s); } catch (IOException e) {
+                                Log.warn("Couldn't send “" +
+                                         StringUtilities.escapeForJava(s) +
+                                         "” to " + ptyProcess, e);
+                        }
+                }});
 	}
 }
