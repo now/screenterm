@@ -40,29 +40,19 @@ public class TerminalControl {
                 actions = new ActionQueue(model);
 	}
 	
-	public void initProcess(List<String> command, String workingDirectory) throws Throwable {
-		// We always want to start a login shell.
-		// This used to be an option, but it wasn't very useful and it caused confusion.
-		// It's also hard to explain the difference without assuming a detailed knowledge of the particular shell.
-		// We used to use "--login", but "-l" was more portable.
-		// tcsh(1) is so broken that "-l" can only appear on its own.
-		// POSIX's sh(1) doesn't even have the notion of login shell (though it does specify vi-compatible line editing).
-		// So now we use the 1970s trick of prefixing argv[0] with "-".
-		String[] argv = command.toArray(new String[command.size()]);
-		String executable = argv[0];
-		// We deliberately use reference equality here so we're sure we know what we're meddling with.
-		// We only want to modify a call to the user's default shell that Terminator itself inserted into 'command'.
-		// If the user's messing about with -e, they get what they ask for no matter what that is.
-		// Since we only support -e for compatibility purposes, it's important to have a compatible implementation!
-		if (argv[0] == TERMINATOR_DEFAULT_SHELL) {
-			argv[0] = "-" + argv[0];
-		}
-		
-		// We log an announceConnectionLost message if we fail to create the PtyProcess, so we need the TerminalLogWriter first.
-		this.ptyProcess = new PTYProcess(executable, argv, workingDirectory);
-		Log.warn("Created " + ptyProcess);
-		writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
-	}
+        public void initProcess(List<String> command, String workingDirectory) throws Throwable {
+                String[] argv = command.toArray(new String[command.size()]);
+                String executable = argv[0];
+                markAsLoginShellIfDefault(argv);
+
+                writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
+                ptyProcess = new PTYProcess(executable, argv, workingDirectory);
+        }
+
+        private void markAsLoginShellIfDefault(String[] argv) {
+                if (argv[0] == TERMINATOR_DEFAULT_SHELL)
+                        argv[0] = "-" + argv[0];
+        }
 	
 	public static ArrayList<String> getDefaultShell() {
 		ArrayList<String> command = new ArrayList<String>();
