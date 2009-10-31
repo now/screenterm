@@ -1,7 +1,6 @@
 package terminator;
 
 import com.apple.eawt.*;
-import e.gui.*;
 import e.util.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
