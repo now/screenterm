@@ -51,8 +51,8 @@ public class TerminalControl {
                 String executable = argv[0];
                 markAsLoginShellIfDefault(argv);
 
-                writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
                 ptyProcess = new PTYProcess(executable, argv, workingDirectory);
+                writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
         }
 
         private void markAsLoginShellIfDefault(String[] argv) {
