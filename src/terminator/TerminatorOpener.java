@@ -49,7 +49,7 @@ public class TerminatorOpener implements Runnable {
     
     public TerminatorFrame createUi() {
             try {
-                    this.window = Terminator.getSharedInstance().openFrame(JTerminalPane.newShell());
+                    this.window = Terminator.instance().openFrame(JTerminalPane.newShell());
                     return window;
             } catch (UsageError ex) {
                     err.println(ex.getMessage());

@@ -17,7 +17,7 @@ public class Terminator {
 	
 	private Frames frames = new Frames();
 	
-	public static Terminator getSharedInstance() {
+	public static Terminator instance() {
 		return INSTANCE;
 	}
 
@@ -25,9 +25,9 @@ public class Terminator {
                 EventQueue.invokeLater(new Runnable() { public void run() {
                         try {
                                 GuiUtilities.initLookAndFeel();
-                                getSharedInstance().initInterface();
+                                instance().initInterface();
 
-                                if (!getSharedInstance().parseArgs(Arrays.asList(args)))
+                                if (!instance().parseArgs(Arrays.asList(args)))
                                         System.exit(1);
                         } catch (Throwable t) {
                                 Log.warn("Couldn’t start Terminator.", t);

@@ -112,7 +112,7 @@ public class TerminatorMenuBar extends EMenuBar {
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			Terminator.getSharedInstance().openFrame(JTerminalPane.newShell());
+			Terminator.instance().openFrame(JTerminalPane.newShell());
 		}
 	}
 	
