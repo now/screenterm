@@ -127,41 +127,41 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 repaint(modelToView(cursor));
         }
 	
-	public void paintComponent(Graphics oldGraphics) {
+        public void paintComponent(Graphics graphics) {
 		Stopwatch.Timer timer = paintComponentStopwatch.start();
 		try {
-                        Graphics2D g = (Graphics2D)oldGraphics;
-			
-                        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                                           RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-			
-			Rectangle rect = g.getClipBounds();
-			g.setColor(Style.DEFAULT.background());
-			g.fill(rect);
-			
-                        FontMetrics metrics = g.getFontMetrics();
-                        int charHeight = Math.max(metrics.getHeight(), 1);
-                        Insets insets = getInsets();
-                        int first = (rect.y - insets.top) / charHeight;
-                        int last = (rect.y - insets.top + rect.height + charHeight - 1) / charHeight;
-                        int baseline = insets.top + charHeight * first - metrics.getMaxDescent();
-                        int maxX = rect.x + rect.width;
-                        for (TextLine line : model.region(first, last)) {
-                                baseline += charHeight;
-                                paintLine(g, line, insets.left, baseline, maxX);
-                        }
-                        cursorPainter.paint(g, first, last);
+                        Graphics2D g = (Graphics2D)graphics;
+
+                        Rectangle r = g.getClipBounds();
+                        g.setColor(Style.DEFAULT.background());
+                        g.fill(r);
+
+                        FontMetrics m = g.getFontMetrics();
+                        int h = Math.max(m.getHeight(), 1);
+                        Insets i = getInsets();
+                        paintLines(g, (r.y - i.top) / h, (r.height + h - 1) / h, i.left,
+                                   r.y + h - m.getMaxDescent(), r.x + r.width);
 		} finally {
 			timer.stop();
 		}
 	}
 
-        private void paintLine(Graphics2D g, TextLine line, int x, int y, int maxX) {
+        private void paintLines(Graphics2D g, int first, int count,
+                                int x, int y, int maxX) {
+                g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                                   RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+                for (TextLine line : model.region(first, first + count))
+                        y += paintLine(g, line, x, y, maxX);
+                cursorPainter.paint(g, first, first + count);
+        }
+
+        private int paintLine(Graphics2D g, TextLine line, int x, int y, int maxX) {
                 for (StyledText text : line.styledTexts()) {
                         if (x >= maxX)
                                 break;
                         x += paintStyledText(g, text, x, y);
                 }
+                return g.getFontMetrics().getHeight();
         }
 
         private int paintStyledText(Graphics2D g, StyledText text, int x, int y) {
