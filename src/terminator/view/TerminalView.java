@@ -139,7 +139,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 			g.setColor(Style.DEFAULT.background());
 			g.fill(rect);
 			
-                        FontMetrics metrics = getFontMetrics(getFont());
+                        FontMetrics metrics = g.getFontMetrics();
                         int charHeight = Math.max(metrics.getHeight(), 1);
                         Insets insets = getInsets();
                         int first = (rect.y - insets.top) / charHeight;
@@ -148,7 +148,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                         int maxX = rect.x + rect.width;
                         for (TextLine line : model.region(first, last)) {
                                 baseline += charHeight;
-                                paintLine(g, metrics, line, insets.left, baseline, maxX);
+                                paintLine(g, line, insets.left, baseline, maxX);
                         }
                         cursorPainter.paint(g, first, last);
 		} finally {
@@ -156,17 +156,15 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 		}
 	}
 
-        private void paintLine(Graphics2D g, FontMetrics metrics,
-                               TextLine line, int x, int y, int maxX) {
+        private void paintLine(Graphics2D g, TextLine line, int x, int y, int maxX) {
                 for (StyledText text : line.styledTexts()) {
                         if (x >= maxX)
                                 break;
-                        x += paintStyledText(g, metrics, text, x, y);
+                        x += paintStyledText(g, text, x, y);
                 }
         }
 
-        private int paintStyledText(Graphics2D g, FontMetrics metrics,
-                                    StyledText text, int x, int y) {
+        private int paintStyledText(Graphics2D g, StyledText text, int x, int y) {
                 Stopwatch.Timer timer = paintStyledTextStopwatch.start();
                 try {
                         Style style = text.getStyle();
@@ -179,11 +177,11 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                                 background = oldForeground;
                         }
                         
-                        int width = metrics.stringWidth(text.getText());
+                        int width = g.getFontMetrics().stringWidth(text.getText());
                         if (!background.equals(getBackground()))
-                                paintBackground(g, metrics, x, y, width, background);
+                                paintBackground(g, x, y, width, background);
                         if (style.underline())
-                                paintUnderline(g, metrics, x, y, width, foreground);
+                                paintUnderline(g, x, y, width, foreground);
                         g.setColor(foreground);
                         g.drawString(text.getText(), x, y);
                         return width;
@@ -192,15 +190,14 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 }
         }
 
-        private void paintBackground(Graphics2D g, FontMetrics m, int x, int y,
-                                     int width, Color c) {
+        private void paintBackground(Graphics2D g, int x, int y, int width, Color c) {
+                FontMetrics m = g.getFontMetrics();
                 g.setColor(c);
                 g.fillRect(x, y - m.getMaxAscent() - m.getLeading(),
                            width, m.getHeight());
         }
 
-        private void paintUnderline(Graphics2D g, FontMetrics m, int x, int y,
-                                    int width, Color c) {
+        private void paintUnderline(Graphics2D g, int x, int y, int width, Color c) {
                 g.setColor(new Color(c.getRed(), c.getGreen(), c.getBlue(), 128));
                 g.drawLine(x, y + 1, x + width, y + 1);
         }
