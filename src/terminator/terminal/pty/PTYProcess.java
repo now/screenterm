@@ -37,16 +37,14 @@ public class PTYProcess {
         }
 
         private void startProcess(final String executable, final String[] argv, final String workingDirectory) throws Exception {
-                invoke(new Callable<Exception>() {
-                        public Exception call() {
-                                try {
-                                        nativeStartProcess(executable, argv, workingDirectory);
-                                        return null;
-                                } catch (Exception ex) {
-                                        return ex;
-                                }
+                invoke(new Callable<Exception>() { public Exception call() {
+                        try {
+                                nativeStartProcess(executable, argv, workingDirectory);
+                                return null;
+                        } catch (Exception e) {
+                                return e;
                         }
-                });
+                }});
                 if (pid == -1)
                         throw new IOException("Couldn’t start process \"" + executable + "\"");
         }
@@ -67,16 +65,14 @@ public class PTYProcess {
         public native void sendResizeNotification(Dimension sizeInChars) throws IOException;
 
         public void waitFor() throws Exception {
-                invoke(new Callable<Exception>() {
-                        public Exception call() {
-                                try {
-                                        waitPID();
-                                        return null;
-                                } catch (Exception ex) {
-                                        return ex;
-                                }
+                invoke(new Callable<Exception>() { public Exception call() {
+                        try {
+                                waitPID();
+                                return null;
+                        } catch (Exception e) {
+                                return e;
                         }
-                });
+                }});
                 executorService.shutdownNow();
         }
 
