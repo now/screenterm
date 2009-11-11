@@ -56,10 +56,14 @@ public class TextLine {
                         return 0;
                 StyledText segment = i.next();
                 i.remove();
-                StyledText remainder = segment.removeRange(from, from + count);
-                if (remainder != StyledText.EMPTY)
-                        i.add(remainder);
+                StyledText remainder = segment.remove(from, count);
+                addIfNotEmpty(i, remainder);
                 return count - (segment.length() - remainder.length());
+        }
+
+        private void addIfNotEmpty(ListIterator<StyledText> i, StyledText segment) {
+                if (segment != StyledText.EMPTY)
+                        i.add(segment);
         }
 
         public void clearFrom(int index) {
@@ -111,9 +115,9 @@ public class TextLine {
         private void insertInside(ListIterator<StyledText> i, int offset, String text, Style style) {
                 StyledText segment = i.next();
                 i.remove();
-                i.add(segment.removeRange(offset, segment.length()));
+                addIfNotEmpty(i, segment.before(offset));
                 insertAt(i, text, style);
-                i.add(segment.removeRange(0, offset));
+                addIfNotEmpty(i, segment.after(offset));
         }
 
         public void writeTextAt(int offset, String text, Style style) {
