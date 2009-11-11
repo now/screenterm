@@ -27,8 +27,7 @@ class Terminator
         log_directory = File.join(dot_directory, "logs")
         make_directory(dot_directory, true)
         make_directory(log_directory, false)
-        options_pathname = File.join(dot_directory, "options")
-        
+
         server_port_file_stem = File.join(dot_directory, "terminator-server-port")
         # Colons have a special meaning on Windows file systems.
         display = ENV["DISPLAY"]
