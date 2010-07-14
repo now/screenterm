@@ -2,13 +2,13 @@ package terminator.view;
 
 import e.util.ComponentUtilities;
 import e.util.GuiUtilities;
-import e.util.Stopwatch;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
 import terminator.model.*;
 import terminator.model.Cursor;
+import terminator.util.*;
 
 public class TerminalView extends JComponent implements FocusListener, TerminalListener {
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
