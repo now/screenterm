@@ -1,10 +1,10 @@
 package terminator;
 
 import e.gui.*;
-import e.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import terminator.util.*;
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame {
@@ -25,7 +25,7 @@ public class TerminatorFrame extends JFrame {
 	}
 
         private void workAroundJavaBug6526971() {
-                if (!GuiUtilities.isWindows())
+                if (!OS.isWindows())
                         return;
                 addWindowFocusListener(new WindowAdapter() {
                         @Override

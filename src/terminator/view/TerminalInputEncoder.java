@@ -1,16 +1,16 @@
 package terminator.view;
 
-import e.util.*;
 import java.awt.event.*;
 
 import terminator.*;
+import terminator.util.*;
 
 class TerminalInputEncoder implements KeyListener {
 	// The probably over-simplified belief here is that Unix terminals always send ^?.
 	// Windows's ReadConsoleInput function always provides applications with ^H, so that's what they expect.
 	// Cygwin telnet unhelpfully doesn't translate this to ^?, unlike PuTTY.
 	// Cygwin ssh tells the server to expect ^H, which means that backspace works, although the Emacs help is hidden.
-	private static final String ERASE_STRING = String.valueOf(GuiUtilities.isWindows() ? Ascii.BS : Ascii.DEL);
+	private static final String ERASE_STRING = String.valueOf(OS.isWindows() ? Ascii.BS : Ascii.DEL);
 	
         private InputHandler handler;
 
@@ -62,12 +62,12 @@ class TerminalInputEncoder implements KeyListener {
         }
 
         private void transmitEscape(KeyEvent event) {
-                if (GuiUtilities.isMacOs())
+                if (OS.isMacOs())
                         transmit(event, Ascii.ESC);
         }
 
         private void transmitEnter(KeyEvent event) {
-                if (GuiUtilities.isMacOs() &&
+                if (OS.isMacOs() &&
                     event.getKeyLocation() == KeyEvent.KEY_LOCATION_NUMPAD)
                         transmit(event, Ascii.CR);
         }

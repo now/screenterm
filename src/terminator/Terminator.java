@@ -9,6 +9,7 @@ import java.net.*;
 import java.util.*;
 import java.util.List;
 
+import terminator.util.*;
 import terminator.view.*;
 
 public class Terminator {
@@ -40,7 +41,7 @@ public class Terminator {
 	}
 	
 	private void initMacOsEventHandlers() {
-                if (!GuiUtilities.isMacOs())
+                if (!OS.isMacOs())
 			return;
 		
 		Application.getApplication().addApplicationListener(new ApplicationAdapter() {
@@ -63,7 +64,7 @@ public class Terminator {
         }
 
 	private void initInterface() {
-		if (GuiUtilities.isMacOs())
+		if (OS.isMacOs())
                         return;
 
                 TerminatorMenuBar.setDefaultKeyStrokeModifiers(KeyEvent.ALT_MASK);

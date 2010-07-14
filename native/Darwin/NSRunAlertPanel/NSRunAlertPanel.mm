@@ -1,4 +1,5 @@
 #import <AppKit/AppKit.h>
+//#import <CoreFoundation/CoreFoundation.h>
 #import <iostream>
 #import "ScopedAutoReleasePool.h"
 
@@ -9,6 +10,12 @@ main(int argc, const char *const *argv)
                 std::cerr << "Usage: " << argv[0] << " TITLE MESSAGE" << std::endl;
                 return 1;
         }
+
+/*
+        CFUserNotificationDisplayAlert(0, 0, NULL, NULL, NULL,
+                                       CFSTR("header"), CFSTR("message"), CFSTR("default button"),
+                                       CFSTR("alt button"), CFSTR("other button"), NULL);
+                                     */
 
         ScopedAutoReleasePool pool;
         [NSApplication sharedApplication];

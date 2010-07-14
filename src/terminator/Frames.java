@@ -1,11 +1,12 @@
 package terminator;
 
 import e.gui.*;
-import e.util.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
+
+import terminator.util.*;
 
 public class Frames {
         private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
@@ -36,7 +37,7 @@ public class Frames {
                         }
                 });
 
-                if (GuiUtilities.isMacOs())
+                if (OS.isMacOs())
                         WindowMenu.getSharedInstance().addWindow(frame);
 
                 frameStateChanged();
@@ -50,7 +51,7 @@ public class Frames {
         }
     
         private void frameStateChanged() {
-                if (!GuiUtilities.isMacOs())
+                if (!OS.isMacOs())
                         return;
 
                 boolean noFramesVisible = true;
