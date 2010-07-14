@@ -1,8 +1,8 @@
 package terminator.view;
 
-import e.util.GuiUtilities;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.*;
 import java.util.*;
 import javax.swing.*;
 
@@ -14,7 +14,12 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 	private static final Stopwatch paintComponentStopwatch = Stopwatch.get("TerminalView.paintComponent");
 	private static final Stopwatch paintStyledTextStopwatch = Stopwatch.get("TerminalView.paintStyledText");
         private static final Font font = new Font("DejaVu Sans Mono", Font.PLAIN, 14);
-	
+        private static final java.awt.Cursor invisibleCursor =
+          Toolkit.getDefaultToolkit().createCustomCursor(
+            new BufferedImage(1, 1, BufferedImage.TYPE_4BYTE_ABGR),
+            new Point(0, 0),
+            "invisible");
+
 	private TerminalModel model;
         private CursorPainter cursorPainter;
 	
@@ -90,7 +95,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 
 	public void userIsTyping() {
                 redrawCursorPosition();
-                setCursor(GuiUtilities.INVISIBLE_CURSOR);
+                setCursor(invisibleCursor);
 	}
 
 	public void contentsChanged(int row) {
