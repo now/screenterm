@@ -8,7 +8,8 @@ class Terminator::Server
 
   def connect
     return false unless FileUtils.uptodate? @connection, [__FILE__]
-    stop_gnome_startup if actually_connect
+    return false unless actually_connect
+    stop_gnome_startup
     true
   end
 
