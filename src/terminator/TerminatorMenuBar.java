@@ -19,7 +19,6 @@ public class TerminatorMenuBar extends EMenuBar {
 
 	private JMenu makeFileMenu() {
 		JMenu menu = new JMenu("File");
-                menu.setMnemonic('F');
 		menu.add(new NewShellAction());
 		menu.addSeparator();
 		menu.add(new CloseAction());

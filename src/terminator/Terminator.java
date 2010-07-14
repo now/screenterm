@@ -1,14 +1,17 @@
 package terminator;
 
 import com.apple.eawt.*;
+import e.debug.HungAwtExit;
 import e.util.GuiUtilities;
 import e.util.InAppServer;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
 import java.util.List;
+import javax.swing.*;
 
 import terminator.util.*;
 import terminator.view.*;
@@ -25,7 +28,7 @@ public class Terminator {
         public static void main(final String[] args) {
                 EventQueue.invokeLater(new Runnable() { public void run() {
                         try {
-                                GuiUtilities.initLookAndFeel();
+                                instance().initLookAndFeel();
                                 instance().initInterface();
 
                                 if (!instance().parseArgs(Arrays.asList(args)))
@@ -64,12 +67,47 @@ public class Terminator {
                 return frames.add(new TerminatorFrame(terminalPane));
         }
 
+        private void initLookAndFeel() {
+          try {
+            workAroundSunBug6389282();
+            setLookandFeel();
+            HungAwtExit.initMBean();
+          } catch (Exception e) {
+            Log.warn("Problem setting up GUI defaults.", e);
+          }
+        }
+
+        private void workAroundSunBug6389282() {
+          UIManager.getInstalledLookAndFeels();
+        }
+
+        private void setLookandFeel() throws Exception {
+          String laf = System.getProperty("swing.defaultlaf");
+          if (laf == null)
+            laf = UIManager.getSystemLookAndFeelClassName();
+          UIManager.setLookAndFeel(laf);
+          setWMClass(laf);
+        }
+
+        private void setWMClass(String laf) {
+          if (!laf.contains("GTK"))
+            return;
+
+          try {
+            Toolkit toolkit = Toolkit.getDefaultToolkit();
+            Field field = toolkit.getClass().getDeclaredField("awtAppClassName");
+            field.setAccessible(true);
+            field.set(toolkit, Log.getApplicationName());
+          } catch (Throwable t) {
+            Log.warn("Failed to set WM_CLASS.", t);
+          }
+        }
+
 	private void initInterface() {
 		if (OS.isMacOs())
                         return;
 
                 TerminatorMenuBar.setDefaultKeyStrokeModifiers(KeyEvent.ALT_MASK);
-                GuiUtilities.setMnemonicsEnabled(false);
 	}
 
         private boolean parseArgs(final List<String> arguments) {
