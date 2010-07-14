@@ -2,7 +2,6 @@ package terminator.model;
 
 import java.awt.Dimension;
 import java.util.*;
-import e.util.*;
 
 public class TextLines {
         private LinkedList<TextLine> textLines = new LinkedList<TextLine>();

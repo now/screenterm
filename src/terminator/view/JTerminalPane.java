@@ -4,11 +4,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
-import e.util.*;
 
 import terminator.*;
 import terminator.model.*;
 import terminator.terminal.*;
+import terminator.util.*;
 
 public class JTerminalPane extends JPanel implements InputHandler {
 	private TerminalControl control;

@@ -1,11 +1,11 @@
 package terminator.terminal.states;
 
-import e.util.*;
 import java.awt.*;
 
 import terminator.*;
 import terminator.terminal.*;
 import terminator.terminal.actions.*;
+import terminator.util.*;
 
 public class CSIParameterState extends State {
         private static CSIParameterState instance = new CSIParameterState();

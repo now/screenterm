@@ -1,6 +1,6 @@
 package terminator.terminal;
 
-import e.util.*;
+import e.util.ThreadUtilities;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.*;
@@ -10,6 +10,7 @@ import terminator.model.*;
 import terminator.terminal.actions.*;
 import terminator.terminal.pty.*;
 import terminator.terminal.states.*;
+import terminator.util.*;
 
 /**
  * Ties together the subprocess reader thread, the subprocess writer thread, and the thread that processes the subprocess' output.
@@ -120,9 +121,10 @@ public class TerminalControl {
         }
 
         public void reportFailure(String description, Throwable t) {
-                announceConnectionLost(StringUtilities.stackTraceFromThrowable(t).
-                                                       replaceAll("\n", "\n\r") +
-                                       "[" + description + ".]");
+          StringWriter writer = new StringWriter();
+          t.printStackTrace(new PrintWriter(writer));
+          announceConnectionLost(writer.toString().replaceAll("\n", "\n\r") +
+                                 "[" + description + ".]");
         }
 	
 	private void announceConnectionLost(String message) {
@@ -163,9 +165,34 @@ public class TerminalControl {
                 writerExecutor.execute(new Runnable() { public void run() {
                         try { ptyProcess.write(s); } catch (IOException e) {
                                 Log.warn("Couldn't send “" +
-                                         StringUtilities.escapeForJava(s) +
+                                         escape(s) +
                                          "” to " + ptyProcess, e);
                         }
                 }});
 	}
+
+        private String escape(final String s) {
+          final StringBuilder result = new StringBuilder(s.length());
+          for (int i = 0; i < s.length(); i++) {
+            final char c = s.charAt(i);
+            if (c == '\\') {
+              result.append("\\\\");
+            } else if (c == '\n') {
+              result.append("\\n");
+            } else if (c == '\r') {
+              result.append("\\r");
+            } else if (c == '\t') {
+              result.append("\\t");
+            } else if (c < ' ' || c > '~') {
+              String digits = Integer.toString(c, 16);
+              result.append("\\u");
+              for (int j = 0; j < 4 - digits.length(); i++)
+                result.append('0');
+              result.append(digits);
+            } else {
+              result.append(c);
+            }
+          }
+          return result.toString();
+        }
 }

@@ -1,11 +1,11 @@
 package terminator.terminal;
 
-import e.util.*;
 import java.awt.*;
 import java.util.*;
 import java.util.concurrent.*;
 
 import terminator.model.*;
+import terminator.util.*;
 
 public class ActionQueue {
         private ArrayList<TerminalAction> actions = new ArrayList<TerminalAction>();

@@ -1,11 +1,10 @@
 package terminator.terminal.states;
 
-import e.util.*;
-
 import terminator.model.*;
 import terminator.terminal.*;
 import terminator.terminal.actions.*;
 import terminator.terminal.charactersets.*;
+import terminator.util.*;
 
 public abstract class State {
         public State process(ActionQueue actions, char c) {

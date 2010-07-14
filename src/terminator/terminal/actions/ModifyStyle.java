@@ -1,6 +1,5 @@
 package terminator.terminal.actions;
 
-import e.util.*;
 import java.awt.Color;
 
 import terminator.model.*;

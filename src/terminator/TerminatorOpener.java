@@ -1,10 +1,11 @@
 package terminator;
 
-import e.util.*;
 import java.awt.*;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+
+import terminator.util.*;
 import terminator.view.*;
 
 public class TerminatorOpener implements Runnable {

@@ -1,7 +1,8 @@
 package terminator.model;
 
 import java.awt.Dimension;
-import e.util.*;
+
+import terminator.util.*;
 
 class Region {
         public static final Region INITIAL = new Region(new Dimension(1, 1), 0, 1);

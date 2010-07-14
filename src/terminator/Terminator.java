@@ -1,7 +1,8 @@
 package terminator;
 
 import com.apple.eawt.*;
-import e.util.*;
+import e.util.GuiUtilities;
+import e.util.InAppServer;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.*;

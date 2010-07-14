@@ -1,10 +1,13 @@
 package terminator.terminal.pty;
 
-import e.util.*;
+import e.util.FileUtilities;
+import e.util.ThreadUtilities;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.concurrent.*;
 import org.jessies.os.*;
+
+import terminator.util.*;
 
 public class PTYProcess {
         private static final String CHARSET_NAME = "UTF-8";

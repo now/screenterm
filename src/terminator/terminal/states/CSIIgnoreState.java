@@ -1,7 +1,5 @@
 package terminator.terminal.states;
 
-import e.util.*;
-
 import terminator.terminal.*;
 
 public class CSIIgnoreState extends State {

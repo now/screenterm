@@ -1,9 +1,11 @@
 package terminator.view;
 
+import e.util.ComponentUtilities;
+import e.util.GuiUtilities;
+import e.util.Stopwatch;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import e.util.*;
 
 import terminator.model.*;
 import terminator.model.Cursor;
