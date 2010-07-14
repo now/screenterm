@@ -1,9 +1,9 @@
 package terminator.view;
 
-import e.util.ComponentUtilities;
 import e.util.GuiUtilities;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 
 import terminator.model.*;
@@ -27,7 +27,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
 
                 setFixedSize(optimalViewSize());
 
-                ComponentUtilities.disableFocusTraversal(this);
+                disableFocusTraversal();
 
 		addFocusListener(this);
 		addMouseListener(new MouseAdapter() {
@@ -80,6 +80,12 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
                 setMaximumSize(size);
                 setPreferredSize(size);
                 setSize(size);
+        }
+
+        private void disableFocusTraversal() {
+          Set<AWTKeyStroke> empty = Collections.emptySet();
+          setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, empty);
+          setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, empty);
         }
 
 	public void userIsTyping() {
