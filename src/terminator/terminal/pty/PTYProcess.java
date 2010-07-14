@@ -1,6 +1,5 @@
 package terminator.terminal.pty;
 
-import e.util.FileUtilities;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.concurrent.*;
@@ -27,7 +26,7 @@ public class PTYProcess {
         private static synchronized void ensureLibraryLoaded() throws UnsatisfiedLinkError {
                 if (libraryLoaded)
                         return;
-                FileUtilities.loadNativeLibrary("pty");
+                NativeLibrary.load("pty");
                 libraryLoaded = true;
         }
 
