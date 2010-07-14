@@ -1,6 +1,5 @@
 package terminator.terminal;
 
-import e.util.ThreadUtilities;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.*;
@@ -53,7 +52,7 @@ public class TerminalControl {
                 markAsLoginShellIfDefault(argv);
 
                 ptyProcess = new PTYProcess(executable, argv, workingDirectory);
-                writerExecutor = ThreadUtilities.newSingleThreadExecutor(makeThreadName("Writer"));
+                writerExecutor = SingleThreadExecutor.create(makeThreadName("Writer"));
         }
 
         private void markAsLoginShellIfDefault(String[] argv) {

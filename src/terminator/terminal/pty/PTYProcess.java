@@ -1,7 +1,6 @@
 package terminator.terminal.pty;
 
 import e.util.FileUtilities;
-import e.util.ThreadUtilities;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.concurrent.*;
@@ -23,7 +22,7 @@ public class PTYProcess {
         private InputStreamReader input;
         private OutputStreamWriter output;
 
-        private final ExecutorService executorService = ThreadUtilities.newSingleThreadExecutor("Child Forker/Reaper");
+        private final ExecutorService executorService = SingleThreadExecutor.create("Child Forker/Reaper");
 
         private static synchronized void ensureLibraryLoaded() throws UnsatisfiedLinkError {
                 if (libraryLoaded)
