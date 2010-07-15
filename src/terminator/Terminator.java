@@ -2,7 +2,6 @@ package terminator;
 
 import com.apple.eawt.*;
 import e.debug.HungAwtExit;
-import e.util.GuiUtilities;
 import e.util.InAppServer;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -123,7 +122,7 @@ public class Terminator {
                 } finally {
                         out.flush();
                         err.flush();
-                        GuiUtilities.finishGnomeStartup();
+                        GnomeStartup.stop();
                 }
                 return true;
         }
