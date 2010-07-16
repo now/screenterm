@@ -17,7 +17,7 @@ module Terminator::Terminfo
     target = path + 'terminator'
     return if same? Definition, target
     path.mkpath
-    Definition.cp target
+    FileUtils.cp Definition, target
   end
 
   def self.same?(a, b)
