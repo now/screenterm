@@ -1,9 +1,13 @@
 package terminator;
 
-import e.util.GuiUtilities;
+import java.awt.Component;
+import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.concurrent.*;
+
+import terminator.util.*;
 
 public class TerminatorServer {
   public void parseCommandLine(PrintWriter out, String line) {
@@ -17,7 +21,7 @@ public class TerminatorServer {
     TerminatorFrame window = opener.openFromBackgroundThread();
     if (window == null)
       return;
-    GuiUtilities.waitForWindowToDisappear(window);
+    waitForWindowToBeClosed(window);
   }
 
   private String decode(String encoded) {
@@ -25,6 +29,23 @@ public class TerminatorServer {
       return URLDecoder.decode(encoded, "UTF-8");
     } catch (UnsupportedEncodingException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private void waitForWindowToBeClosed(final Component window) {
+    final CountDownLatch done = new CountDownLatch(1);
+    // FIXME: Can this be simplified?
+    window.addHierarchyListener(new HierarchyListener() {
+      @Override public void hierarchyChanged(HierarchyEvent e) {
+        if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 &&
+            !window.isShowing())
+          done.countDown();
+      }
+    });
+    try {
+      done.wait();
+    } catch (InterruptedException e) {
+      Log.warn("Waiting for window to be closed was interrupted", e);
     }
   }
 }
