@@ -4,17 +4,17 @@ import terminator.model.*;
 import terminator.terminal.*;
 
 public class MoveCursorUp implements TerminalAction {
-        private int count;
+  private int count;
 
-        public MoveCursorUp(int count) {
-                this.count = count;
-        }
+  public MoveCursorUp(int count) {
+    this.count = count;
+  }
 
-        public void perform(TerminalModelModifier model) {
-                model.moveCursorVertically(-count);
-        }
-        
-        public String toString() {
-                return "Move cursor up " + count + " rows";
-        }
+  public void perform(TerminalModelModifier model) {
+    model.moveCursorVertically(-count);
+  }
+
+  public String toString() {
+    return "Move cursor up " + count + " rows";
+  }
 }

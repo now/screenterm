@@ -9,77 +9,77 @@ import javax.swing.*;
 import terminator.util.*;
 
 public class Frames {
-        private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
-        private JFrame hiddenMacOSXFrame;
+  private ArrayList<TerminatorFrame> list = new ArrayList<TerminatorFrame>();
+  private JFrame hiddenMacOSXFrame;
 
-        public TerminatorFrame add(final TerminatorFrame frame) {
-                list.add(frame);
+  public TerminatorFrame add(final TerminatorFrame frame) {
+    list.add(frame);
 
-                frame.addWindowListener(new WindowAdapter() {
-                        @Override
-                        public void windowOpened(WindowEvent event) {
-                                frameStateChanged();
-                        }
+    frame.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowOpened(WindowEvent event) {
+        frameStateChanged();
+      }
 
-                        @Override
-                        public void windowClosed(WindowEvent event) {
-                                remove(frame);
-                        }
+    @Override
+      public void windowClosed(WindowEvent event) {
+        remove(frame);
+      }
 
-                        @Override
-                        public void windowIconified(WindowEvent event) {
-                                frameStateChanged();
-                        }
+    @Override
+      public void windowIconified(WindowEvent event) {
+        frameStateChanged();
+      }
 
-                        @Override
-                        public void windowDeiconified(WindowEvent event) {
-                                frameStateChanged();
-                        }
-                });
+    @Override
+      public void windowDeiconified(WindowEvent event) {
+        frameStateChanged();
+      }
+    });
 
-                if (OS.isMacOs())
-                        WindowMenu.getSharedInstance().addWindow(frame);
+    if (OS.isMacOs())
+      WindowMenu.getSharedInstance().addWindow(frame);
 
-                frameStateChanged();
+    frameStateChanged();
 
-                return frame;
-        }
-    
-        public void remove(TerminatorFrame frame) {
-                list.remove(frame);
-                frameStateChanged();
-        }
-    
-        private void frameStateChanged() {
-                if (!OS.isMacOs())
-                        return;
+    return frame;
+  }
 
-                boolean noFramesVisible = true;
-                for (TerminatorFrame frame : list)
-                        noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
-                getHiddenMacOSXFrame().setVisible(noFramesVisible);
-        }
+  public void remove(TerminatorFrame frame) {
+    list.remove(frame);
+    frameStateChanged();
+  }
 
-        private synchronized JFrame getHiddenMacOSXFrame() {
-                if (hiddenMacOSXFrame != null)
-                        return hiddenMacOSXFrame;
+  private void frameStateChanged() {
+    if (!OS.isMacOs())
+      return;
 
-                hiddenMacOSXFrame = new JFrame("Mac OS X Hidden Frame");
-                hiddenMacOSXFrame.setJMenuBar(new TerminatorMenuBar());
-                hiddenMacOSXFrame.setUndecorated(true);
-                hiddenMacOSXFrame.setLocation(new Point(-100, -100));
+    boolean noFramesVisible = true;
+    for (TerminatorFrame frame : list)
+      noFramesVisible = noFramesVisible && !frame.isShowingOnScreen();
+    getHiddenMacOSXFrame().setVisible(noFramesVisible);
+  }
 
-                return hiddenMacOSXFrame;
-        }
+  private synchronized JFrame getHiddenMacOSXFrame() {
+    if (hiddenMacOSXFrame != null)
+      return hiddenMacOSXFrame;
 
-        public boolean isEmpty() {
-                return list.isEmpty();
-        }
+    hiddenMacOSXFrame = new JFrame("Mac OS X Hidden Frame");
+    hiddenMacOSXFrame.setJMenuBar(new TerminatorMenuBar());
+    hiddenMacOSXFrame.setUndecorated(true);
+    hiddenMacOSXFrame.setLocation(new Point(-100, -100));
 
-        public boolean closeAll() {
-                // We need to copy frames as we will be mutating it.
-                for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
-                        frame.close();
-                return true;
-        }
+    return hiddenMacOSXFrame;
+  }
+
+  public boolean isEmpty() {
+    return list.isEmpty();
+  }
+
+  public boolean closeAll() {
+    // We need to copy frames as we will be mutating it.
+    for (TerminatorFrame frame : new ArrayList<TerminatorFrame>(list))
+      frame.close();
+    return true;
+  }
 }

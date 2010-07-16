@@ -11,74 +11,74 @@ import terminator.terminal.*;
 import terminator.util.*;
 
 public class JTerminalPane extends JPanel implements InputHandler {
-	private TerminalControl control;
-	private TerminalView view;
+  private TerminalControl control;
+  private TerminalView view;
 
-	public static JTerminalPane newCommandWithArgV(String workingDirectory, List<String> argV) {
-		if (argV.size() == 0)
-			argV = TerminalControl.getDefaultShell();
-		return new JTerminalPane(workingDirectory, argV);
-	}
+  public static JTerminalPane newCommandWithArgV(String workingDirectory, List<String> argV) {
+    if (argV.size() == 0)
+      argV = TerminalControl.getDefaultShell();
+    return new JTerminalPane(workingDirectory, argV);
+  }
 
-	public static JTerminalPane newShell() {
-                return new JTerminalPane(null, TerminalControl.getDefaultShell());
-	}
+  public static JTerminalPane newShell() {
+    return new JTerminalPane(null, TerminalControl.getDefaultShell());
+  }
 
-        private JTerminalPane(String workingDirectory, List<String> command) {
-                super(new BorderLayout());
+  private JTerminalPane(String workingDirectory, List<String> command) {
+    super(new BorderLayout());
 
-                TerminalModel model = new TerminalModel();
-                control = new TerminalControl(model);
-		view = new TerminalView(model);
-                view.addKeyListener(new TerminalInputEncoder(this));
+    TerminalModel model = new TerminalModel();
+    control = new TerminalControl(model);
+    view = new TerminalView(model);
+    view.addKeyListener(new TerminalInputEncoder(this));
 
-		add(view, BorderLayout.CENTER);
+    add(view, BorderLayout.CENTER);
 
-		try {
-			control.initProcess(command, workingDirectory);
-			initSizeMonitoring();
-                } catch (Throwable t) {
-                        reportTerminalInitializationFailure(t);
-		}
-	}
+    try {
+      control.initProcess(command, workingDirectory);
+      initSizeMonitoring();
+    } catch (Throwable t) {
+      reportTerminalInitializationFailure(t);
+    }
+  }
 
-        private void reportTerminalInitializationFailure(final Throwable t) {
-                Log.warn("Couldn’t initialize terminal", t);
-                new Thread(new Runnable() { @Override public void run() {
-                        control.reportFailure("Terminal initialization failed", t);
-                }}).start();
-        }
+  private void reportTerminalInitializationFailure(final Throwable t) {
+    Log.warn("Couldn’t initialize terminal", t);
+    new Thread(new Runnable() { @Override public void run() {
+      control.reportFailure("Terminal initialization failed", t);
+    }}).start();
+  }
 
-        public void handleInput(String input) {
-                control.send(input);
-                view.userIsTyping();
-        }
+  public void handleInput(String input) {
+    control.send(input);
+    view.userIsTyping();
+  }
 
-	private void initSizeMonitoring() {
-		addComponentListener(new ComponentAdapter() {
-                        private Dimension currentSize;
+  private void initSizeMonitoring() {
+    addComponentListener(new ComponentAdapter() {
+      private Dimension currentSize;
 
-			@Override
-			public void componentResized(ComponentEvent event) {
-                                Dimension size = view.sizeInCharacters();
-                                if (size.equals(currentSize))
-                                        return;
-                                control.sizeChanged(size);
-                                currentSize = size;
-			}
-	
-		});
-	}
+      @Override
+      public void componentResized(ComponentEvent event) {
+        Dimension size = view.sizeInCharacters();
+        if (size.equals(currentSize))
+      return;
+    control.sizeChanged(size);
+    currentSize = size;
+      }
 
-	public void start() {
-		control.start();
-	}
+    });
+  }
 
-	public void requestFocus() {
-		view.requestFocus();
-	}
+  public void start() {
+    control.start();
+  }
 
-	public void destroyProcess() {
-		control.destroyProcess();
-	}
+  public void requestFocus() {
+    view.requestFocus();
+  }
+
+  public void destroyProcess() {
+    control.destroyProcess();
+  }
 }
