@@ -1,7 +1,8 @@
 package terminator.terminal.pty;
 
 import java.io.*;
-import org.jessies.os.*;
+
+import terminator.util.*;
 
 class PTYOutputStream extends OutputStream {
         private int fd;
@@ -23,7 +24,7 @@ class PTYOutputStream extends OutputStream {
                                 continue;
                         if (n < 0)
                                 throw new IOException("Writing to PTY failed: " +
-                                                      Errno.toString(-n));
+                                                      new Errno(-n).toString());
                         offset += n;
                         count -= n;
                 }

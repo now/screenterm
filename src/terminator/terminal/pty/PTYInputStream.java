@@ -1,7 +1,8 @@
 package terminator.terminal.pty;
 
 import java.io.*;
-import org.jessies.os.*;
+
+import terminator.util.*;
 
 class PTYInputStream extends InputStream {
         private int fd;
@@ -23,6 +24,6 @@ class PTYInputStream extends InputStream {
                 } while (n < 0 && -n == Errno.EINTR);
                 if (n >= 0)
                         return n;
-                throw new IOException("Reading from PTY failed: " + Errno.toString(-n));
+                throw new IOException("Reading from PTY failed: " + new Errno(-n).toString());
         }
 }

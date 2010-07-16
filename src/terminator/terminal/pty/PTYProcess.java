@@ -3,7 +3,6 @@ package terminator.terminal.pty;
 import java.awt.Dimension;
 import java.io.*;
 import java.util.concurrent.*;
-import org.jessies.os.*;
 
 import terminator.util.*;
 
@@ -89,7 +88,7 @@ public class PTYProcess {
 
                 if (result < 0)
                         throw new IOException("Waiting for PTY process failed: " +
-                                              Errno.toString(-result));
+                                              new Errno(-result).toString());
 
         }
 
@@ -116,12 +115,12 @@ public class PTYProcess {
         public String toExitString() {
                 if (status == null)
                         return "Process is still running";
-                else if (status.WIFEXITED())
-                        return "Process exited with status " + status.WEXITSTATUS();
-		else if (status.WIFSIGNALED())
+                else if (status.exited())
+                        return "Process exited with status " + status.exitStatus();
+		else if (status.signaled())
                         return "Process killed by " +
-                                Signal.toString(status.WTERMSIG()) +
-                                (status.WCOREDUMP() ? " — core dumped" : "");
+                                new Signal(status.terminationSignal()).toString() +
+                                (status.coreDumped() ? " — core dumped" : "");
 		else
                         return "Lost contact with process";
         }
@@ -132,7 +131,7 @@ public class PTYProcess {
                 int rc = Posix.killpg(pid, Signal.SIGHUP);
                 if (rc < 0)
                         throw new IOException("Killing process failed: " +
-                                              Errno.toString(-rc));
+                                              new Errno(-rc).toString());
                 status = new WaitStatus();
         }
 }
