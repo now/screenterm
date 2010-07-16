@@ -1,19 +1,35 @@
 package terminator;
 
-import e.gui.*;
+import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import javax.imageio.*;
 import javax.swing.*;
 
 import terminator.util.*;
 import terminator.view.*;
 
 public class TerminatorFrame extends JFrame {
+  private static final Image ICON;
+  static {
+    String path = System.getProperty("org.jessies.frameIcon");
+    Image image = null;
+    try {
+      if (path != null)
+        image = ImageIO.read(new File(path));
+    } catch (Throwable t) {
+      Log.warn("Failed to load icon “" + path + "”.", t);
+    } finally {
+      ICON = image;
+    }
+  } 
+
   private JTerminalPane terminal;
 
   public TerminatorFrame(JTerminalPane terminal) {
     super("Terminator");
     this.terminal = terminal;
-    JFrameUtilities.setFrameIcon(this);
+    setIconImage(ICON);
     setContentPane(terminal);
     setJMenuBar(new TerminatorMenuBar());
     pack();
