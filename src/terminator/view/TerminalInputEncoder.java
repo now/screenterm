@@ -2,7 +2,7 @@ package terminator.view;
 
 import java.awt.event.*;
 
-import terminator.*;
+import terminator.menu.*;
 import terminator.util.*;
 
 class TerminalInputEncoder implements KeyListener {
@@ -19,7 +19,7 @@ class TerminalInputEncoder implements KeyListener {
   }
 
   public void keyPressed(KeyEvent e) {
-    if (TerminatorMenuBar.isKeyboardEquivalent(e))
+    if (MenuBar.isKeyboardEquivalent(e))
       return;
 
     switch (e.getKeyCode()) {
@@ -88,7 +88,7 @@ class TerminalInputEncoder implements KeyListener {
   }
 
   public void keyTyped(KeyEvent event) {
-    if (TerminatorMenuBar.isKeyboardEquivalent(event)) {
+    if (MenuBar.isKeyboardEquivalent(event)) {
       event.consume();
       return;
     }

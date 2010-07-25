@@ -1,11 +1,12 @@
 package terminator;
 
-import java.awt.*;
+import java.awt.Image;
 import java.awt.event.*;
 import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 
+import terminator.menu.*;
 import terminator.util.*;
 import terminator.view.*;
 
@@ -31,7 +32,7 @@ public class TerminatorFrame extends JFrame {
     this.terminal = terminal;
     setIconImage(ICON);
     setContentPane(terminal);
-    setJMenuBar(new TerminatorMenuBar());
+    setJMenuBar(new MenuBar(this));
     pack();
     workAroundJavaBug6526971();
     setLocationRelativeTo(null);
@@ -44,24 +45,13 @@ public class TerminatorFrame extends JFrame {
     if (!OS.isWindows())
       return;
     addWindowFocusListener(new WindowAdapter() {
-      @Override
-      public void windowLostFocus(WindowEvent e) {
-        MenuSelectionManager.defaultManager().
-      clearSelectedPath();
+      @Override public void windowLostFocus(WindowEvent e) {
+        MenuSelectionManager.defaultManager().clearSelectedPath();
       }
     });
   }
 
-  public boolean isShowingOnScreen() {
-    return isShowing() && (getExtendedState() & ICONIFIED) == 0;
-  }
-
-  public void close() {
-    setVisible(false);
-  }
-
-  @Override
-    public void setVisible(boolean visible) {
+  @Override public void setVisible(boolean visible) {
       super.setVisible(visible);
       if (visible)
         return;

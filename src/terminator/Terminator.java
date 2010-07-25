@@ -3,15 +3,16 @@ package terminator;
 import com.apple.eawt.*;
 import e.debug.HungAwtExit;
 import e.util.InAppServer;
-import java.awt.*;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.*;
 import java.lang.reflect.*;
 import java.net.*;
 import java.util.*;
-import java.util.List;
 import javax.swing.*;
 
+import terminator.menu.*;
 import terminator.util.*;
 import terminator.view.*;
 
@@ -48,18 +49,20 @@ public class Terminator {
       return;
 
     Application.getApplication().addApplicationListener(new ApplicationAdapter() {
-      @Override
-      public void handleReOpenApplication(ApplicationEvent e) {
-        if (frames.isEmpty()) {
-          openFrame(JTerminalPane.newShell());
-        }
+      @Override public void handleReOpenApplication(ApplicationEvent e) {
+        if (frames.isEmpty())
+          openFrame();
         e.setHandled(true);
       }
 
-    @Override public void handleQuit(ApplicationEvent e) {
-      e.setHandled(frames.closeAll());
-    }
+      @Override public void handleQuit(ApplicationEvent e) {
+        e.setHandled(frames.closeAll());
+      }
     });
+  }
+
+  public TerminatorFrame openFrame() {
+    return openFrame(JTerminalPane.newShell());
   }
 
   public TerminatorFrame openFrame(JTerminalPane terminalPane) {
@@ -106,7 +109,7 @@ public class Terminator {
     if (OS.isMacOs())
       return;
 
-    TerminatorMenuBar.setDefaultKeyStrokeModifiers(KeyEvent.ALT_MASK);
+    MenuBar.setDefaultKeyStrokeModifiers(KeyEvent.ALT_MASK);
   }
 
   private boolean parseArgs(final List<String> arguments) {
