@@ -1,6 +1,5 @@
 package terminator.menu;
 
-import e.gui.HelpMenu;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -16,7 +15,7 @@ public class MenuBar extends JMenuBar {
     add(new FileMenu(frame));
     if (OS.isMacOs())
       add(WindowMenu.getSharedInstance().add(frame));
-    add(new HelpMenu().makeJMenu());
+    add(new HelpMenu());
   }
 
   public static boolean isKeyboardEquivalent(KeyEvent event) {
