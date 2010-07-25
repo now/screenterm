@@ -16,6 +16,11 @@ abstract class FrameAction extends AcceleratableAction {
     this.frame = frame;
   }
 
+  public FrameAction(String name, String accelerator, String stock, Frame frame) {
+    super(name, accelerator, stock);
+    this.frame = frame;
+  }
+
   public void actionPerformed(ActionEvent e) {
     if (!isEnabled())
       return;

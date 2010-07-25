@@ -1,6 +1,5 @@
 package terminator.menu;
 
-import e.gui.GnomeStockIcon;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -27,9 +26,7 @@ class FileMenu extends JMenu {
 
   private class CloseAction extends FrameAction {
     CloseAction(Frame frame) {
-      super("Close", "W", frame);
-      /* TODO: Remove this, or move code here. */
-      GnomeStockIcon.configureAction(this);
+      super("Close", "W", "gtk-close", frame);
     }
 
     protected void frameActionPerformed(Frame frame) {
