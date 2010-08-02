@@ -24,7 +24,6 @@ public class NativeLibrary {
   private static void loadLibrary(String name) {
     try {
       System.loadLibrary(name);
-      return;
     } catch (UnsatisfiedLinkError cause) {
       throwError(name, null, cause);
     }
