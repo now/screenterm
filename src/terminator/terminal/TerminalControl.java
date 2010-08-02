@@ -61,8 +61,10 @@ public class TerminalControl {
   }
 
   public void destroyProcess() {
-    try { ptyProcess.destroy(); } catch (IOException ex) {
-      Log.warn("Failed to destroy process " + ptyProcess, ex);
+    try {
+      ptyProcess.destroy();
+    } catch (IOException e) {
+      Log.warn(e, "failed to destroy process: %s", ptyProcess);
     }
   }
 
@@ -89,8 +91,7 @@ public class TerminalControl {
       try {
         read();
       } catch (Throwable t) {
-        Log.warn("Problem reading output from " +
-                 ptyProcess, t);
+        Log.warn(t, "problem reading output from process: %s", ptyProcess);
       } finally {
         handleProcessTermination();
       }
@@ -100,26 +101,29 @@ public class TerminalControl {
       int n;
       while ((n = ptyProcess.read(chars)) != -1)
         process(n);
-      Log.warn("read returned -1 from " + ptyProcess);
+      Log.warn("read returned -1 from process: %s", ptyProcess);
     }
 
     private void process(int n) {
-      try { processBuffer(chars, n); } catch (Throwable t) {
-        Log.warn("Problem processing output from " +
-                 ptyProcess, t);
+      try {
+        processBuffer(chars, n);
+      } catch (Throwable t) {
+        Log.warn(t, "problem processing output from process: ", ptyProcess);
       }
     }
   }
 
   private void handleProcessTermination() {
-    try { ptyProcess.waitFor(); } catch (Exception e) {
-      reportFailure("Problem waiting for process", e);
+    try {
+      ptyProcess.waitFor();
+    } catch (Exception e) {
+      reportFailure(e, "Problem waiting for process");
       return;
     }
     announceConnectionLost("\n\r[" + ptyProcess.toExitString() + ".]");
   }
 
-  public void reportFailure(String description, Throwable t) {
+  public void reportFailure(Throwable t, String description) {
     StringWriter writer = new StringWriter();
     t.printStackTrace(new PrintWriter(writer));
     announceConnectionLost(writer.toString().replaceAll("\n", "\n\r") +
@@ -131,8 +135,8 @@ public class TerminalControl {
       char[] buffer = message.toCharArray();
       processBuffer(buffer, buffer.length);
       model.processActions(new TerminalAction[]{ new SetCursorVisible(false) });
-    } catch (Exception ex) {
-      Log.warn("Couldn't say \"" + message + "\"", ex);
+    } catch (Exception e) {
+      Log.warn(e, "couldn’t announce connection end: %s", message);
     }
   }
 
@@ -147,9 +151,10 @@ public class TerminalControl {
       }
     }});
 
-    try { ptyProcess.sendResizeNotification(size); } catch (Exception e) {
-      Log.warn("Notifying " + ptyProcess +
-               " of size change failed", e);
+    try {
+      ptyProcess.sendResizeNotification(size);
+    } catch (Exception e) {
+      Log.warn(e, "couldn’t notify process of size change: %s",  ptyProcess);
     }
   }
 
@@ -162,10 +167,10 @@ public class TerminalControl {
 
   public void send(final String s) {
     writerExecutor.execute(new Runnable() { public void run() {
-      try { ptyProcess.write(s); } catch (IOException e) {
-        Log.warn("Couldn't send “" +
-                 escape(s) +
-                 "” to " + ptyProcess, e);
+      try {
+        ptyProcess.write(s);
+      } catch (IOException e) {
+        Log.warn(e, "couldn’t send to process: %s: %s", ptyProcess, escape(s));
       }
     }});
   }

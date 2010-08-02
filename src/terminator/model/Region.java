@@ -14,8 +14,7 @@ class Region {
   private Region(Dimension area, int top, int bottom) {
     this.area = area;
     this.top = Math.max(0, top);
-    this.bottom = bottom < 0 ? (area.height - 1) :
-      Math.min(bottom, area.height - 1);
+    this.bottom = bottom < 0 ? (area.height - 1) : Math.min(bottom, area.height - 1);
   }
 
   public Region constrain(Dimension area) {
@@ -24,8 +23,7 @@ class Region {
 
   public Region set(int top, int bottom) {
     if (top >= bottom) {
-      Log.warn("Ignoring illegal scrolling region (" +
-               top + ", " + bottom + ")");
+      Log.warn("ignoring illegal scrolling region (%s, %s)", top, bottom);
       return this;
     }
     return new Region(area, top, bottom);

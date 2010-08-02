@@ -62,7 +62,7 @@ public class CSIParameterState extends State {
     case 'l': csiSetModes(actions, false); break;
     case 'm': csiModifyStyles(actions); break;
     case 'r': actions.add(new SetScrollingRegion(parameters.getInt(0), parameters.getInt(1))); break;
-    default: Log.warn("Unknown CSI sequence " + c); break;
+    default: Log.warn("unknown CSI sequence: %c", c); break;
     }
   }
 
@@ -70,14 +70,14 @@ public class CSIParameterState extends State {
     switch (parameters.getType()) {
     case 0: actions.add(new ClearToEndOfLine()); break;
     case 1: actions.add(new ClearToBeginningOfLine()); break;
-    default: Log.warn("Unknown line clearing request " + parameters.getType()); break;
+    default: Log.warn("unknown line clearing request: %d", parameters.getType()); break;
     }
   }
 
   private void csiClearScreen(ActionQueue actions) {
     switch (parameters.getType()) {
     case 0: actions.add(new ClearToEndOfScreen()); break;
-    default: Log.warn("Unknown screen clearing request " + parameters.getType()); break;
+    default: Log.warn("unknown screen clearing request: %d", parameters.getType()); break;
     }
   }
 
@@ -92,14 +92,14 @@ public class CSIParameterState extends State {
   private void csiSetPrivateMode(ActionQueue actions, int mode, boolean on) {
     switch (mode) {
     case 25: actions.add(new SetCursorVisible(on)); break;
-    default: Log.warn("Unknown private mode " + mode); break;
+    default: Log.warn("unknown private mode: %d", mode); break;
     }
   }
 
   private void csiSetMode(ActionQueue actions, int mode, boolean on) {
     switch (mode) {
     case 4: actions.add(new SetInsertMode(on)); break;
-    default: Log.warn("Unknown mode " + mode); break;
+    default: Log.warn("unknown mode: %d", mode); break;
     }
   }
 
@@ -160,7 +160,7 @@ public class CSIParameterState extends State {
       style.background(Palettes.getColor(parameter - 92));
       break;
     default:
-      Log.warn("Unknown style attribute " + parameter);
+      Log.warn("unknown style attribute: %d", parameter);
       break;
     }
     return i;

@@ -24,13 +24,12 @@ class ShellProcess {
             p.getErrorStream().close();
             p.waitFor();
           } catch (Exception e) {
-            Log.warn(String.format("Problem waiting for %s to finish.",
-                                   args.toString()), e);
+            Log.warn(e, "problem waiting for process to finish: %s", args.toString());
           }
         }
       }.start();
     } catch (Exception e) {
-      Log.warn(String.format("Problem starting %s.", args.toString()), e);
+      Log.warn(e, "problem starting process: %s", args.toString());
     }
     return result;
   }

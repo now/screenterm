@@ -10,7 +10,7 @@ public class Log {
 
   public static class AwtExceptionHandler {
     public void handle(Throwable t) {
-      Log.warn("Exception occurred during event dispatching.", t);
+      Log.warn(t, "exception occurred during event dispatching");
     }
   }
 
@@ -33,21 +33,20 @@ public class Log {
     return System.getProperty("java.runtime.version") + "/" + os();
   }
 
-  /* TODO: Rewrite all callers so that Throwable is always first. */
   public static void warn(String message) {
-    warn(message, (Throwable)null);
+    out.log(message);
   }
 
   public static void warn(String format, Object... args) {
-    warn(null, format, args);
+    out.log(String.format(format, args));
   }
 
   public static void warn(Throwable t, String format, Object... args) {
-    warn(String.format(format, args), t);
+    out.log(t, String.format(format, args));
   }
 
-  public static void warn(String message, Throwable t) {
-    out.log(message, t);
+  public static void warn(Throwable t, String message) {
+    out.log(t, message);
   }
 
   static {

@@ -4,7 +4,7 @@ import java.text.*;
 import java.io.*;
 import java.util.*;
 
-class LogWriter {
+class LogWriter implements Closeable {
   private static final SimpleDateFormat DateFormat =
     new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SZ");
 
@@ -27,16 +27,21 @@ class LogWriter {
                                                    "utf-8"),
                             true);
     } catch (Throwable t) {
-      log("Couldn’t redirect logging to “" + name + "”", t);
+      log(t, "Couldn’t redirect logging to “" + name + "”");
     }
   }
 
-  public void log(final String message, final Throwable t) {
-    out.println(String.format("%s %s: %s",
-                              DateFormat.format(new Date()), name, message));
-    if (t == null)
-      return;
+  public void log(String message) {
+    out.format("%s %s: %s%n", DateFormat.format(new Date()), name, message);
+  }
+
+  public void log(Throwable cause, String message) {
+    log(message);
     out.println("Associated exception:");
-    t.printStackTrace(out);
+    cause.printStackTrace(out);
+  }
+
+  public void close() {
+    out.close();
   }
 }

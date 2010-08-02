@@ -19,7 +19,7 @@ public class TerminatorFrame extends JFrame {
       if (path != null)
         image = ImageIO.read(new File(path));
     } catch (Throwable t) {
-      Log.warn("Failed to load icon “" + path + "”.", t);
+      Log.warn(t, "failed to load icon: %s", path);
     } finally {
       ICON = image;
     }

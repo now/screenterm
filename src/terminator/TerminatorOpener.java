@@ -30,14 +30,11 @@ public class TerminatorOpener implements Runnable {
     return false;
   }
 
-  /**
-   * Sets up the user interface on the AWT event thread.
-   */
   public TerminatorFrame openFromBackgroundThread() {
     try {
       EventQueue.invokeAndWait(this);
-    } catch (Exception ex) {
-      Log.warn("an unexpected checked exception was thrown", ex);
+    } catch (Exception e) {
+      Log.warn(e, "an unexpected checked exception was thrown");
     }
     return window;
   }
@@ -52,12 +49,12 @@ public class TerminatorOpener implements Runnable {
     try {
       this.window = Terminator.instance().openFrame(JTerminalPane.newShell());
       return window;
-    } catch (UsageError ex) {
-      err.println(ex.getMessage());
+    } catch (UsageError e) {
+      err.println(e.getMessage());
       showUsage(err);
-    } catch (Exception ex) {
-      err.println(ex.getMessage());
-      Log.warn("Failed to open window", ex);
+    } catch (Exception e) {
+      err.println(e.getMessage());
+      Log.warn(e, "failed to open window");
     }
     return null;
   }

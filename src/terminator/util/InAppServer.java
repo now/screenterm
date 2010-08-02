@@ -24,8 +24,7 @@ public final class InAppServer<T> {
   private boolean isRunningAsRoot() {
     if (!System.getProperty("user.name").equals("root"))
       return false;
-    Log.warn("InAppServer: refusing to start unauthenticated server “%s” as root.",
-             name);
+    Log.warn("InAppServer: refusing to start server as root: %s", name);
     return true;
   }
 
@@ -37,7 +36,7 @@ public final class InAppServer<T> {
       listener.start();
       secret = new Secret(portFile);
     } catch (Throwable t) {
-      Log.warn(t, "InAppServer: couldn’t start “%s”", name);
+      Log.warn(t, "InAppServer: couldn’t start server: %s", name);
     }
   }
 
@@ -136,7 +135,7 @@ public final class InAppServer<T> {
       try {
         return InetAddress.getLocalHost();
       } catch (UnknownHostException e) {
-        Log.warn("Problem finding a local IP address.", e);
+        Log.warn(e, "problem finding a local IP address");
         return socket.getInetAddress();
       }
     }
@@ -152,7 +151,7 @@ public final class InAppServer<T> {
                    String.format("%s-Handler-%d",
                                  name, Thread.activeCount())).start();
       } catch (Exception e) {
-        Log.warn(e, "%s: exception accepting connection.", name);
+        Log.warn(e, "%s: exception accepting connection", name);
       }
     }
   }
@@ -218,7 +217,7 @@ public final class InAppServer<T> {
     }
 
     private void warn(Exception e, String format, Object... args) {
-      Log.warn(e, "%s: %s.",
+      Log.warn(e, "%s: %s",
                Thread.currentThread().getName(), String.format(format, args));
     }
   }

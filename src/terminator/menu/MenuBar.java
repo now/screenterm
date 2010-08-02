@@ -35,14 +35,13 @@ public class MenuBar extends JMenuBar {
   }
 
   static KeyStroke makeKeyStroke(String key) {
+    int code;
     try {
-      return KeyStroke.getKeyStroke(KeyEvent.class.
-                                      getField("VK_" + key).
-                                      getInt(KeyEvent.class),
-                                    defaultKeyStrokeModifiers);
+      code = KeyEvent.class.getField("VK_" + key).getInt(KeyEvent.class);
     } catch (Exception e) {
-      Log.warn("Couldn’t find virtual keycode for “" + key + "”.", e);
+      Log.warn(e, "couldn’t find virtual keycode: %s", key);
+      return null;
     }
-    return null;
+    return KeyStroke.getKeyStroke(code, defaultKeyStrokeModifiers);
   }
 }

@@ -30,9 +30,9 @@ public class Terminator {
         instance().initInterface();
 
         if (!instance().parseArgs(Arrays.asList(args)))
-      System.exit(1);
+          System.exit(1);
       } catch (Throwable t) {
-        Log.warn("Couldn’t start Terminator.", t);
+        Log.warn(t, "couldn’t start Terminator");
         System.exit(1);
       }
     }});
@@ -68,23 +68,23 @@ public class Terminator {
   }
 
   private void initLookAndFeel() {
-    try {
-      workAroundSunBug6389282();
-      setLookandFeel();
-    } catch (Exception e) {
-      Log.warn("Problem setting up GUI defaults.", e);
-    }
+    workAroundSunBug6389282();
+    setLookandFeel();
   }
 
   private void workAroundSunBug6389282() {
     UIManager.getInstalledLookAndFeels();
   }
 
-  private void setLookandFeel() throws Exception {
+  private void setLookandFeel() {
     String laf = System.getProperty("swing.defaultlaf");
     if (laf == null)
       laf = UIManager.getSystemLookAndFeelClassName();
-    UIManager.setLookAndFeel(laf);
+    try {
+      UIManager.setLookAndFeel(laf);
+    } catch (Exception e) {
+      Log.warn(e, "problem setting up GUI defaults");
+    }
     setWMClass(laf);
   }
 
@@ -98,7 +98,7 @@ public class Terminator {
       field.setAccessible(true);
       field.set(toolkit, Log.getApplicationName());
     } catch (Throwable t) {
-      Log.warn("Failed to set WM_CLASS.", t);
+      Log.warn(t, "failed to set WM_CLASS");
     }
   }
 
@@ -131,8 +131,8 @@ public class Terminator {
     InetAddress loopbackAddress = null;
     try {
       loopbackAddress = InetAddress.getByName(null);
-    } catch (UnknownHostException ex) {
-      Log.warn("Problem looking up the loopback address", ex);
+    } catch (UnknownHostException e) {
+      Log.warn(e, "problem looking up the loopback address");
     }
     new InAppServer<TerminatorServer>("Terminator",
                                       System.getProperty("org.jessies.terminator.serverPortFileName"),

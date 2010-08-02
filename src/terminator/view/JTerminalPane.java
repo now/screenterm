@@ -43,10 +43,10 @@ public class JTerminalPane extends JPanel implements InputHandler {
   }
 
   private void reportTerminalInitializationFailure(final Throwable t) {
-    Log.warn("Couldn’t initialize terminal", t);
+    Log.warn(t, "couldn’t initialize terminal");
     new Thread() {
       public void run () {
-        control.reportFailure("Terminal initialization failed", t);
+        control.reportFailure(t, "Terminal initialization failed");
       }
     }.start();
   }

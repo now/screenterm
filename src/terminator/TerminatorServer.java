@@ -45,7 +45,7 @@ public class TerminatorServer {
     try {
       done.await();
     } catch (InterruptedException e) {
-      Log.warn("Waiting for window to be closed was interrupted", e);
+      Log.warn(e, "waiting for window to be closed was interrupted");
     }
   }
 }

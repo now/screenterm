@@ -30,7 +30,7 @@ public class ActionQueue {
     try {
       eqFlowControl.acquire();
     } catch (InterruptedException e) {
-      Log.warn("Interrupted while trying to flush terminal actions", e);
+      Log.warn(e, "interrupted while trying to flush terminal actions");
       return;
     }
 
@@ -39,7 +39,7 @@ public class ActionQueue {
         try {
           model.processActions(as);
         } catch (Throwable t) {
-          Log.warn("Couldn't process terminal actions", t);
+          Log.warn(t, "couldn't process terminal actions");
         } finally {
           eqFlowControl.release();
         }
