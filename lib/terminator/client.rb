@@ -4,7 +4,7 @@ class Terminator::Client
   def initialize(connection)
     @connection = connection
     @secret = Pathname(@connection.to_str + '.secret')
-    @secret.open('wb'){ |f| f.chmod(0600) }
+    @secret.open('ab'){ |f| f.chmod(0600) }
   end
 
   def try_to_send(command)
