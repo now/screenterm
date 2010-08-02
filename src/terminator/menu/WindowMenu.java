@@ -34,7 +34,7 @@ class WindowMenu {
     }
   };
   private final PropertyChangeListener titleListener = new PropertyChangeListener() {
-    @Override public void propertyChange(PropertyChangeEvent e) {
+    public void propertyChange(PropertyChangeEvent e) {
       update();
     }
   };

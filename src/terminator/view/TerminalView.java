@@ -140,7 +140,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
     repaint(modelToView(cursor));
   }
 
-  public void paintComponent(Graphics graphics) {
+  @Override protected void paintComponent(Graphics graphics) {
     Stopwatch.Timer timer = paintComponentStopwatch.start();
     try {
       Graphics2D g = (Graphics2D)graphics;
@@ -229,7 +229,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
   }
 
   private class FocusedCursorPainter extends CursorPainter {
-    @Override protected void paintCursor(Graphics2D g, Rectangle r) {
+    protected void paintCursor(Graphics2D g, Rectangle r) {
       g.setXORMode(Color.white);
       g.fill(r);
       g.setPaintMode();
@@ -237,7 +237,7 @@ public class TerminalView extends JComponent implements FocusListener, TerminalL
   }
 
   private class UnfocusedCursorPainter extends CursorPainter {
-    @Override protected void paintCursor(Graphics2D g, Rectangle r) {
+    protected void paintCursor(Graphics2D g, Rectangle r) {
       g.drawRect(r.x, r.y, r.width - 1, r.height - 1);
     }
   }

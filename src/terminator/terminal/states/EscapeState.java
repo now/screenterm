@@ -10,7 +10,7 @@ public class EscapeState extends State {
     return instance;
   }
 
-  public State process(ActionQueue actions, char c) {
+  @Override public State process(ActionQueue actions, char c) {
     switch (c) {
     case 'M':
       actions.add(new ReverseLineFeed());

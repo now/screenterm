@@ -17,7 +17,7 @@ class ShellProcess {
       final Process p = Runtime.getRuntime().exec(args);
       result = p;
       new Thread("Shell Process: " + args.toString()) {
-        @Override public void run() {
+        public void run() {
           try {
             p.getInputStream().close();
             p.getOutputStream().close();

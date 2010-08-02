@@ -28,7 +28,7 @@ public class CSIParameterState extends State {
     return instance.process(actions, c);
   }
 
-  public State process(ActionQueue actions, char c) {
+  @Override public State process(ActionQueue actions, char c) {
     if (c == ';') {
       parameters.next();
       return this;

@@ -10,7 +10,7 @@ public class CSIEntryState extends State {
     return instance;
   }
 
-  public State process(ActionQueue actions, char c) {
+  @Override public State process(ActionQueue actions, char c) {
     if ((0x20 <= c && c <= 0x2f) || c == 0x3a)
       return CSIIgnoreState.enter();
     if (0x30 <= c && c <= 0x3f)

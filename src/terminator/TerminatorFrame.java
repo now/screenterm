@@ -52,10 +52,10 @@ public class TerminatorFrame extends JFrame {
   }
 
   @Override public void setVisible(boolean visible) {
-      super.setVisible(visible);
-      if (visible)
-        return;
-      terminal.destroyProcess();
-      dispose();
-    }
+    super.setVisible(visible);
+    if (visible)
+      return;
+    terminal.destroyProcess();
+    dispose();
+  }
 }

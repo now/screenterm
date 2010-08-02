@@ -29,7 +29,7 @@ public class GroundState extends State {
     characters = new StringBuilder();
   }
 
-  public State process(ActionQueue actions, char c) {
+  @Override public State process(ActionQueue actions, char c) {
     if (c >= 0x20) {
       characters.append(c);
       return this;

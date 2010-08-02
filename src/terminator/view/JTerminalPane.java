@@ -44,9 +44,11 @@ public class JTerminalPane extends JPanel implements InputHandler {
 
   private void reportTerminalInitializationFailure(final Throwable t) {
     Log.warn("Couldn’t initialize terminal", t);
-    new Thread(new Runnable() { @Override public void run() {
-      control.reportFailure("Terminal initialization failed", t);
-    }}).start();
+    new Thread() {
+      public void run () {
+        control.reportFailure("Terminal initialization failed", t);
+      }
+    }.start();
   }
 
   public void handleInput(String input) {
@@ -58,15 +60,13 @@ public class JTerminalPane extends JPanel implements InputHandler {
     addComponentListener(new ComponentAdapter() {
       private Dimension currentSize;
 
-      @Override
-      public void componentResized(ComponentEvent event) {
+      @Override public void componentResized(ComponentEvent event) {
         Dimension size = view.sizeInCharacters();
         if (size.equals(currentSize))
-      return;
-    control.sizeChanged(size);
-    currentSize = size;
+          return;
+        control.sizeChanged(size);
+        currentSize = size;
       }
-
     });
   }
 
@@ -74,7 +74,7 @@ public class JTerminalPane extends JPanel implements InputHandler {
     control.start();
   }
 
-  public void requestFocus() {
+  @Override public void requestFocus() {
     view.requestFocus();
   }
 

@@ -85,7 +85,7 @@ public class TerminalControl {
   private class ReaderRunnable implements Runnable {
     private char[] chars = new char[INPUT_BUFFER_SIZE];
 
-    @Override public void run() {
+    public void run() {
       try {
         read();
       } catch (Throwable t) {
