@@ -23,9 +23,8 @@ class Terminator::Java
     @class_path = ClassPath.new
 
     add_pathnames_property 'org.jessies.libraryDirectories',
-      Dir.glob('{%s,%s}/.generated/*_%s/lib' %
+      Dir.glob('%s/.generated/*_%s/lib' %
                 [Terminator::Root,
-                 Terminator::SalmaHayek,
                  Terminator::OS.name])
     add_pathname_property 'org.jessies.binaryDirectory', binaries
   end
@@ -56,7 +55,7 @@ class Terminator::Java
 
   def binaries
     path = '%s/.generated/{%s,*_%s}/bin' %
-      [Terminator::SalmaHayek, Terminator::OS.target, Terminator::OS.name]
+      [Terminator::Root, Terminator::OS.target, Terminator::OS.name]
     @binaries ||= Dir.glob(path).first or
       raise 'failed to find any support binary directories: %s' % path
   end
@@ -100,7 +99,6 @@ class Terminator::Java
 
     add_pathname_property 'org.jessies.frameIcon', @frame_icon
     add_pathname_property 'org.jessies.projectRoot', Terminator::Root
-    add_pathname_property 'org.jessies.supportRoot', Terminator::SalmaHayek
 
     # Work around Sun bug 6274341.
     add_property 'java.awt.Window.locationByPlatform', 'true'

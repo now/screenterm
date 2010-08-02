@@ -13,7 +13,6 @@ class Terminator
   autoload :Terminfo, 'terminator/terminfo'
 
   Root = Pathname.new(__FILE__).realpath.dirname.dirname
-  SalmaHayek = (Root.dirname + 'salma-hayek').realpath
 
   def self.start
     # TODO: report_exceptions is broken

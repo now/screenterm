@@ -21,7 +21,7 @@ class Terminator::Server
 
   def stop_gnome_startup
     return unless id = ENV['DESKTOP_STARTUP_ID']
-    system Terminator::SalmaHayek + '.generated' + target_directory + 'bin' + 'gnome-startup',
+    system Terminator::Root + '.generated' + Terminator::OS.target + 'bin' + 'gnome-startup',
            'stop', id
   end
 
