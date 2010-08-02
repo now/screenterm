@@ -32,18 +32,18 @@ public class TerminatorServer {
     }
   }
 
-  private void waitForWindowToBeClosed(final Component window) {
+  private static void waitForWindowToBeClosed(final Component window) {
     final CountDownLatch done = new CountDownLatch(1);
     // FIXME: Can this be simplified?
     window.addHierarchyListener(new HierarchyListener() {
-      @Override public void hierarchyChanged(HierarchyEvent e) {
+      public void hierarchyChanged(HierarchyEvent e) {
         if ((e.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 &&
             !window.isShowing())
           done.countDown();
       }
     });
     try {
-      done.wait();
+      done.await();
     } catch (InterruptedException e) {
       Log.warn("Waiting for window to be closed was interrupted", e);
     }
