@@ -8,58 +8,64 @@ import java.util.List;
 import terminator.util.*;
 import terminator.view.*;
 
-public class TerminatorOpener implements Runnable {
-  private List<String> arguments;
-  private PrintWriter err;
-  private TerminatorFrame window;
+public class TerminatorOpener {
+  private final List<String> arguments;
+  private final PrintWriter err;
 
-  public TerminatorOpener(final List<String> arguments, final PrintWriter err) {
+  public TerminatorOpener(List<String> arguments, PrintWriter err) {
     this.arguments = arguments;
     this.err = err;
   }
 
-  private static void showUsage(final PrintWriter out) {
-    out.println("Usage: terminator [--help] [[-n <name>] [--working-directory <directory>] [<command>]]...");
+  public boolean showUsageIfRequested(final PrintWriter out) {
+    if (!(arguments.contains("-h") || arguments.contains("--help")))
+      return false;
+    showUsage(out);
+    return true;
   }
 
-  public boolean showUsageIfRequested(final PrintWriter out) {
-    if (arguments.contains("-h") || arguments.contains("-help") || arguments.contains("--help")) {
-      showUsage(out);
-      return true;
-    }
-    return false;
+  private static void showUsage(final PrintWriter out) {
+    out.println("Usage: terminator [--help]");
   }
 
   public TerminatorFrame openFromBackgroundThread() {
+    Opener opener = new Opener(err);
     try {
-      EventQueue.invokeAndWait(this);
+      EventQueue.invokeAndWait(opener);
     } catch (Exception e) {
       Log.warn(e, "an unexpected checked exception was thrown");
     }
-    return window;
+    return opener.frame();
   }
 
-  private static class UsageError extends RuntimeException {
-    public UsageError(final String message) {
-      super(message);
+  public TerminatorFrame open() {
+    return new Opener(err).open();
+  }
+
+  private class Opener implements Runnable {
+    private final PrintWriter err;
+    private TerminatorFrame frame;
+
+    Opener(PrintWriter err) {
+      this.err = err;
     }
-  }
 
-  public TerminatorFrame createUi() {
-    try {
-      this.window = Terminator.instance().openFrame(JTerminalPane.newShell());
-      return window;
-    } catch (UsageError e) {
-      err.println(e.getMessage());
-      showUsage(err);
-    } catch (Exception e) {
-      err.println(e.getMessage());
-      Log.warn(e, "failed to open window");
+    public void run() {
+      frame = open();
     }
-    return null;
-  }
 
-  public void run() {
-    createUi();
+    TerminatorFrame open() {
+      try {
+        return Terminator.instance().openFrame(JTerminalPane.newShell());
+      } catch (Exception e) {
+        err.println(e.getMessage());
+        Log.warn(e, "failed to open window");
+      }
+      return null;
+    }
+
+    TerminatorFrame frame() {
+      return this.frame;
+    }
   }
 }

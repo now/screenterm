@@ -116,7 +116,7 @@ public class Terminator {
       TerminatorOpener opener = new TerminatorOpener(arguments, err);
       if (opener.showUsageIfRequested(out))
         return true;
-      if (opener.createUi() == null)
+      if (opener.open() == null)
         return false;
       startTerminatorServer();
     } finally {
