@@ -1,8 +1,6 @@
 package terminator;
 
 import com.apple.eawt.*;
-import e.debug.HungAwtExit;
-import e.util.InAppServer;
 import java.awt.EventQueue;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -73,7 +71,6 @@ public class Terminator {
     try {
       workAroundSunBug6389282();
       setLookandFeel();
-      HungAwtExit.initMBean();
     } catch (Exception e) {
       Log.warn("Problem setting up GUI defaults.", e);
     }
@@ -137,9 +134,9 @@ public class Terminator {
     } catch (UnknownHostException ex) {
       Log.warn("Problem looking up the loopback address", ex);
     }
-    new InAppServer("Terminator",
-                    System.getProperty("org.jessies.terminator.serverPortFileName"),
-                    loopbackAddress, TerminatorServer.class,
-                    new TerminatorServer());
+    new InAppServer<TerminatorServer>("Terminator",
+                                      System.getProperty("org.jessies.terminator.serverPortFileName"),
+                                      loopbackAddress,
+                                      new TerminatorServer());
   }
 }

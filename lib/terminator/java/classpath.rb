@@ -4,10 +4,8 @@ class Terminator::Java::ClassPath
   def initialize
     @paths = [
       '%s/.generated/classes.jar' % Terminator::Root,
-      '%s/.generated/classes' % Terminator::Root,
-      '%s/.generated/classes' % Terminator::SalmaHayek
-    ].concat(Dir.glob('%s/lib/jars/*.jar' % Terminator::SalmaHayek)).
-      concat(Dir.glob('%s/lib/jars/*.jar' % Terminator::Root))
+      '%s/.generated/classes' % Terminator::Root
+    ].concat(Dir.glob('%s/lib/jars/*.jar' % Terminator::Root))
   end
 
   # TODO: Perhaps take java in constructor and have a method like

@@ -33,8 +33,17 @@ public class Log {
     return System.getProperty("java.runtime.version") + "/" + os();
   }
 
+  /* TODO: Rewrite all callers so that Throwable is always first. */
   public static void warn(String message) {
-    warn(message, null);
+    warn(message, (Throwable)null);
+  }
+
+  public static void warn(String format, Object... args) {
+    warn(null, format, args);
+  }
+
+  public static void warn(Throwable t, String format, Object... args) {
+    warn(String.format(format, args), t);
   }
 
   public static void warn(String message, Throwable t) {
